@@ -1,0 +1,43 @@
+<table class="table table-hover table-bordered">
+		<thead>
+				<th>Project</th>
+				<th>Name</th>
+				<th>State</th>
+				<th>ID</th>
+				<th>Zone</th>
+				<th></th>
+		</thead>
+		<tbody>
+				<tr ng-repeat="instance in instances | orderBy: 'name'" ng-class="{success: instance.state == 'running'}">
+						<td>
+								{{ instance.project }}
+						</td>
+						<td>
+								{{ instance.name }}
+						</td>
+						<td>
+								{{ instance.state }}
+						</td>
+						<td>
+								<a href="/instances/{{ instance.id }}" class="link">{{ instance.id }}</a>
+						</td>
+						<td>
+								{{ instance.placement }}
+						</td>
+						<td>
+							<div class="btn-group">		
+
+								<button type="button" class="btn btn-default">View</button>
+								<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+										 <span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu">
+									<li><a href="/instances/{{ instance.id }}">View details</a></li>
+									<li><a href="/instances/{{ instance.id }}#edit">Edit</a></li>
+									<li><a href="#">Stop</a></li>
+								</ul>
+							</div>
+						</td>
+				</tr>
+		</tbody>
+</table>
