@@ -1,0 +1,79 @@
+<div class="row">
+	<div class="col-6">
+		<form class="form-inline">
+		<input ng-model="query.$" class="form-control" placeholder="Search" style="width:200px"/>
+		<select ng-model="query.state" class="form-control" style="width:200px">
+			<option></option>
+			<option value="running">Running only</option>
+			<option value="stopped">Stopped</option>
+		</select>
+	</form>
+	</div>
+	<hr />
+	<div class="col-12">
+		<table class="table table-hover table-bordered">
+				<thead>
+						<th>Project</th>
+						<th>Name</th>
+						<th>State</th>
+						<th>ID</th>
+						<th>Zone</th>
+						<th></th>
+				</thead>
+				<tbody>
+						<tr ng-repeat="instance in instances | filter:query" ng-class="{success: instance.state == 'running'}">
+								<td>
+										{{ instance.project }}
+								</td>
+								<td>
+										{{ instance.name }}
+								</td>
+								<td>
+										{{ instance.state }}
+								</td>
+								<td>
+										{{ instance.id }}
+								</td>
+								<td>
+										{{ instance.placement }}
+								</td>
+								<td>
+									<div class="btn-group">		
+
+										<a href="/instances/{{ instance.id }}" class="btn btn-default">View</a>
+										<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+												 <span class="caret"></span>
+										</button>
+										<ul class="dropdown-menu">
+											<li><a href="/instances/{{ instance.id }}#edit">Edit</a></li>
+											
+											<li ng-switch on="instance.state" class="disabled">
+												<a href="#" ng-switch-when="stopped">Start</a>
+												<a href="#" ng-switch-when="running">Stop</a>
+											</li>
+										</ul>
+									</div>
+								</td>
+						</tr>
+				</tbody>
+		</table>
+	</div>
+	<div class="col-3">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<h3 class="panel-title">Summary</h3>
+			</div>
+				Running instances : <span class="label label-success">{{ running }}</span><br />
+				Stopped instances : <span class="label label-danger">{{ stopped }}</span>
+		</div>
+	</div>
+	<div class="col-3 pull-right" ng-repeat="(region_name, region) in regions">
+		<div class="panel">
+			<div class="panel-heading">
+				<h3 class="panel-title">{{ region_name }}</h3>
+			</div>
+				Running instances : <span class="label label-success">{{ region.running }}</span><br />
+				Stopped instances : <span class="label label-danger">{{ region.stopped }}</span>
+		</div>
+	</div>
+</div>
