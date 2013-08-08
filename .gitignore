@@ -4,4 +4,3 @@ venv
 .DS_Store
 ignore
 *.swp
-settings.php
