@@ -21,7 +21,6 @@ def get_pw(username):
 @app.route('/')
 @app.route('/instances')
 @app.route('/instances/<id>')
-@auth.login_required
 def basic_pages(**kwargs):
     return render_template('index.html')
 
