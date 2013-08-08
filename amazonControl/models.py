@@ -25,7 +25,8 @@ class Amazon():
                         instance.state,
                         instance.instance_type,
                         instance.ip_address,
-                        instance.public_dns_name
+                        instance.public_dns_name,
+                        instance.placement
                     )
                 )
         return instancesObjects
@@ -45,20 +46,21 @@ class Instance():
             self,
             id,
             name,
-            project=None,
-            state=None,
-            instance_type=None,
-            ip_address=None,
-            public_dns_name=None,
-            placement=None):
+            project,
+            state,
+            instance_type,
+            ip_address,
+            public_dns_name,
+            placement):
+        print public_dns_name
 
         self.id = id
         self.name = str(name)
         self.project = str(project)
         self.state = str(state)
         self.instance_type = str(instance_type)
-        self.ip_address = str(ip_address)
-        self.public_dns_name = str(public_dns_name)
+        self.ip = str(ip_address)
+        self.public_dns = str(public_dns_name)
         self.placement = str(placement)
 
     def __unicode__(self):

@@ -2,11 +2,26 @@ from flask import render_template, send_file
 from amazonControl import app
 from amazonControl.core import api
 from amazonControl.services import InstanceApi, InstancesApi
+from flask.ext.httpauth import HTTPBasicAuth
+
+auth = HTTPBasicAuth()
+
+users = {
+    'montreal': 'python',
+}
+
+
+@auth.get_password
+def get_pw(username):
+    if username in users:
+        return users[username]
+    return None
 
 
 @app.route('/')
 @app.route('/instances')
 @app.route('/instances/<id>')
+@auth.login_required
 def basic_pages(**kwargs):
     return render_template('index.html')
 

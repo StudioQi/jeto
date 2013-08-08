@@ -18,8 +18,30 @@ class InstancesApi(Resource):
     def get(self):
         amazon = Amazon()
         instances = amazon.get_all_instances()
-        return {'instances': map(lambda t: marshal(t, instance_fields),
-                instances)}
+        running = 0
+        regions = {}
+        stopped = 0
+
+        for instance in instances:
+            if instance.state == 'running':
+                running += 1
+            elif instance.state == 'stopped':
+                stopped += 1
+
+            if instance.placement not in regions:
+                regions[instance.placement] = {}
+
+            if instance.state not in regions[instance.placement]:
+                regions[instance.placement][instance.state] = 0
+
+            regions[instance.placement][instance.state] += 1
+
+        return {
+            'instances': map(lambda t: marshal(t, instance_fields), instances),
+            'regions': regions,
+            'running': running,
+            'stopped': stopped,
+        }
 
     def delete(self):
         pass

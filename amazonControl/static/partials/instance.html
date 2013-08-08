@@ -1,8 +1,22 @@
-<div class="panel">
-		<div class="panel-heading">
-				{{ instance.name }}
+<div class="row">
+	<div class="col-4">
+		<div class="panel">
+				<div class="panel-heading">
+					<h4>{{ instance.name }}</h4>
+				</div>
+				Project : {{ instance.project }}<br/ >
+				Id : {{ instance.id }}<br />
 		</div>
-		Project : {{ instance.project }}<br/ >
-		State : {{ instance.state }}<br />
-		Id : {{ instance.id }}<br />
+	</div>
+
+	<div class="col-4 pull-right">
+		<div class="panel">
+			<div class="panel-heading">
+				<h4>Status</h4>
+			</div>
+				Currently : {{ instance.state }}<br />
+				Public DNS : {{ instance.public_dns }}<br />
+				IP : {{ instance.ip }}
+		</div>
+	</div>
 </div>

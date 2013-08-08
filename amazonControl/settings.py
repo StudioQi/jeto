@@ -1,7 +1,9 @@
 DEBUG = True
 SECRET_KEY = 'ieFoh1fazar2ieshuuGh9yeoph8no6Eed8Yohkaht3Uasei4eit8pheichahj'
-aws_access_key_id = "AKIAJYZ2MSDC62AILCKQ"
-aws_secret_access_key = "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"
+#aws_access_key_id = "AKIAJYZ2MSDC62AILCKQ"
+#aws_secret_access_key = "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"
+aws_access_key_id = "AKIAILCGVDXKVKKXBVLA"
+aws_secret_access_key = "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"
 region = "us-east-1"
 ami_default = "ami-49641c20"
 size_default = "t1.micro"
