@@ -47,9 +47,9 @@
 										<ul class="dropdown-menu">
 											<li><a href="/instances/{{ instance.id }}#edit">Edit</a></li>
 											
-											<li ng-switch on="instance.state" class="disabled">
-												<a href="#" ng-switch-when="stopped">Start</a>
-												<a href="#" ng-switch-when="running">Stop</a>
+											<li ng-switch on="instance.state">
+												<a href="#" ng-switch-when="stopped" ng-click="startInstance(instance.id)">Start</a>
+												<a href="#" ng-switch-when="running" ng-click="stopInstance(instance.id)">Stop</a>
 											</li>
 										</ul>
 									</div>

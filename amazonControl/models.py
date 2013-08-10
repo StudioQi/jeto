@@ -40,6 +40,18 @@ class Amazon():
 
         return instances
 
+    def stop(self, instanceId):
+        instances = self._get_all_instances()
+        for instance in instances:
+            if instance.id == instanceId:
+                instance.stop()
+
+    def start(self, instanceId):
+        instances = self._get_all_instances()
+        for instance in instances:
+            if instance.id == instanceId:
+                instance.start()
+
 
 class Instance():
     def __init__(
