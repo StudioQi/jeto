@@ -48,7 +48,7 @@
 											<li><a href="/instances/{{ instance.id }}#edit">Edit</a></li>
 											
 											<li class="divider"></li>
-											<li ng-switch on="instance.state">
+											<li ng-switch on="instance.state" class="disabled">
 												<a href="#" ng-switch-when="stopped" ng-click="startInstance(instance.id)">Start</a>
 												<a href="#" ng-switch-when="running" ng-click="stopInstance(instance.id)" class="btn-danger"><span class="glyphicon glyphicon-remove pull-left"></span> Stop</a>
 											</li>
