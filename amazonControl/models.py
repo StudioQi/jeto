@@ -64,7 +64,6 @@ class Instance():
             ip_address,
             public_dns_name,
             placement):
-        print public_dns_name
 
         self.id = id
         self.name = str(name)

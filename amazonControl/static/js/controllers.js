@@ -40,4 +40,3 @@ function InstanceController($scope, $routeParams, Instances) {
         //console.log(instance);
     })
 }
-
