@@ -4,12 +4,16 @@ from amazonControl.core import api
 from amazonControl.services import InstanceApi, InstancesApi
 from amazonControl.models import Amazon
 from flask.ext.httpauth import HTTPBasicAuth
+from flask.ext.restful import reqparse
 
 auth = HTTPBasicAuth()
 
 users = {
     'montreal': 'python',
 }
+
+parser = reqparse.RequestParser()
+parser.add_argument('test', type=str)
 
 
 @auth.get_password

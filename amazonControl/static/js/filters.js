@@ -5,7 +5,10 @@
 angular.module('angularFlaskFilters', [])
 	.filter('uppercase', function() {
 		return function(input) {
-			return input.toUpperCase();
+			if(input){
+				return input.toUpperCase();
+			}
+			return null;
 		}
 	})
 	.filter('console', function() {

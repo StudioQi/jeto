@@ -21,7 +21,7 @@
 						<th></th>
 				</thead>
 				<tbody>
-						<tr ng-repeat="instance in instances | filter:query" ng-class="{success: instance.state == 'running'}">
+				<tr ng-repeat="instance in instances | filter:query" ng-class="{success: instance.state == 'running', warning: instance.state == 'pending'}">
 								<td>
 										{{ instance.project }}
 								</td>
@@ -48,7 +48,7 @@
 											<li><a href="/instances/{{ instance.id }}#edit">Edit</a></li>
 											
 											<li class="divider"></li>
-											<li ng-switch on="instance.state" class="disabled">
+											<li ng-switch on="instance.state">
 												<a href="#" ng-switch-when="stopped" ng-click="startInstance(instance.id)">Start</a>
 												<a href="#" ng-switch-when="running" ng-click="stopInstance(instance.id)" class="btn-danger"><span class="glyphicon glyphicon-remove pull-left"></span> Stop</a>
 											</li>

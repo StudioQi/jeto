@@ -1,5 +1,7 @@
+#-=- encoding: utf-8 -=-
 from boto import ec2
 from amazonControl import settings
+from time import sleep
 
 
 class Amazon():
@@ -45,12 +47,14 @@ class Amazon():
         for instance in instances:
             if instance.id == instanceId:
                 instance.stop()
+                sleep(2)
 
     def start(self, instanceId):
         instances = self._get_all_instances()
         for instance in instances:
             if instance.id == instanceId:
                 instance.start()
+                sleep(2)
 
 
 class Instance():
@@ -73,6 +77,10 @@ class Instance():
         self.ip = str(ip_address)
         self.public_dns = str(public_dns_name)
         self.placement = str(placement)
+        self.test = '11111111111'
 
     def __unicode__(self):
         return self.name
+
+    def save():
+        pass

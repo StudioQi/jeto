@@ -11,25 +11,25 @@ function InstancesController($scope, Instances, $http) {
         $scope.regions = infos.regions;
         $scope.stopped = infos.stopped;
         $scope.running = infos.running;
-        //console.log(infos);
+        $scope.resource = infos;
     })
 
     $scope.stopInstance = function(instanceId) {
-        $http.post('/api/instances/' + instanceId + '/status', {
-            status : 'stopped',
+        angular.forEach($scope.instances, function(instance, idx){
+            if(instance.id == instanceId){
+                $scope.instances[idx].state = 'stop';
+            }
         })
-        .success(function(test) {
-            //console.log(test);
-        })
+        $scope.resource.$save();
     }
 
     $scope.startInstance = function(instanceId) {
-        $http.post('/api/instances/' + instanceId + '/status', {
-            status : 'start',
+        angular.forEach($scope.instances, function(instance, idx){
+            if(instance.id == instanceId){
+                $scope.instances[idx].state = 'start';
+            }
         })
-        .success(function(test) {
-            //console.log(test);
-        })
+        $scope.resource.$save();
     }
 
 }
@@ -37,6 +37,17 @@ function InstancesController($scope, Instances, $http) {
 function InstanceController($scope, $routeParams, Instances) {
     var instancesQuery = Instances.get({instanceId: $routeParams.instanceId}, function(instance) {
         $scope.instance = instance;
-        //console.log(instance);
-    })
+    });
+    $scope.setName = function(newName) {
+        $scope.instance.test = 'stopped';
+        $scope.instance.$save();
+    }
+    $scope.stop = function() {
+        $scope.instance.state = 'stop';
+        $scope.instance.$save();
+    };
+    $scope.start = function() {
+        $scope.instance.state = 'start';
+        $scope.instance.$save();
+    }
 }
