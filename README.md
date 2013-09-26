@@ -13,5 +13,6 @@ Eventually :
 
 ## License
 
-[Creative Commons Attribution 3.0 Unported] [3]
+[Creative Commons Attribution 3.0 Unported] [2]
   [1]: https://raw.github.com/PierrePaul/amazonControl/master/screenshot.png
+  [2]: https://raw.github.com/PierrePaul/amazonControl/master/LICENSE.txt
