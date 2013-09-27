@@ -17,9 +17,9 @@
 </div>
 <div class="row">
 	<div class="col-md-12">
-		<table class="table table-hover table-condensed">
+		<table class="table table-hover table-bordered">
 				<thead>
-						<th>ID</th>
+						<th>Name</th>
 						<th>Path</th>
 						<th>Status</th>
 						<th></th>
@@ -27,7 +27,7 @@
 				<tbody>
 						<tr ng-repeat="instance in instances | filter:query" ng-class="{success: instance.status.search('running') != -1, warning: instance.status.search('poweroff') != -1, danger: instance.status.search('aborted') != -1}">
 								<td>
-									{{ instance.id }}{{ instance.status.search('aborted')}}
+									{{ instance.name }}
 								</td>
 								<td>
 										{{ instance.path }}
