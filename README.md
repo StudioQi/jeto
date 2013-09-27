@@ -1,5 +1,4 @@
 # VagrantControl
-![] [1]
 
 This is currently a work in progress. The interface will, or should, depending on where we are on the roadmap : 
 
@@ -9,5 +8,4 @@ This is currently a work in progress. The interface will, or should, depending o
 ## License
 
 [Creative Commons Attribution 3.0 Unported] [2]
-  [1]: https://raw.github.com/PierrePaul/amazonControl/master/screenshot.png
   [2]: https://raw.github.com/PierrePaul/amazonControl/master/LICENSE.txt
