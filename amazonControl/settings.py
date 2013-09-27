@@ -1,7 +1,7 @@
 DEBUG = True
 SECRET_KEY = 'generate me'
-aws_access_key_id = "AKIAILCGVDXKVKKXBVLA"
-aws_secret_access_key = "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"
+aws_access_key_id = "generate me"
+aws_secret_access_key = "generate me"
 
 region = "us-east-1"
 ami_default = "ami-49641c20"
@@ -10,11 +10,11 @@ keypair_name = "pierrepaul"
 security_groups_default = "default group, need to be create beforehand for now"
 
 try:
-    from .settings.dev import *
+    from .settings_dev import *
 except ImportError:
     pass
 
 try:
-    from .settings.pheromone import *
+    from .settings_pheromone import *
 except ImportError:
     pass

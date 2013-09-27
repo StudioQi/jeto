@@ -17,6 +17,7 @@
 
     <script src="/static/lib/jquery/jquery.min.js"></script>
     <script src="/static/lib/bootstrap/bootstrap.min.js"></script>
+    <script src="/static/lib/angular/createDialog.js"></script>
 </head>
 <body>
     <div class="navbar navbar-fixed-top navbar-inverse">
@@ -36,21 +37,24 @@
       </div>
     </div>
     <div class="container page">
-				{% block content %}
-					<div id="content" class="container main" ng-view>
-					</div>
-				{% endblock %}
-
-        <hr>
-        <footer id="footer" class="footer">
-            <div class="footer-left">
-                <a href="/">Home</a> |
-                <a href="/instances">Instances</a>
+        {% block content %}
+            <div id="content" class="container main" ng-view>
             </div>
-            <div class="footer-right">
-                Pierre Paul
+        {% endblock %}
+        <div class="row">
+            <div class="col-md-12">
+                <hr>
+                <footer id="footer" class="footer">
+                    <div class="footer-left">
+                        <a href="/">Home</a> |
+                        <a href="/instances">Instances</a>
+                    </div>
+                    <div class="footer-right">
+                        Pierre Paul
+                    </div>
+                </footer>
             </div>
-        </footer>
+        </div>
     </div>
 </body>
 </html>

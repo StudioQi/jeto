@@ -1,15 +1,18 @@
 <div class="row">
-	<div class="col-md-6">
+	<div class="col-md-12">
 		<form class="form-inline">
-		<input ng-model="query.$" class="form-control" placeholder="Search" style="width:200px"/>
-		<select ng-model="query.state" class="form-control" style="width:200px">
-			<option></option>
-			<option value="running">Running only</option>
-			<option value="stopped">Stopped</option>
-		</select>
-	</form>
+			<input ng-model="query.$" class="form-control" placeholder="Search" style="width:200px"/>
+			<select ng-model="query.state" class="form-control" style="width:200px">
+				<option></option>
+				<option value="running">Running only</option>
+				<option value="stopped">Stopped</option>
+			</select>
+			<button type="button" class="btn btn-default" ng-click="create()">Create a new machine</button>
+		</form>
+		<hr />
 	</div>
-	<hr />
+</div>
+<div class="row">
 	<div class="col-md-12">
 		<table class="table table-hover table-bordered">
 				<thead>
@@ -21,7 +24,7 @@
 						<th></th>
 				</thead>
 				<tbody>
-				<tr ng-repeat="instance in instances | filter:query" ng-class="{success: instance.state == 'running', warning: instance.state == 'pending'}">
+						<tr ng-repeat="instance in instances | filter:query" ng-class="{success: instance.state == 'running', warning: instance.state == 'pending'}">
 								<td>
 										{{ instance.project }}
 								</td>
