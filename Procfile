@@ -1,1 +1,1 @@
-web: gunicorn amazonControl:app
+web: gunicorn vagrantControl:app

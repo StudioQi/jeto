@@ -8,7 +8,7 @@ function IndexController($scope) {
 function InstancesController($scope, Instances, $http, createDialog) {
     var instancesQuery = Instances.get({}, function(infos) {
         $scope.instances = infos.instances;
-        $scope.regions = infos.regions;
+        console.log($scope.instances);
         $scope.stopped = infos.stopped;
         $scope.running = infos.running;
         $scope.resource = infos;
@@ -54,9 +54,9 @@ function InstancesController($scope, Instances, $http, createDialog) {
 function InstanceController($scope, $routeParams, Instances) {
     var instancesQuery = Instances.get({instanceId: $routeParams.instanceId}, function(instance) {
         $scope.instance = instance;
+        console.log(instance);
     });
     $scope.setName = function(newName) {
-        $scope.instance.test = 'stopped';
         $scope.instance.$save();
     }
     $scope.stop = function() {

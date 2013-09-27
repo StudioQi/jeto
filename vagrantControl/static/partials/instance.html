@@ -6,12 +6,12 @@
 			</div>
 			<table class="table">
 				<tr>
-					<th>Project</th>
-					<td><span class="label label-info">{{ instance.project }}</span></td>
-				</tr>
-				<tr>
 					<th>ID</th>
 					<td>{{ instance.id }}</td>
+				</tr>
+				<tr>
+					<th>Path</th>
+					<td>{{ instance.path }}</td>
 				</tr>
 			</table>
 		</div>
@@ -25,15 +25,7 @@
 			<table class="table table-bordered">
 				<tr>
 					<th>Currently</th>
-					<td><span class="label label-{{ instance.state | stateClass }}" ng-bind-template="{{instance.state | uppercase }}"></span></td>
-				</tr>
-				<tr>
-					<th>Public DNS</th>
-					<td><a href="http://{{ instance.public_dns }}">{{ instance.public_dns }}</a></td>
-				</tr>
-				<tr>
-					<th>IP</th>
-					<td>{{ instance.ip }}</td>
+					<td><span ng-bind="instance.status"></span></td>
 				</tr>
 			</table>
 		</div>

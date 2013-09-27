@@ -1,5 +1,5 @@
 import os
-from amazonControl import app
+from vagrantControl import app
 
 
 def runserver():
