@@ -17,12 +17,4 @@ angular.module('angularFlaskFilters', [])
 			return test;
 		}
 	})
-	.filter('stateClass', function() {
-		return function(state) {
-			if(state == 'running') {
-				return 'success';
-			}
-			return 'warning';
-		}
-	})
 ;

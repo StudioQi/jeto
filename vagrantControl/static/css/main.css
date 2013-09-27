@@ -57,3 +57,7 @@ padding-top: 60px;
 [ng\:cloak], [ng-cloak], .ng-cloak {
   display: none;
 }
+
+.force-show {
+  display: block;
+}

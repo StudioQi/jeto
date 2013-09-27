@@ -1,47 +1,28 @@
 #-=- encoding: utf-8 -=-
 from flask.ext.restful import Resource, fields, marshal_with, marshal
 from flask import request
-from amazonControl.models import Amazon
+from vagrantControl.models import VagrantBackend
 
 
 instance_fields = {
     'id': fields.String,
     'name': fields.String,
-    'project': fields.String,
-    'state': fields.String,
-    'type': fields.String,
-    'ip': fields.String,
-    'public_dns': fields.String,
-    'placement': fields.String,
-    'test': fields.String,
+    'path': fields.String,
+    'status': fields.String,
 }
 
 
 class InstancesApi(Resource):
+    backend = None
+
     def get(self):
-        amazon = Amazon()
-        instances = amazon.get_all_instances()
+        self.backend = VagrantBackend()
+        instances = self.backend.get_all_instances()
         running = 0
-        regions = {}
         stopped = 0
-
-        for instance in instances:
-            if instance.state == 'running':
-                running += 1
-            elif instance.state == 'stopped':
-                stopped += 1
-
-            if instance.placement not in regions:
-                regions[instance.placement] = {}
-
-            if instance.state not in regions[instance.placement]:
-                regions[instance.placement][instance.state] = 0
-
-            regions[instance.placement][instance.state] += 1
 
         return {
             'instances': map(lambda t: marshal(t, instance_fields), instances),
-            'regions': regions,
             'running': running,
             'stopped': stopped,
         }
@@ -50,34 +31,37 @@ class InstancesApi(Resource):
         pass
 
     def post(self):
-        instances = request.json['instances']
-        for instance in instances:
-            instanceLive = self._getInstance(instance['id'])
-            if instanceLive.state != instance['state']:
-                if instance['state'] == 'stop':
-                    self._stop(instanceLive.id)
-                elif instance['state'] == 'start':
-                    self._start(instanceLive.id)
+        pass
+#        instances = request.json['instances']
+#        for instance in instances:
+#            instanceLive = self._getInstance(instance['id'])
+#            if instanceLive.state != instance['state']:
+#                if instance['state'] == 'stop':
+#                    self._stop(instanceLive.id)
+#                elif instance['state'] == 'start':
+#                    self._start(instanceLive.id)
 
         return self.get()
 
     def _stop(self, id):
-        amazon = Amazon()
-        amazon.stop(id)
+        self.backend.stop(id)
 
     def _start(self, id):
-        amazon = Amazon()
-        amazon.start(id)
+        self.backend.start(id)
 
     def _getInstance(self, id):
-        amazon = Amazon()
-        instances = amazon.get_all_instances()
+        instances = self.backend.get_all_instances()
         for instance in instances:
             if instance.id == id:
                 return instance
 
 
 class InstanceApi(Resource):
+    backend = None
+
+    def __init__(self):
+        self.backend = VagrantBackend()
+
     @marshal_with(instance_fields)
     def get(self, id):
         instance = self._getInstance(id)
@@ -110,21 +94,18 @@ class InstanceApi(Resource):
         return self.get(id)
 
     def stop(self, id):
-        amazon = Amazon()
-        amazon.stop(id)
+        self.backend.stop(id)
         return self.get(id)
 
     def start(self, id):
-        amazon = Amazon()
-        amazon.start(id)
+        self.backend.start(id)
         return self.get(id)
 
     def delete(self, id):
         pass
 
     def _getInstance(self, id):
-        amazon = Amazon()
-        instances = amazon.get_all_instances()
+        instances = self.backend.get_all_instances()
         for instance in instances:
             if instance.id == id:
                 return instance

@@ -1,45 +1,42 @@
 <div class="row">
-	<div class="col-md-6">
-		<form class="form-inline">
-		<input ng-model="query.$" class="form-control" placeholder="Search" style="width:200px"/>
-		<select ng-model="query.state" class="form-control" style="width:200px">
-			<option></option>
-			<option value="running">Running only</option>
-			<option value="stopped">Stopped</option>
-		</select>
-	</form>
-	</div>
-	<hr />
 	<div class="col-md-12">
-		<table class="table table-hover table-bordered">
+		<form class="form-inline">
+			<input ng-model="query.$" class="form-control" placeholder="Search" style="width:200px"/>
+			<select ng-model="query.status" class="form-control" style="width:200px">
+				<option></option>
+				<option value="running">Running only</option>
+				<option value="poweroff">Stopped</option>
+				<option value="aborted">Aborted</option>
+				<option value="not created">Not created</option>
+				<option value="saved">Suspended</option>
+			</select>
+			<button type="button" class="btn btn-default" ng-click="create()">Create a new machine</button>
+		</form>
+		<hr />
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-12">
+		<table class="table table-hover table-condensed">
 				<thead>
-						<th>Project</th>
-						<th>Name</th>
-						<th>State</th>
 						<th>ID</th>
-						<th>Zone</th>
+						<th>Path</th>
+						<th>Status</th>
 						<th></th>
 				</thead>
 				<tbody>
-				<tr ng-repeat="instance in instances | filter:query" ng-class="{success: instance.state == 'running', warning: instance.state == 'pending'}">
+						<tr ng-repeat="instance in instances | filter:query" ng-class="{success: instance.status.search('running') != -1, warning: instance.status.search('poweroff') != -1, danger: instance.status.search('aborted') != -1}">
 								<td>
-										{{ instance.project }}
+									{{ instance.id }}{{ instance.status.search('aborted')}}
 								</td>
 								<td>
-										{{ instance.name }}
+										{{ instance.path }}
 								</td>
 								<td>
-										{{ instance.state }}
-								</td>
-								<td>
-										{{ instance.id }}
-								</td>
-								<td>
-										{{ instance.placement }}
+										{{ instance.status }}
 								</td>
 								<td>
 									<div class="btn-group">		
-
 										<a href="/instances/{{ instance.id }}" class="btn btn-default">View</a>
 										<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
 												 <span class="caret"></span>

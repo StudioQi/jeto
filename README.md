@@ -1,15 +1,10 @@
-# AmazonControl
+# VagrantControl
 ![] [1]
 
 This is currently a work in progress. The interface will, or should, depending on where we are on the roadmap : 
 
-- Stop an Amazon EC2 machine
-- Start an Amazon EC2 machine
-
-Eventually :
-
-- Create an Amazon EC2 machine
-- Edit an Amazon EC2 machine
+- Stop a Vagrant machine
+- Start a Vagrant machine
 
 ## License
 

@@ -5,14 +5,31 @@
 function IndexController($scope) {
 }
 
-function InstancesController($scope, Instances, $http) {
+function InstancesController($scope, Instances, $http, createDialog) {
     var instancesQuery = Instances.get({}, function(infos) {
         $scope.instances = infos.instances;
-        $scope.regions = infos.regions;
+        console.log($scope.instances);
         $scope.stopped = infos.stopped;
         $scope.running = infos.running;
         $scope.resource = infos;
     })
+
+    $scope.create = function() {
+        createDialog('/static/partials/create.html',{ 
+           id : 'createDialog', 
+           title: 'Create a new machine',
+           backdrop: true, 
+           success: {
+               label: 'Create',
+               fn: function(){
+                   console.log('Successfully closed modal');
+               }
+           },
+           cancel: {
+               label: 'Cancel',
+           }
+        });
+    }
 
     $scope.stopInstance = function(instanceId) {
         angular.forEach($scope.instances, function(instance, idx){
@@ -37,9 +54,9 @@ function InstancesController($scope, Instances, $http) {
 function InstanceController($scope, $routeParams, Instances) {
     var instancesQuery = Instances.get({instanceId: $routeParams.instanceId}, function(instance) {
         $scope.instance = instance;
+        console.log(instance);
     });
     $scope.setName = function(newName) {
-        $scope.instance.test = 'stopped';
         $scope.instance.$save();
     }
     $scope.stop = function() {
