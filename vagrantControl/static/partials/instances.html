@@ -38,18 +38,11 @@
 								<td>
 									<div class="btn-group">		
 										<a href="/instances/{{ instance.id }}" class="btn btn-default">View</a>
-										<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-												 <span class="caret"></span>
-										</button>
-										<ul class="dropdown-menu">
-											<li><a href="/instances/{{ instance.id }}#edit">Edit</a></li>
-											
-											<li class="divider"></li>
-											<li ng-switch on="instance.state">
-												<a href="#" ng-switch-when="stopped" ng-click="startInstance(instance.id)">Start</a>
-												<a href="#" ng-switch-when="running" ng-click="stopInstance(instance.id)" class="btn-danger"><span class="glyphicon glyphicon-remove pull-left"></span> Stop</a>
-											</li>
-										</ul>
+										<a href="/instances/{{ instance.id }}#edit" class="btn btn-default">Edit</a></li>
+									</div>
+								 	<div class="btn-group pull-right">		
+										<a href="#" ng-click="control(instance.id, 'start')" class="btn btn-warning">Start</a>
+										<a href="#" ng-click="control(instance.id, 'stop')" class="btn btn-danger">Stop</a>
 									</div>
 								</td>
 						</tr>

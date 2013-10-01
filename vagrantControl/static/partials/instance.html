@@ -33,9 +33,11 @@
 </div>
 
 <div class="row">
-	<div class="col-md-2 pull-right" ng-switch on="instance.state">
-		<button type="button" class="btn btn-danger pull-right" ng-switch-when="running" ng-bind-html="{{instance.state}}" ng-click="stop()">Stop Instance</button>
-		<button type="button" class="btn btn-danger pull-right" ng-switch-when="stopped" ng-bind-html="{{instance.state}}" ng-click="start()">Start Instance</button>
+	<div class="col-md-4 pull-right">
+		<div class="btn-group pull-right">
+			<button type="button" class="btn btn-warning" ng-bind-html="{{instance.state}}" ng-click="start()">Start</button>
+			<button type="button" class="btn btn-danger" ng-bind-html="{{instance.state}}" ng-click="stop()">Stop</button>
+		</div>
 	</div>
 	<!--
 	<div class="col-md-2 pull-right">

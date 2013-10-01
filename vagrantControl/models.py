@@ -1,8 +1,10 @@
 #-=- encoding: utf-8 -=-
 #from time import sleep
-import vagrant
+#import vagrant
+import gearman
 from vagrantControl import db
 from flask.ext.sqlalchemy import orm
+from flask import request
 
 
 class BackendProvider():
@@ -47,13 +49,23 @@ class VagrantInstance(db.Model):
     def __str__(self):
         return self.__unicode__()
 
+    def post(self):
+        print request.json
+        return self
+
     @orm.reconstructor
     def init_on_load(self):
-        self.vagrant = vagrant.Vagrant(self.path)
+        self.gm_client = gearman.GearmanClient(['localhost'])
         self.status = self._status()
 
     def _status(self):
-        statuses = self.vagrant.status()
-        return ','.join(
-            [status + '::' + statuses[status] for status in statuses]
-        )
+        request = self.gm_client.submit_job('status', bytes(self.path))
+        return request.result
+
+    def start(self):
+        request = self.gm_client.submit_job('start', bytes(self.path))
+        print request.result
+
+    def stop(self):
+        request = self.gm_client.submit_job('stop', bytes(self.path))
+        print request.result

@@ -8,7 +8,6 @@ function IndexController($scope) {
 function InstancesController($scope, Instances, $http, createDialog) {
     var instancesQuery = Instances.get({}, function(infos) {
         $scope.instances = infos.instances;
-        console.log($scope.instances);
         $scope.stopped = infos.stopped;
         $scope.running = infos.running;
         $scope.resource = infos;
@@ -47,6 +46,19 @@ function InstancesController($scope, Instances, $http, createDialog) {
             }
         })
         $scope.resource.$save();
+    }
+
+    $scope.control = function(instanceId, state) {
+        $http.post('/api/instances/', {
+            state : state,
+            instanceId : instanceId,
+        })
+        .success(function(infos) {
+            $scope.instances = infos.instances;
+            $scope.stopped = infos.stopped;
+            $scope.running = infos.running;
+            $scope.resource = infos;
+        })
     }
 
 }
