@@ -2,7 +2,7 @@
 from flask.ext.restful import Resource, fields, marshal_with, marshal
 from flask import request
 from vagrantControl.models import VagrantBackend
-from time import sleep
+#from time import sleep
 
 
 instance_fields = {
@@ -10,6 +10,7 @@ instance_fields = {
     'name': fields.String,
     'path': fields.String,
     'status': fields.String,
+    'ip': fields.String,
 }
 
 
@@ -47,7 +48,9 @@ class InstancesApi(Resource):
                     print 'Trying to stop instance {}'.format(instance.id)
                     instance.stop()
 
-        sleep(2)
+        if 'state' in request.json and request.json['state'] == 'create':
+            instance = self.backend.create(request.json)
+
         return self.get()
 
     def _stop(self, id):

@@ -27,12 +27,21 @@
 					<th>Currently</th>
 					<td><span ng-bind="instance.status"></span></td>
 				</tr>
+				<tr>
+					<th>IP</th>
+					<td><span ng-bind="instance.ip"></span></td>
+				</tr>
 			</table>
 		</div>
 	</div>
 </div>
 
 <div class="row">
+	<div class="col-md-4 pull-left">
+		<div class="btn-group pull-left">
+			<button type="button" class="btn btn-default" ng-bind-html="{{instance.state}}" ng-click="delete()">Delete</button>
+		</div>
+	</div>
 	<div class="col-md-4 pull-right">
 		<div class="btn-group pull-right">
 			<button type="button" class="btn btn-warning" ng-bind-html="{{instance.state}}" ng-click="start()">Start</button>

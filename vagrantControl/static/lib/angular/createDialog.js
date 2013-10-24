@@ -64,12 +64,6 @@ angular.module('fundoo.services', []).factory('createDialog', ["$document", "$co
         '    </div><!-- /.modal-content --> ' +
         '  </div><!-- /.modal-dialog --> ' +
         '</div><!-- /.modal -->');
-//        '<div class="' + options.modalClass + ' fade"' + idAttr + '>' +
-//          '  <div class="modal-header">' +
-//          '    <button type="button" class="close" ng-click="$modalCancel()">&times;</button>' +
-//          '    <h2>{{$title}}</h2>' +
-//          '  </div>' +
-//          '</div>');
 
       modalEl.addClass('force-show');
       var backdropEl = angular.element('<div ng-click="$modalCancel()">');

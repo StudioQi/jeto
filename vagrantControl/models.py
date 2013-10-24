@@ -2,9 +2,11 @@
 #from time import sleep
 #import vagrant
 import gearman
+import json
 from vagrantControl import db
 from flask.ext.sqlalchemy import orm
 from flask import request
+from sh import ls
 
 
 class BackendProvider():
@@ -30,6 +32,21 @@ class VagrantBackend(BackendProvider):
 
     def get_all_instances(self):
         return self.instances
+
+    def create(self, request):
+        instance = VagrantInstance(None, request['path'], request['name'])
+        if self._check_instance(request['path']):
+            db.session.add(instance)
+            db.session.commit()
+
+        return instance
+
+    def _check_instance(self, path):
+        try:
+            ls(path + '/Vagrantfile')
+        except:
+            return False
+        return True
 
 
 class VagrantInstance(db.Model):
@@ -57,15 +74,30 @@ class VagrantInstance(db.Model):
     def init_on_load(self):
         self.gm_client = gearman.GearmanClient(['localhost'])
         self.status = self._status()
+        self.ip = self._ip()
 
     def _status(self):
-        request = self.gm_client.submit_job('status', bytes(self.path))
-        return request.result
+        args = {'path': self.path}
+        results = self._submit_job('status', args)
+        print results
+        return results
+
+    def _ip(self):
+        args = {'path': self.path}
+        results = self._submit_job('ip', args)
+        return results
 
     def start(self):
-        request = self.gm_client.submit_job('start', bytes(self.path))
-        print request.result
+        args = {'path': self.path, 'eth': 'wlan0'}
+        results = self._submit_job('start', args)
+        return results
 
     def stop(self):
-        request = self.gm_client.submit_job('stop', bytes(self.path))
-        print request.result
+        args = {'path': self.path}
+        results = self._submit_job('stop', args)
+        return results
+
+    def _submit_job(self, action, args):
+        request = self.gm_client.submit_job(action,
+                                            bytes(json.dumps(args)))
+        return request.result
