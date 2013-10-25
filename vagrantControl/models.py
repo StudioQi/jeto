@@ -7,6 +7,7 @@ from vagrantControl import db
 from flask.ext.sqlalchemy import orm
 from flask import request
 from sh import ls
+from settings import ETH
 
 
 class BackendProvider():
@@ -88,7 +89,7 @@ class VagrantInstance(db.Model):
         return results
 
     def start(self):
-        args = {'path': self.path, 'eth': 'wlan0'}
+        args = {'path': self.path, 'eth': ETH}
         results = self._submit_job('start', args)
         return results
 

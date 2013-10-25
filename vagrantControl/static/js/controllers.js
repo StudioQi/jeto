@@ -72,8 +72,7 @@ function InstancesController($scope, Instances, $http, createDialog, $log) {
             instanceId : instanceId,
         })
         .success(function(infos) {
-            console.log(infos.instances);
-            console.log('awdawd');
+            //console.log(infos.instances);
             $scope.instances = infos.instances;
             //$scope.stopped = infos.stopped;
             //$scope.running = infos.running;
