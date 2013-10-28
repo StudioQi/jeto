@@ -86,20 +86,14 @@ class InstanceApi(Resource):
             instance.name = request.json['name']
             changed = True
 
-        if request.json['project'] != instance.project:
-            instance.project = request.json['project']
-            changed = True
-
-        if request.json['test'] != instance.test:
-            instance.test = request.json['test']
-            changed = True
-
         if changed:
             instance.save()
 
-        if request.json['state'] == 'stop' and instance.state != 'stopped':
+        if 'state' in request and request.json['state'] == 'stop' and\
+                instance.state != 'stopped':
             self.stop(id)
-        if request.json['state'] == 'start' and instance.state != 'running':
+        if 'state' in request and request.json['state'] == 'start' and\
+                instance.state != 'running':
             self.start(id)
 
         return self.get(id)

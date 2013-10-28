@@ -35,8 +35,13 @@ class VagrantBackend(BackendProvider):
         return self.instances
 
     def create(self, request):
+        if 'environment' in request:
+            environment = request['environment']
+        else:
+            environment = ''
+
         instance = VagrantInstance(None, request['path'], request['name'],
-                                   request['environment'])
+                                   environment)
         if self._check_instance(request['path']):
             db.session.add(instance)
             db.session.commit()
