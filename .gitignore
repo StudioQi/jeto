@@ -5,3 +5,4 @@ venv
 ignore
 *.swp
 settings_dev.py
+settings_pheromone.py

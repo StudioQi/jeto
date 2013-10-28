@@ -37,6 +37,7 @@ function InstancesController($scope, Instances, $http, createDialog, $log) {
                    var instance = new Instances();
                    instance.name = $scope.instanceInfo.name;
                    instance.path = $scope.instanceInfo.path;
+                   instance.environment = $scope.instanceInfo.environment;
                    instance.state = 'create';
                    instance.$save();
                    $scope.updateInfos();
