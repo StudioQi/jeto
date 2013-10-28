@@ -11,6 +11,7 @@ instance_fields = {
     'path': fields.String,
     'status': fields.String,
     'ip': fields.String,
+    'environment': fields.String,
 }
 
 

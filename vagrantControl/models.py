@@ -35,7 +35,8 @@ class VagrantBackend(BackendProvider):
         return self.instances
 
     def create(self, request):
-        instance = VagrantInstance(None, request['path'], request['name'])
+        instance = VagrantInstance(None, request['path'], request['name'],
+                                   request['environment'])
         if self._check_instance(request['path']):
             db.session.add(instance)
             db.session.commit()
@@ -54,11 +55,13 @@ class VagrantInstance(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     path = db.Column(db.String)
     name = db.Column(db.String)
+    environment = db.Column(db.String)
 
-    def __init__(self, id, path, name):
+    def __init__(self, id, path, name, environment):
         self.id = id
         self.path = path
         self.name = name
+        self.environment = environment
         self.init_on_load()
 
     def __unicode__(self):
@@ -89,7 +92,7 @@ class VagrantInstance(db.Model):
         return results
 
     def start(self):
-        args = {'path': self.path, 'eth': ETH}
+        args = {'path': self.path, 'eth': ETH, 'environment': self.environment}
         results = self._submit_job('start', args)
         return results
 

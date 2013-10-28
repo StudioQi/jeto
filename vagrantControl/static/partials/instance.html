@@ -1,56 +1,60 @@
 <div class="row">
-	<div class="col-md-4">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				{{ instance.name }}
-			</div>
-			<table class="table">
-				<tr>
-					<th>ID</th>
-					<td>{{ instance.id }}</td>
-				</tr>
-				<tr>
-					<th>Path</th>
-					<td>{{ instance.path }}</td>
-				</tr>
-			</table>
-		</div>
-	</div>
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {{ instance.name }}
+            </div>
+            <table class="table">
+                <tr>
+                    <th>ID</th>
+                    <td>{{ instance.id }}</td>
+                </tr>
+                <tr>
+                    <th>Path</th>
+                    <td>{{ instance.path }}</td>
+                </tr>
+                <tr>
+                    <th>Environment</th>
+                    <td>{{ instance.environment }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
 
-	<div class="col-md-8 pull-right">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				Status
-			</div>
-			<table class="table table-bordered">
-				<tr>
-					<th>Currently</th>
-					<td><span ng-bind="instance.status"></span></td>
-				</tr>
-				<tr>
-					<th>IP</th>
-					<td><span ng-bind="instance.ip"></span></td>
-				</tr>
-			</table>
-		</div>
-	</div>
+    <div class="col-md-8 pull-right">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Status
+            </div>
+            <table class="table table-bordered">
+                <tr>
+                    <th>Currently</th>
+                    <td><span ng-bind="instance.status"></span></td>
+                </tr>
+                <tr>
+                    <th>IP</th>
+                    <td><span ng-bind="instance.ip"></span></td>
+                </tr>
+            </table>
+        </div>
+    </div>
 </div>
 
 <div class="row">
-	<div class="col-md-4 pull-left">
-		<div class="btn-group pull-left">
-			<button type="button" class="btn btn-default" ng-bind-html="{{instance.state}}" ng-click="delete()">Delete</button>
-		</div>
-	</div>
-	<div class="col-md-4 pull-right">
-		<div class="btn-group pull-right">
-			<button type="button" class="btn btn-warning" ng-bind-html="{{instance.state}}" ng-click="start()">Start</button>
-			<button type="button" class="btn btn-danger" ng-bind-html="{{instance.state}}" ng-click="stop()">Stop</button>
-		</div>
-	</div>
-	<!--
-	<div class="col-md-2 pull-right">
-		<button type="button" class="btn btn-danger pull-right" ng-click="test()">Test</button>
-	</div>
-	-->
+    <div class="col-md-4 pull-left">
+        <div class="btn-group pull-left">
+            <button type="button" class="btn btn-default" ng-bind-html="{{instance.state}}" ng-click="delete()">Delete</button>
+        </div>
+    </div>
+    <div class="col-md-4 pull-right">
+        <div class="btn-group pull-right">
+            <button type="button" class="btn btn-warning" ng-bind-html="{{instance.state}}" ng-click="start()">Start</button>
+            <button type="button" class="btn btn-danger" ng-bind-html="{{instance.state}}" ng-click="stop()">Stop</button>
+        </div>
+    </div>
+    <!--
+    <div class="col-md-2 pull-right">
+        <button type="button" class="btn btn-danger pull-right" ng-click="test()">Test</button>
+    </div>
+    -->
 </div>
