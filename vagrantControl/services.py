@@ -110,7 +110,8 @@ class InstanceApi(Resource):
         return self.get(id)
 
     def delete(self, id):
-        pass
+        instanceId = int(id)
+        self.backend.delete(instanceId)
 
     def _getInstance(self, id):
         instances = self.backend.get_all_instances()
