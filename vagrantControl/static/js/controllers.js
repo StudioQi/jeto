@@ -50,12 +50,12 @@ function InstancesController($scope, Instances, $http, createDialog, $log) {
     };
 
     $scope.stopInstance = function(instanceId) {
-        angular.forEach($scope.instances, function(instance, idx){
-            if(instance.id == instanceId){
-                $scope.instances[idx].state = 'stop';
-            }
+        $http.post('/api/instances/', {
+            state : 'stop',
+            id : instanceId,
+        })
+        .success(function(result) {
         });
-        $scope.resource.$save();
     };
 
     $scope.startInstance = function(instanceId) {
@@ -72,16 +72,20 @@ function InstancesController($scope, Instances, $http, createDialog, $log) {
             state : state,
             id : instanceId,
         })
-        .success(function(infos) {
-            $scope.instances = infos.instances;
-            $scope.resource = infos;
+        .success(function(result) {
+            instanceInfos = result.instance;
+            angular.forEach($scope.instances, function(instance, idx){
+                console.log(instance);
+                if(instance.id == instanceInfos.id){
+                    $scope.instances[idx] = instanceInfos;
+                }
+            });
         });
     };
 
     $scope.delete = function(instanceId) {
         $http.delete('/api/instances/' + instanceId)
         .success(function(infos) {
-            console.log(infos);
             $scope.instances = infos.instances;
             $scope.resource = infos;
         });
@@ -90,7 +94,6 @@ function InstancesController($scope, Instances, $http, createDialog, $log) {
 }
 
 function InstanceController($scope, $routeParams, Instances) {
-    console.log($routeParams);
     var instancesQuery = Instances.get({id: $routeParams.id}, function(instance) {
         $scope.instance = instance;
     });

@@ -31,6 +31,9 @@ class VagrantBackend(BackendProvider):
     def __init__(self):
         self.instances = VagrantInstance.query.all()
 
+    def get(self, instanceId):
+        return VagrantInstance.query.get(int(instanceId))
+
     def get_all_instances(self):
         return self.instances
 
@@ -88,7 +91,8 @@ class VagrantInstance(db.Model):
     def init_on_load(self):
         self.gm_client = gearman.GearmanClient(['localhost'])
         self.status = self._status()
-        self.ip = self._ip()
+        if 'running' in self.status:
+            self.ip = self._ip()
 
     def _status(self):
         args = {'path': self.path}
@@ -103,11 +107,13 @@ class VagrantInstance(db.Model):
     def start(self):
         args = {'path': self.path, 'eth': ETH, 'environment': self.environment}
         results = self._submit_job('start', args)
+        self.status = self._status()
         return results
 
     def stop(self):
         args = {'path': self.path}
         results = self._submit_job('stop', args)
+        self.status = self._status()
         return results
 
     def delete(self):
