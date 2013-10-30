@@ -1,6 +1,7 @@
 angular.module('AngularFlask', ['angularFlaskServices', 'angularFlaskFilters', 'fundoo.services'])
     .config(['$routeProvider', '$locationProvider',
         function($routeProvider, $locationProvider) {
+            $locationProvider.html5Mode(true);
             $routeProvider
                 .when('/', {
                     templateUrl: 'static/partials/landing.html',
@@ -18,7 +19,6 @@ angular.module('AngularFlask', ['angularFlaskServices', 'angularFlaskFilters', '
                     redirectTo: '/'
                 })
             ;
-            $locationProvider.html5Mode(true);
         }
     ])
 ;

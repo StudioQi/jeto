@@ -48,8 +48,8 @@
     </div>
     <div class="col-md-4 pull-right">
         <div class="btn-group pull-right">
-            <button type="button" class="btn btn-warning" ng-bind-html="{{instance.state}}" ng-click="start()">Start</button>
-            <button type="button" class="btn btn-danger" ng-bind-html="{{instance.state}}" ng-click="stop()">Stop</button>
+            <button type="button" class="btn btn-warning" ng-bind-html="{{instance.state}}" ng-click="control('start')">Start</button>
+            <button type="button" class="btn btn-danger" ng-bind-html="{{instance.state}}" ng-click="control('stop')">Stop</button>
         </div>
     </div>
     <!--

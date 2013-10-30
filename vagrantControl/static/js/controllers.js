@@ -49,24 +49,6 @@ function InstancesController($scope, Instances, $http, createDialog, $log) {
         });
     };
 
-    $scope.stopInstance = function(instanceId) {
-        $http.post('/api/instances/', {
-            state : 'stop',
-            id : instanceId,
-        })
-        .success(function(result) {
-        });
-    };
-
-    $scope.startInstance = function(instanceId) {
-        angular.forEach($scope.instances, function(instance, idx){
-            if(instance.id == instanceId){
-                $scope.instances[idx].state = 'start';
-            }
-        });
-        $scope.resource.$save();
-    };
-
     $scope.control = function(instanceId, state) {
         $http.post('/api/instances/', {
             state : state,
@@ -92,19 +74,38 @@ function InstancesController($scope, Instances, $http, createDialog, $log) {
 
 }
 
-function InstanceController($scope, $routeParams, Instances) {
+function InstanceController($scope, $routeParams, Instances, $http, $location) {
     var instancesQuery = Instances.get({id: $routeParams.id}, function(instance) {
         $scope.instance = instance;
     });
+
+    $scope.updateInfos = function() {
+        var instanceQuery = Instances.get({id: $routeParams.id}, function(instance) {
+            $scope.instance = instance;
+        });
+    };
+
     $scope.setName = function(newName) {
         $scope.instance.$save();
     };
-    $scope.stop = function() {
-        $scope.instance.state = 'stop';
-        $scope.instance.$save();
+
+    $scope.control = function(state) {
+        $http.post('/api/instances/' + $scope.instance.id, {
+            state : state,
+        })
+        .success(function(result) {
+            instanceInfos = result.instance;
+            angular.forEach($scope.instances, function(instance, idx){
+                $scope.instance = instanceInfos;
+            });
+        });
     };
-    $scope.start = function() {
-        $scope.instance.state = 'start';
-        $scope.instance.$save();
+
+    $scope.delete = function() {
+        $http.delete('/api/instances/' + $scope.instance.id)
+        .success(function(infos) {
+            //$scope.updateInfos();
+            $location.path('/instances');
+        });
     };
 }
