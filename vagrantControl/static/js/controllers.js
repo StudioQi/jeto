@@ -70,13 +70,19 @@ function InstancesController($scope, Instances, $http, createDialog, $log) {
     $scope.control = function(instanceId, state) {
         $http.post('/api/instances/', {
             state : state,
-            instanceId : instanceId,
+            id : instanceId,
         })
         .success(function(infos) {
-            //console.log(infos.instances);
             $scope.instances = infos.instances;
-            //$scope.stopped = infos.stopped;
-            //$scope.running = infos.running;
+            $scope.resource = infos;
+        });
+    };
+
+    $scope.delete = function(instanceId) {
+        $http.delete('/api/instances/' + instanceId)
+        .success(function(infos) {
+            console.log(infos);
+            $scope.instances = infos.instances;
             $scope.resource = infos;
         });
     };
@@ -84,7 +90,8 @@ function InstancesController($scope, Instances, $http, createDialog, $log) {
 }
 
 function InstanceController($scope, $routeParams, Instances) {
-    var instancesQuery = Instances.get({instanceId: $routeParams.instanceId}, function(instance) {
+    console.log($routeParams);
+    var instancesQuery = Instances.get({id: $routeParams.id}, function(instance) {
         $scope.instance = instance;
     });
     $scope.setName = function(newName) {

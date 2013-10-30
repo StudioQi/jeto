@@ -48,6 +48,11 @@ class VagrantBackend(BackendProvider):
 
         return instance
 
+    def delete(self, instanceId):
+        instance = VagrantInstance.query.get(instanceId)
+        db.session.delete(instance)
+        db.session.commit()
+
     def _check_instance(self, path):
         try:
             ls(path + '/Vagrantfile')
@@ -88,7 +93,6 @@ class VagrantInstance(db.Model):
     def _status(self):
         args = {'path': self.path}
         results = self._submit_job('status', args)
-        print results
         return results
 
     def _ip(self):
@@ -105,6 +109,10 @@ class VagrantInstance(db.Model):
         args = {'path': self.path}
         results = self._submit_job('stop', args)
         return results
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
 
     def _submit_job(self, action, args):
         request = self.gm_client.submit_job(action,

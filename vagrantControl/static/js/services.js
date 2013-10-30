@@ -1,9 +1,9 @@
 angular.module('angularFlaskServices', ['ngResource'])
     .factory('Instances', function($resource) {
-        return $resource('/api/instances/:instanceId', {instanceId:'@id'}, {
+        return $resource('/api/instances/:id', {id:'@id'}, {
             query: {
                 method: 'GET',
-                params: { instanceId: '' },
+                params: { id: '' },
                 isArray: true
             }
         });

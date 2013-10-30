@@ -29,17 +29,18 @@ class InstancesApi(Resource):
         }
 
     def delete(self):
-        pass
+        instanceId = int(request.json['id'])
+        self.backend.delete(instanceId)
 
     def post(self):
         if 'state' in request.json and request.json['state'] == 'start':
-            instanceId = int(request.json['instanceId'])
+            instanceId = int(request.json['id'])
             for instance in self.backend.get_all_instances():
                 if instance.id == instanceId:
                     instance.start()
 
         if 'state' in request.json and request.json['state'] == 'stop':
-            instanceId = int(request.json['instanceId'])
+            instanceId = int(request.json['id'])
             for instance in self.backend.get_all_instances():
                 if instance.id == instanceId:
                     print 'Trying to stop instance {}'.format(instance.id)

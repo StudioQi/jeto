@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('AngularFlask', ['angularFlaskServices', 'angularFlaskFilters', 'fundoo.services'])
     .config(['$routeProvider', '$locationProvider',
         function($routeProvider, $locationProvider) {
@@ -12,7 +10,7 @@ angular.module('AngularFlask', ['angularFlaskServices', 'angularFlaskFilters', '
                     templateUrl: 'static/partials/instances.html',
                     controller: InstancesController
                 })
-                .when('/instances/:instanceId', {
+                .when('/instances/:id', {
                     templateUrl: '/static/partials/instance.html',
                     controller: InstanceController
                 })
