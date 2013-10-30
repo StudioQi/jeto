@@ -23,13 +23,9 @@ class InstancesApi(Resource):
 
     def get(self):
         instances = self.backend.get_all_instances()
-        running = 0
-        stopped = 0
 
         return {
             'instances': map(lambda t: marshal(t, instance_fields), instances),
-            'running': running,
-            'stopped': stopped,
         }
 
     def delete(self):
@@ -51,6 +47,9 @@ class InstancesApi(Resource):
 
         if 'state' in request.json and request.json['state'] == 'create':
             instance = self.backend.create(request.json)
+            return {
+                'instance': marshal(instance, instance_fields),
+            }
 
         return self.get()
 
