@@ -51,7 +51,7 @@
 }
 
 body {
-padding-top: 60px;
+padding-top: 80px;
 }
 
 [ng\:cloak], [ng-cloak], .ng-cloak {
@@ -61,3 +61,12 @@ padding-top: 60px;
 .force-show {
   display: block;
 }
+
+.navbar-brand {
+  background: url('/static/img/nav-logo.png') no-repeat;
+  display: block;
+  width: 117px;
+  height: 70px;
+  margin: 5px auto;
+text-indent: -99999px; -webkit-background-size: 117px 99px; -moz-background-size: 117px 99px; background-size: 117px 99px; }
+  
