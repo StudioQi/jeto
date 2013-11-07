@@ -15,6 +15,10 @@ angular.module('AngularFlask', ['angularFlaskServices', 'angularFlaskFilters', '
                     templateUrl: '/static/partials/instance.html',
                     controller: InstanceController
                 })
+                .when('/domains', {
+                    templateUrl: 'static/partials/domains/list.html',
+                    controller: DomainsController
+                })
                 .otherwise({
                     redirectTo: '/'
                 })

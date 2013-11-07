@@ -72,6 +72,13 @@ function InstancesController($scope, Instances, $http, createDialog, $log) {
         });
     };
 
+    $scope.status = {};
+    pubsubCallback = function(status) {
+        $scope.$apply(function() {
+            $scope.status = JSON.parse(infos.data);
+        });
+    };
+    var source = new EventSource('/pubsub', pubsubCallback, false);
 }
 
 function InstanceController($scope, $routeParams, Instances, $http, $location) {
@@ -104,8 +111,88 @@ function InstanceController($scope, $routeParams, Instances, $http, $location) {
     $scope.delete = function() {
         $http.delete('/api/instances/' + $scope.instance.id)
         .success(function(infos) {
-            //$scope.updateInfos();
             $location.path('/instances');
         });
     };
+}
+
+function DomainsController($scope, $routeParams, Domains, $http, $location, createDialog) {
+    $scope.update = function() {
+        Domains.get({}, function(infos) {
+            $scope.domains = infos.domains;
+            $scope.resource = infos;
+        });
+    };
+    $scope.update();
+
+    $scope.domainInfo = {
+        'domain': '',
+        'ip': '',
+    };
+
+    $scope.create = function() {
+        createDialog('/static/partials/domains/form.html',{ 
+           id : 'createDialog', 
+           title: 'Create a new domain',
+           backdrop: true, 
+           scope: $scope,
+           success: {
+               label: 'Create',
+               fn: function(){
+                   var domain = new Domains();
+                   domain.domain = $scope.domainInfo.domain;
+                   domain.ip = $scope.domainInfo.ip;
+                   domain.$save();
+                   $scope.update();
+                   $scope.domainInfo = {
+                       'domain': '',
+                       'ip': '',
+                   };
+               }
+           },
+           cancel: {
+               label: 'Cancel',
+           }
+        });
+    };
+
+    $scope.edit = function(domainInfo) {
+        $scope.domainInfo = {
+            'domain': domainInfo.domain,
+            'ip': domainInfo.ip,
+            'slug': domainInfo.slug,
+        };
+        createDialog('/static/partials/domains/form.html',{ 
+           id : 'editDialog', 
+           title: 'Edit a domain',
+           backdrop: true, 
+           scope: $scope,
+           success: {
+               label: 'Edit',
+               fn: function(){
+                   var domain = new Domains();
+                   domain.domain = $scope.domainInfo.domain;
+                   domain.ip = $scope.domainInfo.ip;
+                   domain.slug = $scope.domainInfo.slug;
+                   domain.$save();
+                   $scope.update();
+                   $scope.domainInfo = {
+                       'domain': '',
+                       'ip': '',
+                   };
+               }
+           },
+           cancel: {
+               label: 'Cancel',
+           }
+        });
+    };
+
+    $scope.delete = function(slug) {
+        $http.delete('/api/domains/' + slug)
+        .success(function() {
+            $scope.update();
+        });
+    };
+
 }

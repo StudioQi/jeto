@@ -8,4 +8,13 @@ angular.module('angularFlaskServices', ['ngResource'])
             }
         });
     })
+    .factory('Domains', function($resource) {
+        return $resource('/api/domains/:slug', {slug:'@slug'}, {
+            query: {
+                method: 'GET',
+                params: { slug: '' },
+                isArray: true
+            }
+        });
+    })
 ;

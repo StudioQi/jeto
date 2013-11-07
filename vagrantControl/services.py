@@ -1,7 +1,9 @@
 #-=- encoding: utf-8 -=-
 from flask.ext.restful import Resource, fields, marshal_with, marshal
-from flask import request
+from flask import request, json
 from vagrantControl.models import VagrantBackend
+from settings import DOMAINS_API_IP, DOMAINS_API_PORT
+import requests as req
 #from time import sleep
 
 
@@ -12,6 +14,12 @@ instance_fields = {
     'status': fields.String,
     'ip': fields.String,
     'environment': fields.String,
+}
+
+domain_fields = {
+    'slug': fields.String,
+    'domain': fields.String,
+    'ip': fields.String,
 }
 
 
@@ -118,3 +126,48 @@ class InstanceApi(Resource):
         for instance in instances:
             if instance.id == id:
                 return instance
+
+
+class DomainsApi(Resource):
+    def get(self):
+        r = req.get(self._get_url(), headers=self._get_headers())
+        domains = r.json()['domains']
+        print domains
+
+        return {
+            'domains': map(lambda t: marshal(t, domain_fields), domains),
+        }
+
+    def post(self, slug=None):
+        domain = request.json['domain']
+        ip = request.json['ip']
+
+        data = json.dumps({'site': domain, 'ip': ip})
+        if 'slug' in request.json:
+            # Should mean we are editing a domain
+            slug = request.json['slug']
+            r = req.put(self._get_url() + '/{}'.format(slug),
+                        headers=self._get_headers(),
+                        data=data)
+        else:
+            # Should mean we are adding a new domain
+            r = req.post(self._get_url(),
+                         headers=self._get_headers(),
+                         data=data)
+
+        return r.content
+
+    def delete(self, slug):
+        url = self._get_url() + '/{}'.format(slug)
+        r = req.delete(url=url, headers=self._get_headers())
+        return r.content
+
+    def put(self):
+        pass
+
+    def _get_url(self):
+        return 'http://' + DOMAINS_API_IP + ':' + DOMAINS_API_PORT
+
+    def _get_headers(self):
+        return {'Content-Type': 'application/json',
+                'Accept': 'application/json'}
