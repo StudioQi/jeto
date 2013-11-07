@@ -132,7 +132,6 @@ class DomainsApi(Resource):
     def get(self):
         r = req.get(self._get_url(), headers=self._get_headers())
         domains = r.json()['domains']
-        print domains
 
         return {
             'domains': map(lambda t: marshal(t, domain_fields), domains),
