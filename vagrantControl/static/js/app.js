@@ -4,19 +4,19 @@ angular.module('AngularFlask', ['angularFlaskServices', 'angularFlaskFilters', '
             $locationProvider.html5Mode(true);
             $routeProvider
                 .when('/', {
-                    templateUrl: 'partials/landing.html',
+                    templateUrl: '/partials/landing.html',
                     controller: IndexController
                 })
                 .when('/instances', {
-                    templateUrl: 'partials/instances/list.html',
+                    templateUrl: '/partials/instances/list.html',
                     controller: InstancesController
                 })
                 .when('/instances/:id', {
-                    templateUrl: 'partials/instances/instance.html',
+                    templateUrl: '/partials/instances/instance.html',
                     controller: InstanceController
                 })
                 .when('/domains', {
-                    templateUrl: 'partials/domains/list.html',
+                    templateUrl: '/partials/domains/list.html',
                     controller: DomainsController
                 })
                 .otherwise({
