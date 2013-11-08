@@ -1,0 +1,147 @@
+# French translations for PROJECT.
+# Copyright (C) 2013 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2013.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2013-11-08 11:22-0500\n"
+"PO-Revision-Date: 2013-11-08 10:10-0500\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: fr <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 1.3\n"
+
+#: vagrantControl/templates/base.html:33 vagrantControl/templates/base.html:50
+msgid "Home"
+msgstr "Accueil"
+
+#: vagrantControl/templates/base.html:34 vagrantControl/templates/base.html:51
+msgid "Instances"
+msgstr ""
+
+#: vagrantControl/templates/base.html:35 vagrantControl/templates/base.html:52
+msgid "Domains"
+msgstr "Domaines"
+
+#: vagrantControl/templates/partials/domains/form.html:5
+msgid "Domain"
+msgstr "Domaines"
+
+#: vagrantControl/templates/partials/domains/form.html:6
+msgid "myproject.val.pheromone.ca"
+msgstr "monproject.val.pheromone.ca"
+
+#: vagrantControl/templates/partials/domains/form.html:9
+#: vagrantControl/templates/partials/domains/list.html:16
+#: vagrantControl/templates/partials/instances/list.html:29
+msgid "IP"
+msgstr ""
+
+#: vagrantControl/templates/partials/domains/list.html:4
+msgid "Create a new domain"
+msgstr "Ajouter un nouveau domaine"
+
+#: vagrantControl/templates/partials/domains/list.html:14
+msgid "Slug"
+msgstr ""
+
+#: vagrantControl/templates/partials/domains/list.html:15
+#, fuzzy
+msgid "Domaine"
+msgstr "Domaines"
+
+#: vagrantControl/templates/partials/domains/list.html:32
+msgid "Edit"
+msgstr "Modifier"
+
+#: vagrantControl/templates/partials/domains/list.html:33
+#: vagrantControl/templates/partials/instances/instance.html:46
+#: vagrantControl/templates/partials/instances/list.html:54
+msgid "Delete"
+msgstr "Effacer"
+
+#: vagrantControl/templates/partials/instances/form.html:5
+#: vagrantControl/templates/partials/instances/list.html:27
+msgid "Name"
+msgstr "Nom"
+
+#: vagrantControl/templates/partials/instances/form.html:6
+msgid "Super project"
+msgstr "Super projet"
+
+#: vagrantControl/templates/partials/instances/form.html:9
+#: vagrantControl/templates/partials/instances/instance.html:17
+#: vagrantControl/templates/partials/instances/list.html:31
+msgid "Environment"
+msgstr "Environnement"
+
+#: vagrantControl/templates/partials/instances/form.html:10
+msgid "validation"
+msgstr ""
+
+#: vagrantControl/templates/partials/instances/form.html:13
+#: vagrantControl/templates/partials/instances/instance.html:13
+#: vagrantControl/templates/partials/instances/list.html:28
+msgid "Path"
+msgstr "Chemin"
+
+#: vagrantControl/templates/partials/instances/instance.html:9
+msgid "ID"
+msgstr ""
+
+#: vagrantControl/templates/partials/instances/instance.html:51
+#: vagrantControl/templates/partials/instances/list.html:57
+msgid "Start"
+msgstr "Démarrer"
+
+#: vagrantControl/templates/partials/instances/instance.html:52
+#: vagrantControl/templates/partials/instances/list.html:58
+msgid "Stop"
+msgstr "Arrêter"
+
+#: vagrantControl/templates/partials/instances/list.html:7
+msgid "Running only"
+msgstr "Ouvertes seulement"
+
+#: vagrantControl/templates/partials/instances/list.html:8
+msgid "Stopped"
+msgstr "Arrêtée"
+
+#: vagrantControl/templates/partials/instances/list.html:9
+msgid "Aborted"
+msgstr "Plantée"
+
+#: vagrantControl/templates/partials/instances/list.html:10
+msgid "Not created"
+msgstr "Pas créée"
+
+#: vagrantControl/templates/partials/instances/list.html:11
+msgid "Suspended"
+msgstr "Suspendue"
+
+#: vagrantControl/templates/partials/instances/list.html:15
+msgid "Dev"
+msgstr ""
+
+#: vagrantControl/templates/partials/instances/list.html:16
+msgid "Validation"
+msgstr ""
+
+#: vagrantControl/templates/partials/instances/list.html:18
+msgid "Create a new machine"
+msgstr "Ajouter une nouvelle machine"
+
+#: vagrantControl/templates/partials/instances/list.html:30
+msgid "Status"
+msgstr "Statut"
+
+#: vagrantControl/templates/partials/instances/list.html:53
+msgid "View"
+msgstr "Voir"
+

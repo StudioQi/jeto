@@ -2,11 +2,11 @@
     <div>
             <form class="form">
                 <div class="form-group">
-                    <label for="name">Domaine</label>
-                    <input type="text" name="name" id="domain" ng-model="domainInfo.domain" placeholder="monprojet.val.pheromone.ca" class="form-control"/>
+                    <label for="name">{{ _('Domain') }}</label>
+                    <input type="text" name="name" id="domain" ng-model="domainInfo.domain" placeholder="{{ _('myproject.val.pheromone.ca') }}" class="form-control"/>
                 </div>
                 <div class="form-group">
-                    <label for="name">IP</label>
+                    <label for="name">{{ _('IP') }}</label>
                     <input type="text" name="ip" id="ip" ng-model="domainInfo.ip" placeholder="192.168.10.x" class="form-control"/>
                 </div>
             </form>

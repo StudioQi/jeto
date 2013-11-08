@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-md-12">
         <form class="form-inline">
-            <button type="button" class="btn btn-default" ng-click="create()">Create a new domain</button>
+            <button type="button" class="btn btn-default" ng-click="create()">{{ _('Create a new domain') }}</button>
         </form>
         <hr />
     </div>
@@ -11,26 +11,26 @@
     <div class="col-md-12">
         <table class="table table-hover table-bordered">
                 <thead>
-                        <th>Slug</th>
-                        <th>Domaine</th>
-                        <th>IP</th>
+                        <th>{{ _('Slug') }}</th>
+                        <th>{{ _('Domaine') }}</th>
+                        <th>{{ _('IP') }}</th>
                         <th></th>
                 </thead>
                 <tbody>
                         <tr ng-repeat="domain in domains">
                                 <td>
-                                    {{ domain.slug }}
+                                    [[ domain.slug ]]
                                 </td>
                                 <td>
-                                        {{ domain.domain }}
+                                        [[ domain.domain ]]
                                 </td>
                                 <td>
-                                        {{ domain.ip }}
+                                        [[ domain.ip ]]
                                 </td>
                                 <td>
                                     <div class="btn-group">        
-                                        <a href="#" ng-click="edit(domain)" class="btn btn-default">Edit</a>
-                                        <a href="#" ng-click="delete(domain.slug)" class="btn btn-danger">Delete</a>
+                                        <a href="#" ng-click="edit(domain)" class="btn btn-default">{{ _('Edit') }}</a>
+                                        <a href="#" ng-click="delete(domain.slug)" class="btn btn-danger">{{ _('Delete') }}</a>
                                     </div>
                                 </td>
                         </tr>

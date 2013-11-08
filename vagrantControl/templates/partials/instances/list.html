@@ -1,0 +1,65 @@
+<div class="row">
+    <div class="col-md-12">
+        <form class="form-inline">
+            <input ng-model="query.$" class="form-control" placeholder="Search" style="width:200px"/>
+            <select ng-model="query.status" class="form-control" style="width:200px">
+                <option></option>
+                <option value="running">{{ _('Running only') }}</option>
+                <option value="poweroff">{{ _('Stopped') }}</option>
+                <option value="aborted">{{ _('Aborted') }}</option>
+                <option value="not created">{{ _('Not created') }}</option>
+                <option value="saved">{{ _('Suspended') }}</option>
+            </select>
+            <select ng-model="query.environment" class="form-control" style="width:200px">
+                <option></option>
+                <option value="dev">{{ _('Dev') }}</option>
+                <option value="validation">{{ _('Validation') }}</option>
+            </select>
+            <button type="button" class="btn btn-default" ng-click="create()">{{ _('Create a new machine') }}</button>
+        </form>
+        <hr />
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-hover table-bordered">
+                <thead>
+                    <th>{{ _("Name") }}</th>
+                    <th>{{ _("Path") }}</th>
+                    <th>{{ _("IP") }}</th>
+                    <th>{{ _("Status") }}</th>
+                    <th>{{ _("Environment") }}</th>
+                    <th></th>
+                </thead>
+                <tbody>
+                        <tr ng-repeat="instance in instances | filter:query" ng-class="{success: instance.status.search('running') != -1, warning: instance.status.search('poweroff') != -1, danger: instance.status.search('aborted') != -1}">
+                                <td>
+                                    [[ instance.name ]]
+                                </td>
+                                <td>
+                                        [[ instance.path ]]
+                                </td>
+                                <td>
+                                        [[ instance.ip ]]
+                                </td>
+                                <td>
+                                        [[ instance.status ]]
+                                </td>
+                                <td>
+                                        [[ instance.environment ]]
+                                </td>
+                                <td>
+                                    <div class="btn-group">        
+                                        <a href="/instances/[[ instance.id ]]" class="btn btn-default">{{ _('View') }}</a>
+                                        <a href="#" ng-click="delete(instance.id)" class="btn btn-danger">{{ _('Delete') }}</a></li>
+                                    </div>
+                                     <div class="btn-group pull-right">        
+                                        <a href="#" ng-click="control(instance.id, 'start')" class="btn btn-warning">{{ _('Start') }}</a>
+                                        <a href="#" ng-click="control(instance.id, 'stop')" class="btn btn-danger">{{ _('Stop') }}</a>
+                                    </div>
+                                </td>
+                        </tr>
+                </tbody>
+        </table>
+    </div>
+</div>

@@ -26,7 +26,7 @@ function InstancesController($scope, Instances, $http, createDialog, $log) {
     };
 
     $scope.create = function() {
-        createDialog('/static/partials/create.html',{ 
+        createDialog('/partials/instances/form.html',{ 
            id : 'createDialog', 
            title: 'Create a new machine',
            backdrop: true, 
@@ -131,7 +131,7 @@ function DomainsController($scope, $routeParams, Domains, $http, $location, crea
     };
 
     $scope.create = function() {
-        createDialog('/static/partials/domains/form.html',{ 
+        createDialog('/partials/domains/form.html',{ 
            id : 'createDialog', 
            title: 'Create a new domain',
            backdrop: true, 
@@ -162,7 +162,7 @@ function DomainsController($scope, $routeParams, Domains, $http, $location, crea
             'ip': domainInfo.ip,
             'slug': domainInfo.slug,
         };
-        createDialog('/static/partials/domains/form.html',{ 
+        createDialog('/partials/domains/form.html',{ 
            id : 'editDialog', 
            title: 'Edit a domain',
            backdrop: true, 
