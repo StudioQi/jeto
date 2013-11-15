@@ -17,4 +17,13 @@ angular.module('angularFlaskServices', ['ngResource'])
             }
         });
     })
+    .factory('Htpassword', function($resource) {
+        return $resource('/api/htpassword/:slug', {slug:'@slug'}, {
+            query: {
+                method: 'GET',
+                params: { slug: '' },
+                isArray: true
+            }
+        });
+    })
 ;

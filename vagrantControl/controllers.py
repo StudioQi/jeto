@@ -1,7 +1,9 @@
 from flask import render_template, send_file, Response
 from vagrantControl import app, babel
 from vagrantControl.core import api
-from vagrantControl.services import InstanceApi, InstancesApi, DomainsApi
+from vagrantControl.services import InstanceApi, InstancesApi
+from vagrantControl.services import DomainsApi
+from vagrantControl.services import HtpasswordApi
 
 
 @app.route('/')
@@ -9,6 +11,7 @@ from vagrantControl.services import InstanceApi, InstancesApi, DomainsApi
 @app.route('/instances/<id>')
 @app.route('/domains')
 @app.route('/domains/<id>')
+@app.route('/htpassword')
 def basic_pages(**kwargs):
     return render_template('index.html')
 
@@ -61,3 +64,9 @@ api.add_resource(
 )
 
 api.add_resource(DomainsApi, '/api/domains/<slug>')
+
+api.add_resource(
+    HtpasswordApi,
+    '/api/htpassword',
+    endpoint='htpassword'
+)

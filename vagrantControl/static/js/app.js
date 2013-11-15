@@ -19,6 +19,10 @@ angular.module('AngularFlask', ['angularFlaskServices', 'angularFlaskFilters', '
                     templateUrl: '/partials/domains/list.html',
                     controller: DomainsController
                 })
+                .when('/htpassword', {
+                    templateUrl: '/partials/htpassword/list.html',
+                    controller: HtpasswordController
+                })
                 .otherwise({
                     redirectTo: '/'
                 });

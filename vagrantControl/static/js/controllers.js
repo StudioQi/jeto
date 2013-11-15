@@ -125,9 +125,12 @@ function DomainsController($scope, $routeParams, Domains, $http, $location, crea
     };
     $scope.update();
 
-    $scope.domainInfo = {
-        'domain': '',
-        'ip': '',
+
+    $scope.resetInfos = function(){
+        $scope.domainInfo = {
+            'domain': '',
+            'ip': '',
+        };
     };
 
     $scope.create = function() {
@@ -144,14 +147,12 @@ function DomainsController($scope, $routeParams, Domains, $http, $location, crea
                    domain.ip = $scope.domainInfo.ip;
                    domain.$save();
                    $scope.update();
-                   $scope.domainInfo = {
-                       'domain': '',
-                       'ip': '',
-                   };
+                   $scope.resetInfos();
                }
            },
            cancel: {
                label: 'Cancel',
+               fn: $scope.resetInfos(),
            }
         });
     };
@@ -194,5 +195,77 @@ function DomainsController($scope, $routeParams, Domains, $http, $location, crea
             $scope.update();
         });
     };
+}
 
+function HtpasswordController($scope, $routeParams, Htpassword, $http, $location, createDialog) {
+    $scope.update = function() {
+        Htpassword.get({}, function(infos) {
+            $scope.lists = infos.lists;
+            $scope.resource = infos;
+        });
+    };
+    $scope.update();
+
+
+    $scope.resetInfos = function(){
+        $scope.list = {
+            'slug': '',
+            'name': '',
+        };
+    };
+
+    $scope.create = function() {
+        createDialog('/partials/htpassword/form.html',{ 
+           id : 'createDialog', 
+           title: 'Create a new list',
+           backdrop: true, 
+           scope: $scope,
+           success: {
+               label: 'Create',
+               fn: function(){
+                   var list = new Htpassword();
+                   list.name = $scope.list.name;
+                   list.$save();
+                   $scope.update();
+                   $scope.resetInfos();
+               }
+           },
+           cancel: {
+               label: 'Cancel',
+               fn: $scope.resetInfos(),
+           }
+        });
+    };
+
+    $scope.edit = function(list) {
+        $scope.list = {
+            'name': list.slug,
+        };
+        createDialog('/partials/domains/form.html',{ 
+           id : 'editDialog', 
+           title: 'Edit a list',
+           backdrop: true, 
+           scope: $scope,
+           success: {
+               label: 'Edit',
+               fn: function(){
+                   var list = new Htpassword();
+                   list.name = $scope.list.name;
+                   list.$save();
+                   $scope.update();
+                   $scope.resetInfos();
+               }
+           },
+           cancel: {
+               label: 'Cancel',
+           }
+        });
+    };
+
+    $scope.delete = function(slug) {
+       var list = new Htpassword();
+       list.name = slug;
+       list.slug = slug;
+       list.$delete();
+    };
 }

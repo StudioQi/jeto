@@ -2,7 +2,8 @@
 from flask.ext.restful import Resource, fields, marshal_with, marshal
 from flask import request, json
 from vagrantControl.models import VagrantBackend
-from settings import DOMAINS_API_IP, DOMAINS_API_PORT
+from settings import DOMAINS_API_URL, DOMAINS_API_PORT
+from settings import HTPASSWORD_API_URL, HTPASSWORD_API_PORT
 import requests as req
 #from time import sleep
 
@@ -11,7 +12,7 @@ instance_fields = {
     'id': fields.String,
     'name': fields.String,
     'path': fields.String,
-    'status': fields.String,
+    'status': fields.List(fields.String),
     'ip': fields.String,
     'environment': fields.String,
 }
@@ -20,6 +21,10 @@ domain_fields = {
     'slug': fields.String,
     'domain': fields.String,
     'ip': fields.String,
+}
+
+htpassword_list_fields = {
+    'slug': fields.String,
 }
 
 
@@ -141,31 +146,88 @@ class DomainsApi(Resource):
         domain = request.json['domain']
         ip = request.json['ip']
 
-        data = json.dumps({'site': domain, 'ip': ip})
         if 'slug' in request.json:
             # Should mean we are editing a domain
             slug = request.json['slug']
-            r = req.put(self._get_url() + '/{}'.format(slug),
-                        headers=self._get_headers(),
-                        data=data)
+            content = self.put(slug)
         else:
+            data = json.dumps({'site': domain, 'ip': ip})
             # Should mean we are adding a new domain
             r = req.post(self._get_url(),
                          headers=self._get_headers(),
                          data=data)
+            content = r.content
 
-        return r.content
+        return content
 
     def delete(self, slug):
         url = self._get_url() + '/{}'.format(slug)
         r = req.delete(url=url, headers=self._get_headers())
         return r.content
 
-    def put(self):
-        pass
+    def put(self, slug=None):
+        domain = request.json['domain']
+        ip = request.json['ip'].strip()
+        data = json.dumps({'site': domain, 'ip': ip})
+        r = req.put(self._get_url() + '/{}'.format(slug),
+                    headers=self._get_headers(),
+                    data=data)
+
+        return r.content
 
     def _get_url(self):
-        return 'http://' + DOMAINS_API_IP + ':' + DOMAINS_API_PORT
+        return 'http://' + DOMAINS_API_URL + ':' + DOMAINS_API_PORT
+
+    def _get_headers(self):
+        return {'Content-Type': 'application/json',
+                'Accept': 'application/json'}
+
+
+class HtpasswordApi(Resource):
+    def get(self):
+        r = req.get(self._get_url(), headers=self._get_headers())
+        items = r.json()['lists']
+        print items
+
+        return {
+            'lists': map(lambda t: marshal(t, htpassword_list_fields), items),
+        }
+
+    def post(self, slug=None):
+        domain = request.json['domain']
+        ip = request.json['ip']
+
+        if 'slug' in request.json:
+            # Should mean we are editing a domain
+            slug = request.json['slug']
+            content = self.put(slug)
+        else:
+            data = json.dumps({'site': domain, 'ip': ip})
+            # Should mean we are adding a new domain
+            r = req.post(self._get_url(),
+                         headers=self._get_headers(),
+                         data=data)
+            content = r.content
+
+        return content
+
+    def delete(self, slug):
+        url = self._get_url() + '/{}'.format(slug)
+        r = req.delete(url=url, headers=self._get_headers())
+        return r.content
+
+    def put(self, slug=None):
+        domain = request.json['domain']
+        ip = request.json['ip'].strip()
+        data = json.dumps({'site': domain, 'ip': ip})
+        r = req.put(self._get_url() + '/{}'.format(slug),
+                    headers=self._get_headers(),
+                    data=data)
+
+        return r.content
+
+    def _get_url(self):
+        return 'http://' + HTPASSWORD_API_URL + ':' + HTPASSWORD_API_PORT
 
     def _get_headers(self):
         return {'Content-Type': 'application/json',
