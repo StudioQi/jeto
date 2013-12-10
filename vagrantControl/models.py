@@ -90,7 +90,7 @@ class VagrantInstance(db.Model):
     @orm.reconstructor
     def init_on_load(self):
         self.gm_client = gearman.GearmanClient(['localhost'])
-        self.status = self._status()
+        #self.status = self._status()
         #if 'running' in self.status:
         #   self.ip = self._ip()
 
