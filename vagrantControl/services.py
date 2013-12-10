@@ -93,6 +93,8 @@ class InstanceApi(Resource):
     @marshal_with(instance_fields)
     def get(self, id):
         instance = self._getInstance(id)
+        instance.status = instance._status()
+        instance.ip = instance._ip()
         return instance
 
     def post(self, id):
@@ -192,6 +194,7 @@ class HtpasswordService(object):
         return {
             "Content-Type": "application/json",
         }
+
 
 class HtpasswordApi(Resource, HtpasswordService):
     def get(self):
