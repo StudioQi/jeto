@@ -3,7 +3,7 @@ from vagrantControl import app, babel
 from vagrantControl.core import api
 from vagrantControl.services import InstanceApi, InstancesApi
 from vagrantControl.services import DomainsApi
-from vagrantControl.services import HtpasswordApi
+from vagrantControl.services import HtpasswordApi, HtpasswordListApi
 
 
 @app.route('/')
@@ -12,6 +12,7 @@ from vagrantControl.services import HtpasswordApi
 @app.route('/domains')
 @app.route('/domains/<id>')
 @app.route('/htpassword')
+@app.route('/htpassword/<slug>')
 def basic_pages(**kwargs):
     return render_template('index.html')
 
@@ -69,4 +70,10 @@ api.add_resource(
     HtpasswordApi,
     '/api/htpassword',
     endpoint='htpassword'
+)
+
+api.add_resource(
+    HtpasswordListApi,
+    '/api/htpassword/<slug>',
+    endpoint='htpasswordlist'
 )

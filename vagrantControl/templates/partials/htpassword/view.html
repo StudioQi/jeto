@@ -1,0 +1,64 @@
+<div class="row" ng-show="changed">
+    <div class="col-md-12">
+        <div class="bs-callout bs-callout-warning">
+            {{ _('Make sure to save your changes.')}}
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h2>[[ item.slug ]]</h2>
+            </div>
+            <table class="table">
+                <tr>
+                    <th>{{ _('Username') }}</th>
+                    <th></th>
+                </tr>
+                <tr ng-repeat="user in item.users" ng-class="{danger: user.state == 'DELETE', success: user.state == 'CREATE'}">
+                    <td>[[ user.username ]]</td>
+                    <td><div ng-switch on="user.state">
+                            <button type="button" ng-switch-when="DELETE" class="btn btn-warning pull-right" ng-click="cancelDeleteUser(user.username)"><span >{{ _('Cancel') }}</span><span class="sr-only"> delete</span></button>
+                            <button type="button" ng-switch-default class="btn btn-warning pull-right glyphicon glyphicon-trash" ng-click="deleteUser(user.username)"><span class="sr-only">{{ _('Delete') }}</span></button>
+                    </div></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="col-md-6 pull-right">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {{ _('Add a user') }}
+            </div>
+            <div class="panel-body">
+                <form class="form">
+                    <div class="form-group">
+                        <label for="name">{{ _('Name') }}</label>
+                        <input type="text" name="username" ng-model="newItem.username" placeholder="{{ _('Name') }}" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="name">{{ _('Password') }}</label>
+                        <input type="password" name="password" ng-model="newItem.password" placeholder="{{ _('Password') }}" class="form-control"/>
+                    </div>
+                    <button type="button" ng-click="add()" class="btn btn-default pull-right">{{ _('Add user')}}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4 pull-left">
+        <div class="btn-group pull-left">
+            <button type="button" class="btn btn-danger" ng-click="delete()">{{ _('Delete list') }}</button>
+        </div>
+    </div>
+    <div class="col-md-4 pull-right">
+        <div class="btn-group pull-right">
+            <button type="button" class="btn btn-default" ng-click="cancel()">{{ _('Cancel') }}</button>
+            <button type="button" class="btn btn-default" ng-class="{'btn-primary': changed == true}" ng-click="save()">{{ _('Save') }}</button>
+        </div>
+    </div>
+</div>

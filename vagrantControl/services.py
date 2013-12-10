@@ -25,6 +25,7 @@ domain_fields = {
 
 htpassword_list_fields = {
     'slug': fields.String,
+    'users': fields.List(fields.String),
 }
 
 
@@ -183,31 +184,33 @@ class DomainsApi(Resource):
                 'Accept': 'application/json'}
 
 
-class HtpasswordApi(Resource):
+class HtpasswordService(object):
+    def _get_url(self):
+        return 'http://' + HTPASSWORD_API_URL + ':' + HTPASSWORD_API_PORT
+
+    def _get_headers(self):
+        return {
+            "Content-Type": "application/json",
+        }
+
+class HtpasswordApi(Resource, HtpasswordService):
     def get(self):
-        r = req.get(self._get_url(), headers=self._get_headers())
+        r = req.get(self._get_url())
         items = r.json()['lists']
-        print items
 
         return {
             'lists': map(lambda t: marshal(t, htpassword_list_fields), items),
         }
 
     def post(self, slug=None):
-        domain = request.json['domain']
-        ip = request.json['ip']
+        name = request.json['name']
 
-        if 'slug' in request.json:
-            # Should mean we are editing a domain
-            slug = request.json['slug']
-            content = self.put(slug)
-        else:
-            data = json.dumps({'site': domain, 'ip': ip})
-            # Should mean we are adding a new domain
-            r = req.post(self._get_url(),
-                         headers=self._get_headers(),
-                         data=data)
-            content = r.content
+        data = json.dumps({'name': name})
+        # Should mean we are adding a new domain
+        r = req.post(self._get_url(),
+                     headers=self._get_headers(),
+                     data=data)
+        content = r.content
 
         return content
 
@@ -226,8 +229,39 @@ class HtpasswordApi(Resource):
 
         return r.content
 
-    def _get_url(self):
-        return 'http://' + HTPASSWORD_API_URL + ':' + HTPASSWORD_API_PORT
+
+class HtpasswordListApi(Resource, HtpasswordService):
+    def get(self, slug):
+        r = req.get(self._get_url(slug))
+        htpassword = r.json()
+        return {'item': htpassword}
+
+    def delete(self, slug):
+        r = req.delete(self._get_url(slug))
+        return r.content
+
+    def put(self, slug):
+        users = request.json['users']
+        for user in users:
+            print user
+            if 'state' in user:
+                if user['state'] == 'DELETE':
+                    resp = req.delete(self._get_url(slug) +
+                                      '/{}'.format(user['username']))
+
+                if user['state'] == 'CREATE':
+                    data = {
+                        'username': user['username'],
+                        'password': user['password']
+                    }
+                    resp = req.post(self._get_url(slug),
+                                    headers=self._get_headers())
+                    resp.content
+
+        return self.get(slug)
+
+    def _get_url(self, slug):
+        return super(HtpasswordListApi, self)._get_url() + '/{}'.format(slug)
 
     def _get_headers(self):
         return {'Content-Type': 'application/json',
