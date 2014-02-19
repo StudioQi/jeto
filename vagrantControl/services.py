@@ -4,6 +4,7 @@ from flask import request, json
 from vagrantControl.models import VagrantBackend
 from settings import DOMAINS_API_URL, DOMAINS_API_PORT
 from settings import HTPASSWORD_API_URL, HTPASSWORD_API_PORT
+from vagrantControl import app
 import requests as req
 #from time import sleep
 
@@ -21,6 +22,7 @@ domain_fields = {
     'slug': fields.String,
     'domain': fields.String,
     'ip': fields.String,
+    'htpasswd': fields.String,
 }
 
 htpassword_list_fields = {
@@ -148,13 +150,15 @@ class DomainsApi(Resource):
     def post(self, slug=None):
         domain = request.json['domain']
         ip = request.json['ip']
+        htpasswd = request.json['htpasswd']
+        app.logger.debug(htpasswd)
 
         if 'slug' in request.json:
             # Should mean we are editing a domain
             slug = request.json['slug']
             content = self.put(slug)
         else:
-            data = json.dumps({'site': domain, 'ip': ip})
+            data = json.dumps({'site': domain, 'ip': ip, 'htpasswd': htpasswd})
             # Should mean we are adding a new domain
             r = req.post(self._get_url(),
                          headers=self._get_headers(),
@@ -171,7 +175,8 @@ class DomainsApi(Resource):
     def put(self, slug=None):
         domain = request.json['domain']
         ip = request.json['ip'].strip()
-        data = json.dumps({'site': domain, 'ip': ip})
+        htpasswd = request.json['htpasswd'].strip()
+        data = json.dumps({'site': domain, 'ip': ip, 'htpasswd': htpasswd})
         r = req.put(self._get_url() + '/{}'.format(slug),
                     headers=self._get_headers(),
                     data=data)
@@ -209,7 +214,7 @@ class HtpasswordApi(Resource, HtpasswordService):
         name = request.json['name']
 
         data = json.dumps({'name': name})
-        # Should mean we are adding a new domain
+        # Should mean we are adding a new user
         r = req.post(self._get_url(),
                      headers=self._get_headers(),
                      data=data)
@@ -253,13 +258,15 @@ class HtpasswordListApi(Resource, HtpasswordService):
                                       '/{}'.format(user['username']))
 
                 if user['state'] == 'CREATE':
-                    data = {
+                    data = json.dumps({
                         'username': user['username'],
                         'password': user['password']
-                    }
+                    })
                     resp = req.post(self._get_url(slug),
-                                    headers=self._get_headers())
-                    resp.content
+                                    headers=self._get_headers(), data=data)
+
+                    app.logger.info(resp.content)
+                    app.logger.info(resp.status_code)
 
         return self.get(slug)
 
@@ -267,5 +274,5 @@ class HtpasswordListApi(Resource, HtpasswordService):
         return super(HtpasswordListApi, self)._get_url() + '/{}'.format(slug)
 
     def _get_headers(self):
-        return {'Content-Type': 'application/json',
-                'Accept': 'application/json'}
+        return {'Accept': 'application/json',
+                'Content-Type': 'application/json'}

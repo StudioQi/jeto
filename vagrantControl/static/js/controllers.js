@@ -45,9 +45,10 @@ function InstancesController($scope, Instances, $http, createDialog, $log) {
            },
            cancel: {
                label: 'Cancel',
-           }
+           },
         });
     };
+
 
     $scope.control = function(instanceId, state) {
         $http.post('/api/instances/', {
@@ -57,7 +58,6 @@ function InstancesController($scope, Instances, $http, createDialog, $log) {
         .success(function(result) {
             instanceInfos = result.instance;
             angular.forEach($scope.instances, function(instance, idx){
-                console.log(instance);
                 if(instance.id == instanceInfos.id){
                     $scope.instances[idx] = instanceInfos;
                 }
@@ -72,13 +72,13 @@ function InstancesController($scope, Instances, $http, createDialog, $log) {
         });
     };
 
-    $scope.status = {};
-    pubsubCallback = function(status) {
-        $scope.$apply(function() {
-            $scope.status = JSON.parse(infos.data);
-        });
-    };
-    var source = new EventSource('/pubsub', pubsubCallback, false);
+    //$scope.status = {};
+    //pubsubCallback = function(status) {
+    //    $scope.$apply(function() {
+    //        $scope.status = JSON.parse(infos.data);
+    //    });
+    //};
+    //var source = new EventSource('/pubsub', pubsubCallback, false);
 }
 
 function InstanceController($scope, $routeParams, Instances, $http, $location) {
@@ -116,21 +116,27 @@ function InstanceController($scope, $routeParams, Instances, $http, $location) {
     };
 }
 
-function DomainsController($scope, $routeParams, Domains, $http, $location, createDialog) {
+function DomainsController($scope, $routeParams, Domains, $http, $location, createDialog, Htpassword) {
     $scope.update = function() {
         Domains.get({}, function(infos) {
             $scope.domains = infos.domains;
             $scope.resource = infos;
         });
+
+        Htpassword.get({}, function(infos){
+            $scope.htpasswdLst = infos.lists.map(function(current){ return current.slug });
+        });
     };
     $scope.update();
-
 
     $scope.resetInfos = function(){
         $scope.domainInfo = {
             'domain': '',
             'ip': '',
+            'htpasswd': '',
+            'slug': '',
         };
+       setTimeout($scope.update, 100);
     };
 
     $scope.create = function() {
@@ -145,15 +151,17 @@ function DomainsController($scope, $routeParams, Domains, $http, $location, crea
                    var domain = new Domains();
                    domain.domain = $scope.domainInfo.domain;
                    domain.ip = $scope.domainInfo.ip;
+                   domain.htpasswd = $scope.domainInfo.htpasswd;
                    domain.$save();
-                   $scope.update();
+
                    $scope.resetInfos();
                }
            },
            cancel: {
                label: 'Cancel',
                fn: $scope.resetInfos(),
-           }
+           },
+           controller: 'DomainsController',
         });
     };
 
@@ -162,6 +170,7 @@ function DomainsController($scope, $routeParams, Domains, $http, $location, crea
             'domain': domainInfo.domain,
             'ip': domainInfo.ip,
             'slug': domainInfo.slug,
+            'htpasswd' : domainInfo.htpasswd,
         };
         createDialog('/partials/domains/form.html',{ 
            id : 'editDialog', 
@@ -175,12 +184,10 @@ function DomainsController($scope, $routeParams, Domains, $http, $location, crea
                    domain.domain = $scope.domainInfo.domain;
                    domain.ip = $scope.domainInfo.ip;
                    domain.slug = $scope.domainInfo.slug;
+                   domain.htpasswd = $scope.domainInfo.htpasswd;
                    domain.$save();
-                   $scope.update();
-                   $scope.domainInfo = {
-                       'domain': '',
-                       'ip': '',
-                   };
+
+                   $scope.resetInfos();
                }
            },
            cancel: {
@@ -212,6 +219,7 @@ function HtpasswordController($scope, $routeParams, Htpassword, $http, $location
             'slug': '',
             'name': '',
         };
+       setTimeout($scope.update, 100);
     };
 
     $scope.create = function() {
@@ -287,6 +295,7 @@ function HtpasswordListController($scope, $routeParams, Htpassword, $http, $loca
             'password': '',
             'state': 'CREATE',
         };
+       setTimeout($scope.update, 100);
     };
 
     $scope.add = function(){
@@ -320,7 +329,21 @@ function HtpasswordListController($scope, $routeParams, Htpassword, $http, $loca
             users: $scope.item.users,
         })
         .success(function(infos){
-            //$location.path('/htpassword');
+            $scope.resetInfos();
+            $location.path('/htpassword');
         });
+    };
+
+    $scope.cancel = function(){
+        $scope.resetInfos()
+        $location.path('/htpassword');
+    };
+
+    $scope.delete = function(){
+        var list = new Htpassword();
+        list.name = $scope.item.slug;
+        list.slug = $scope.item.slug;
+        list.$delete();
+        $location.path('/htpassword');
     };
 }

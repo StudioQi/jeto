@@ -4,6 +4,7 @@ angular.module('fundoo.services', []).factory('createDialog', ["$document", "$co
       id: null,
       template: null,
       templateUrl: null,
+      onload: null,
       title: 'Default Title',
       backdrop: true,
       success: {label: 'OK', fn: null},
@@ -45,7 +46,7 @@ angular.module('fundoo.services', []).factory('createDialog', ["$document", "$co
           }
         } else {
           // Template url
-          return '<div class="modal-body" ng-include="\'' + options.templateUrl + '\'"></div>'
+          return '<div class="modal-body" ng-include src="\'' + options.templateUrl + '\'"></div>'
         }
       })();
       //We don't have the scope we're gonna use yet, so just get a compile function for modal

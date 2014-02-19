@@ -2,12 +2,16 @@
 #from time import sleep
 #import vagrant
 import gearman
-from vagrantControl import db
+from vagrantControl import db, app
 from flask.ext.sqlalchemy import orm
 from flask import json
 from flask import request
 from sh import ls
 from settings import ETH
+
+
+class InvalidPath(Exception):
+    pass
 
 
 class BackendProvider():
@@ -30,6 +34,7 @@ class BackendProvider():
 class VagrantBackend(BackendProvider):
     def __init__(self):
         self.instances = VagrantInstance.query.all()
+        app.logger.debug(self.instances)
 
     def get(self, instanceId):
         return VagrantInstance.query.get(int(instanceId))
@@ -45,9 +50,14 @@ class VagrantBackend(BackendProvider):
 
         instance = VagrantInstance(None, request['path'], request['name'],
                                    environment)
+        app.logger.debug('derp derp')
         if self._check_instance(request['path']):
+            app.logger.debug('darp darp')
             db.session.add(instance)
             db.session.commit()
+        else:
+            raise InvalidPath('Path {} given is invalid or cant be read'
+                              .format(request['path']))
 
         return instance
 
@@ -75,6 +85,7 @@ class VagrantInstance(db.Model):
         self.path = path
         self.name = name
         self.environment = environment
+        app.logger.debug('derp derp derp')
         self.init_on_load()
 
     def __unicode__(self):
