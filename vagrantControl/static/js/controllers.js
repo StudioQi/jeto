@@ -84,6 +84,7 @@ function InstancesController($scope, Instances, $http, createDialog, $log) {
 function InstanceController($scope, $routeParams, Instances, $http, $location) {
     var instancesQuery = Instances.get({id: $routeParams.id}, function(instance) {
         $scope.instance = instance;
+        console.log(instance);
     });
 
     $scope.updateInfos = function() {
@@ -234,7 +235,6 @@ function HtpasswordController($scope, $routeParams, Htpassword, $http, $location
                    var list = new Htpassword();
                    list.name = $scope.list.name;
                    list.$save();
-                   $scope.update();
                    $scope.resetInfos();
                }
            },
@@ -301,7 +301,6 @@ function HtpasswordListController($scope, $routeParams, Htpassword, $http, $loca
     $scope.add = function(){
         $scope.item.users.push({'username':$scope.newItem.username, 'password': $scope.newItem.password, 'state': 'CREATE'});
         $scope.changed = true;
-        $scope.resetInfos();
     };
 
     $scope.deleteUser = function(username){

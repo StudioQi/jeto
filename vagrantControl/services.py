@@ -96,7 +96,8 @@ class InstanceApi(Resource):
     def get(self, id):
         instance = self._getInstance(id)
         instance.status = instance._status()
-        instance.ip = instance._ip()
+        #instance.ip = instance._ip()
+        #app.logger.debug(instance.ip)
         return instance
 
     def post(self, id):
@@ -151,7 +152,6 @@ class DomainsApi(Resource):
         domain = request.json['domain']
         ip = request.json['ip']
         htpasswd = request.json['htpasswd']
-        app.logger.debug(htpasswd)
 
         if 'slug' in request.json:
             # Should mean we are editing a domain
@@ -254,19 +254,16 @@ class HtpasswordListApi(Resource, HtpasswordService):
             print user
             if 'state' in user:
                 if user['state'] == 'DELETE':
-                    resp = req.delete(self._get_url(slug) +
-                                      '/{}'.format(user['username']))
+                    req.delete(self._get_url(slug) +
+                               '/{}'.format(user['username']))
 
                 if user['state'] == 'CREATE':
                     data = json.dumps({
                         'username': user['username'],
                         'password': user['password']
                     })
-                    resp = req.post(self._get_url(slug),
-                                    headers=self._get_headers(), data=data)
-
-                    app.logger.info(resp.content)
-                    app.logger.info(resp.status_code)
+                    req.post(self._get_url(slug),
+                             headers=self._get_headers(), data=data)
 
         return self.get(slug)
 
