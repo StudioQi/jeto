@@ -113,3 +113,22 @@ padding-top: 80px;
 .btn-glow {
   box-shadow: 0px 0px 15px 5px #285e8e;
 }
+.loading {
+  display:none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  background-color: rgba(0,0,0,0.5); /*dim the background*/
+}
+.loading .well {
+  margin-top:10em;
+  margin-right: auto;
+  margin-left:auto;
+  width:400px;
+}
+.loading .well .progress {
+  margin-bottom:0;
+}

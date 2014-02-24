@@ -14,7 +14,6 @@ angular.module('angularFlaskFilters', [])
 	.filter('console', function() {
 		return function(test) {
 			console.log(test);
-			return test;
 		}
 	})
 ;

@@ -11,12 +11,20 @@ function InstancesController($scope, Instances, $http, createDialog, $log) {
         $scope.resource = infos;
     });
 
+    $scope.states = [
+        {label: 'Development', type:'dev'},
+        {label: 'Sandbox', type:'sandbox'},
+        {label: 'QA', type:'qa'},
+        {label: 'Validation', type:'validation'}
+    ];
+
     $scope.updateInfos = function() {
         var instancesQuery = Instances.get({}, function(infos) {
             $scope.instances = infos.instances;
             $scope.stopped = infos.stopped;
             $scope.running = infos.running;
             $scope.resource = infos;
+            $('.loading').hide();
         });
     };
 
@@ -34,13 +42,14 @@ function InstancesController($scope, Instances, $http, createDialog, $log) {
            success: {
                label: 'Create',
                fn: function(){
+                   $('.loading').show();
                    var instance = new Instances();
                    instance.name = $scope.instanceInfo.name;
                    instance.path = $scope.instanceInfo.path;
                    instance.environment = $scope.instanceInfo.environment;
                    instance.state = 'create';
                    instance.$save();
-                   $scope.updateInfos();
+                   setTimeout($scope.updateInfos, 100);
                }
            },
            cancel: {
@@ -82,14 +91,16 @@ function InstancesController($scope, Instances, $http, createDialog, $log) {
 }
 
 function InstanceController($scope, $routeParams, Instances, $http, $location) {
+    $('.loading').show();
     var instancesQuery = Instances.get({id: $routeParams.id}, function(instance) {
         $scope.instance = instance;
-        console.log(instance);
+        $('.loading').hide();
     });
 
     $scope.updateInfos = function() {
         var instanceQuery = Instances.get({id: $routeParams.id}, function(instance) {
             $scope.instance = instance;
+            $('.loading').hide();
         });
     };
 
@@ -98,14 +109,12 @@ function InstanceController($scope, $routeParams, Instances, $http, $location) {
     };
 
     $scope.control = function(state) {
+        $('.loading').show();
         $http.post('/api/instances/' + $scope.instance.id, {
             state : state,
         })
         .success(function(result) {
-            instanceInfos = result.instance;
-            angular.forEach($scope.instances, function(instance, idx){
-                $scope.instance = instanceInfos;
-            });
+           setTimeout($scope.updateInfos, 100);
         });
     };
 

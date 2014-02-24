@@ -49,7 +49,7 @@ class InstancesApi(Resource):
         self.backend.delete(instanceId)
 
     def post(self):
-        if 'state' in request.json and request.json['state'] == 'start':
+        if 'state' in request.json and 'start' in request.json['state']:
             instanceId = int(request.json['id'])
             instance = self.backend.get(instanceId)
             instance.start()
@@ -96,7 +96,7 @@ class InstanceApi(Resource):
     def get(self, id):
         instance = self._getInstance(id)
         instance.status = instance._status()
-        #instance.ip = instance._ip()
+        instance.ip = instance._ip()
         #app.logger.debug(instance.ip)
         return instance
 
@@ -104,19 +104,19 @@ class InstanceApi(Resource):
         instance = self._getInstance(id)
 
         changed = False
-        if request.json['name'] != instance.name:
-            instance.name = request.json['name']
-            changed = True
+        if 'name' in request.json:
+            if request.json['name'] != instance.name:
+                instance.name = request.json['name']
+                changed = True
 
         if changed:
             instance.save()
 
-        if 'state' in request and request.json['state'] == 'stop' and\
-                instance.state != 'stopped':
+        if 'state' in request.json and request.json['state'] == 'stop':
             self.stop(id)
-        if 'state' in request and request.json['state'] == 'start' and\
-                instance.state != 'running':
-            self.start(id)
+        if 'state' in request.json and 'start' in request.json['state']:
+            provider = request.json['state'].replace('start-', '')
+            self.start(id, provider)
 
         return self.get(id)
 
@@ -124,8 +124,8 @@ class InstanceApi(Resource):
         self.backend.stop(id)
         return self.get(id)
 
-    def start(self, id):
-        self.backend.start(id)
+    def start(self, id, provider):
+        self.backend.start(id, provider)
         return self.get(id)
 
     def delete(self, id):

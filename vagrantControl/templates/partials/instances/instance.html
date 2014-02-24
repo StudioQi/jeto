@@ -47,14 +47,15 @@
         </div>
     </div>
     <div class="col-md-4 pull-right">
-        <div class="btn-group pull-right">
-            <button type="button" class="btn btn-warning" ng-bind-html="[[instance.state]]" ng-click="control('start')">{{ _('Start') }}</button>
-            <button type="button" class="btn btn-danger" ng-bind-html="[[instance.state]]" ng-click="control('stop')">{{ _('Stop') }}</button>
+         <div class="btn-group pull-right">        
+            <button type="button" class="btn btn-warning" ng-bind-html="[[instance.state]]" ng-click="control('stop')">{{ _('Stop') }}</button>
+            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+              {{ _('Start') }} <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+              <li><a href="#" ng-click="control('start-lxc')">LXC</a></li>
+              <li><a href="#" ng-click="control('start-virtualbox')">VirtualBox</a></li>
+            </ul>
         </div>
     </div>
-    <!--
-    <div class="col-md-2 pull-right">
-        <button type="button" class="btn btn-danger pull-right" ng-click="test()">Test</button>
-    </div>
-    -->
 </div>

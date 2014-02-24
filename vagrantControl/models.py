@@ -72,6 +72,14 @@ class VagrantBackend(BackendProvider):
             return False
         return True
 
+    def stop(self, instanceId):
+        instance = VagrantInstance.query.get(instanceId)
+        return instance.stop()
+
+    def start(self, instanceId, provider):
+        instance = VagrantInstance.query.get(instanceId)
+        return instance.start(provider)
+
 
 class VagrantInstance(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -107,7 +115,7 @@ class VagrantInstance(db.Model):
         args = {'path': self.path}
         results = json.loads(self._submit_job('status', args))
         results = re.findall(r'.*\n\n(.*)\n\n.*', results, re.M)
-        app.logger.debug(results)
+        #app.logger.debug(results)
         return results
 
     def _ip(self):
@@ -115,8 +123,12 @@ class VagrantInstance(db.Model):
         results = self._submit_job('ip', args)
         return results
 
-    def start(self):
+    def start(self, provider=None):
         args = {'path': self.path, 'eth': ETH, 'environment': self.environment}
+        if provider:
+            args['provider'] = provider
+
+        #app.logger.debug(args)
         results = self._submit_job('start', args)
         self.status = self._status()
         return results
