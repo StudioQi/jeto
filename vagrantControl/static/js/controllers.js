@@ -77,7 +77,7 @@ function InstancesController($scope, Instances, $http, createDialog, $log) {
     $scope.delete = function(instanceId) {
         $http.delete('/api/instances/' + instanceId)
         .success(function(infos) {
-            $scope.updateInfos();
+            setTimeout($scope.updateInfos, 100);
         });
     };
 

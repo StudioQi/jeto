@@ -142,6 +142,7 @@ class InstanceApi(Resource):
 class DomainsApi(Resource):
     def get(self):
         r = req.get(self._get_url(), headers=self._get_headers())
+        app.logger.debug(r.json())
         domains = r.json()['domains']
 
         return {
@@ -175,7 +176,9 @@ class DomainsApi(Resource):
     def put(self, slug=None):
         domain = request.json['domain']
         ip = request.json['ip'].strip()
-        htpasswd = request.json['htpasswd'].strip()
+        htpasswd = None
+        if 'htpasswd' in request.json and request.json['htpasswd'] is not None:
+            htpasswd = request.json['htpasswd'].strip()
         data = json.dumps({'site': domain, 'ip': ip, 'htpasswd': htpasswd})
         r = req.put(self._get_url() + '/{}'.format(slug),
                     headers=self._get_headers(),

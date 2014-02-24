@@ -62,8 +62,7 @@ class VagrantBackend(BackendProvider):
 
     def delete(self, instanceId):
         instance = VagrantInstance.query.get(instanceId)
-        db.session.delete(instance)
-        db.session.commit()
+        instance.delete()
 
     def _check_instance(self, path):
         try:
@@ -142,6 +141,8 @@ class VagrantInstance(db.Model):
     def delete(self):
         db.session.delete(self)
         db.session.commit()
+        args = {'path': self.path}
+        self._submit_job('destroy', args)
 
     def _submit_job(self, action, args):
         request = self.gm_client.submit_job(action,

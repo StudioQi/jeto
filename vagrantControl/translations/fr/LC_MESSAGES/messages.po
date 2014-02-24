@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-11-08 11:22-0500\n"
+"POT-Creation-Date: 2014-02-24 12:33-0500\n"
 "PO-Revision-Date: 2013-11-08 10:10-0500\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: fr <LL@li.org>\n"
@@ -17,17 +17,21 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.3\n"
 
-#: vagrantControl/templates/base.html:33 vagrantControl/templates/base.html:50
+#: vagrantControl/templates/base.html:42 vagrantControl/templates/base.html:60
 msgid "Home"
 msgstr "Accueil"
 
-#: vagrantControl/templates/base.html:34 vagrantControl/templates/base.html:51
+#: vagrantControl/templates/base.html:43 vagrantControl/templates/base.html:61
 msgid "Instances"
 msgstr ""
 
-#: vagrantControl/templates/base.html:35 vagrantControl/templates/base.html:52
+#: vagrantControl/templates/base.html:44 vagrantControl/templates/base.html:62
 msgid "Domains"
 msgstr "Domaines"
+
+#: vagrantControl/templates/base.html:45 vagrantControl/templates/base.html:63
+msgid "Security"
+msgstr "Sécurité"
 
 #: vagrantControl/templates/partials/domains/form.html:5
 msgid "Domain"
@@ -39,9 +43,17 @@ msgstr "monproject.val.pheromone.ca"
 
 #: vagrantControl/templates/partials/domains/form.html:9
 #: vagrantControl/templates/partials/domains/list.html:16
-#: vagrantControl/templates/partials/instances/list.html:29
 msgid "IP"
 msgstr ""
+
+#: vagrantControl/templates/partials/domains/form.html:13
+#: vagrantControl/templates/partials/domains/list.html:17
+msgid "htpasswd"
+msgstr ""
+
+#: vagrantControl/templates/partials/domains/form.html:15
+msgid "None"
+msgstr "Aucun"
 
 #: vagrantControl/templates/partials/domains/list.html:4
 msgid "Create a new domain"
@@ -49,27 +61,84 @@ msgstr "Ajouter un nouveau domaine"
 
 #: vagrantControl/templates/partials/domains/list.html:14
 msgid "Slug"
-msgstr ""
+msgstr "Accronyme"
 
 #: vagrantControl/templates/partials/domains/list.html:15
 #, fuzzy
 msgid "Domaine"
 msgstr "Domaines"
 
-#: vagrantControl/templates/partials/domains/list.html:32
+#: vagrantControl/templates/partials/domains/list.html:36
 msgid "Edit"
 msgstr "Modifier"
 
-#: vagrantControl/templates/partials/domains/list.html:33
+#: vagrantControl/templates/partials/domains/list.html:37
+#: vagrantControl/templates/partials/htpassword/list.html:29
+#: vagrantControl/templates/partials/htpassword/view.html:23
 #: vagrantControl/templates/partials/instances/instance.html:46
-#: vagrantControl/templates/partials/instances/list.html:54
 msgid "Delete"
 msgstr "Effacer"
 
+#: vagrantControl/templates/partials/htpassword/form.html:5
+#: vagrantControl/templates/partials/htpassword/list.html:14
+#: vagrantControl/templates/partials/htpassword/view.html:38
+#: vagrantControl/templates/partials/htpassword/view.html:39
 #: vagrantControl/templates/partials/instances/form.html:5
 #: vagrantControl/templates/partials/instances/list.html:27
 msgid "Name"
 msgstr "Nom"
+
+#: vagrantControl/templates/partials/htpassword/form.html:6
+msgid "my list"
+msgstr ""
+
+#: vagrantControl/templates/partials/htpassword/list.html:4
+#, fuzzy
+msgid "Create a new list"
+msgstr "Ajouter un nouveau domaine"
+
+#: vagrantControl/templates/partials/htpassword/list.html:15
+msgid "Number of users"
+msgstr "Nombre d'utilisateur"
+
+#: vagrantControl/templates/partials/htpassword/list.html:28
+#: vagrantControl/templates/partials/instances/list.html:57
+msgid "View"
+msgstr "Voir"
+
+#: vagrantControl/templates/partials/htpassword/view.html:4
+msgid "Make sure to save your changes."
+msgstr "N'oubliez pas d'enregistrer"
+
+#: vagrantControl/templates/partials/htpassword/view.html:16
+msgid "Username"
+msgstr "Nom d'utilisateur"
+
+#: vagrantControl/templates/partials/htpassword/view.html:22
+#: vagrantControl/templates/partials/htpassword/view.html:60
+msgid "Cancel"
+msgstr "Annuler"
+
+#: vagrantControl/templates/partials/htpassword/view.html:33
+msgid "Add a user"
+msgstr "Ajouter un utilisateur"
+
+#: vagrantControl/templates/partials/htpassword/view.html:42
+#: vagrantControl/templates/partials/htpassword/view.html:43
+msgid "Password"
+msgstr "Mot de passe"
+
+#: vagrantControl/templates/partials/htpassword/view.html:45
+msgid "Add user"
+msgstr "Ajouter un utilisateur"
+
+#: vagrantControl/templates/partials/htpassword/view.html:55
+msgid "Delete list"
+msgstr "Effacer la liste"
+
+#: vagrantControl/templates/partials/htpassword/view.html:61
+msgid "Save"
+msgstr "Enregistrer"
 
 #: vagrantControl/templates/partials/instances/form.html:6
 msgid "Super project"
@@ -77,7 +146,7 @@ msgstr "Super projet"
 
 #: vagrantControl/templates/partials/instances/form.html:9
 #: vagrantControl/templates/partials/instances/instance.html:17
-#: vagrantControl/templates/partials/instances/list.html:31
+#: vagrantControl/templates/partials/instances/list.html:33
 msgid "Environment"
 msgstr "Environnement"
 
@@ -96,52 +165,47 @@ msgid "ID"
 msgstr ""
 
 #: vagrantControl/templates/partials/instances/instance.html:51
-#: vagrantControl/templates/partials/instances/list.html:57
-msgid "Start"
-msgstr "Démarrer"
-
-#: vagrantControl/templates/partials/instances/instance.html:52
-#: vagrantControl/templates/partials/instances/list.html:58
+#: vagrantControl/templates/partials/instances/list.html:63
 msgid "Stop"
 msgstr "Arrêter"
 
-#: vagrantControl/templates/partials/instances/list.html:7
-msgid "Running only"
-msgstr "Ouvertes seulement"
-
-#: vagrantControl/templates/partials/instances/list.html:8
-msgid "Stopped"
-msgstr "Arrêtée"
-
-#: vagrantControl/templates/partials/instances/list.html:9
-msgid "Aborted"
-msgstr "Plantée"
-
-#: vagrantControl/templates/partials/instances/list.html:10
-msgid "Not created"
-msgstr "Pas créée"
-
-#: vagrantControl/templates/partials/instances/list.html:11
-msgid "Suspended"
-msgstr "Suspendue"
-
-#: vagrantControl/templates/partials/instances/list.html:15
-msgid "Dev"
-msgstr ""
+#: vagrantControl/templates/partials/instances/instance.html:53
+#: vagrantControl/templates/partials/instances/list.html:65
+msgid "Start"
+msgstr "Démarrer"
 
 #: vagrantControl/templates/partials/instances/list.html:16
-msgid "Validation"
-msgstr ""
+msgid "All"
+msgstr "Tous"
 
 #: vagrantControl/templates/partials/instances/list.html:18
 msgid "Create a new machine"
 msgstr "Ajouter une nouvelle machine"
 
-#: vagrantControl/templates/partials/instances/list.html:30
-msgid "Status"
-msgstr "Statut"
+#~ msgid "Running only"
+#~ msgstr "Ouvertes seulement"
 
-#: vagrantControl/templates/partials/instances/list.html:53
-msgid "View"
-msgstr "Voir"
+#~ msgid "Stopped"
+#~ msgstr "Arrêtée"
+
+#~ msgid "Aborted"
+#~ msgstr "Plantée"
+
+#~ msgid "Not created"
+#~ msgstr "Pas créée"
+
+#~ msgid "Suspended"
+#~ msgstr "Suspendue"
+
+#~ msgid "Dev"
+#~ msgstr ""
+
+#~ msgid "Validation"
+#~ msgstr ""
+
+#~ msgid "Status"
+#~ msgstr "Statut"
+
+#~ msgid "Securité"
+#~ msgstr ""
 
