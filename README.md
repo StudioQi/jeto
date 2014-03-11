@@ -9,3 +9,7 @@ This is currently a work in progress. The interface will, or should, depending o
 
 [Creative Commons Attribution 3.0 Unported] [2]
   [2]: https://raw.github.com/PierrePaul/amazonControl/master/LICENSE.txt
+
+# Note 
+
+Keep in mind that this project is closer to ALPHA than to STABLE. DO NOT use on production system.
