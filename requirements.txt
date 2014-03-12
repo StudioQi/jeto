@@ -21,3 +21,6 @@ sh==1.09
 six==1.3.0
 speaklater==1.3
 wsgiref==0.1.2
+redis==2.9.1
+rq==0.3.13
+times==0.6.2

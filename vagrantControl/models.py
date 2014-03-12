@@ -6,10 +6,15 @@ import re
 from vagrantControl import db
 from vagrantControl import app
 from flask.ext.sqlalchemy import orm
-from flask import json
+#from flask import json
 from flask import request
 from sh import ls
 from settings import ETH
+
+import time
+from rq import Queue, Connection
+from redis import Redis
+redis_conn = Redis()
 
 
 class InvalidPath(Exception):
@@ -111,40 +116,42 @@ class VagrantInstance(db.Model):
         #   self.ip = self._ip()
 
     def _status(self):
-        args = {'path': self.path}
-        results = json.loads(self._submit_job('status', args))
-        results = re.findall(r'.*\n\n(.*)\n\n.*', results, re.M)
-        #app.logger.debug(results)
+        results = self._submit_job('status', path=self.path)
+        results = re.findall(r'.*\\n\\n(.*)\\n\\n.*', results, re.M)
+        app.logger.debug(results)
         return results
 
     def _ip(self):
-        args = {'path': self.path}
-        results = self._submit_job('ip', args)
+        results = self._submit_job('ip', path=self.path)
         return results
 
     def start(self, provider=None):
-        args = {'path': self.path, 'eth': ETH, 'environment': self.environment}
-        if provider:
-            args['provider'] = provider
-
-        #app.logger.debug(args)
-        results = self._submit_job('start', args)
+        results = self._submit_job(
+            'run',
+            path=self.path,
+            eth=ETH,
+            environment=self.environment,
+            provider=provider
+        )
         self.status = self._status()
         return results
 
     def stop(self):
-        args = {'path': self.path}
-        results = self._submit_job('stop', args)
+        results = self._submit_job('stop', path=self.path)
         self.status = self._status()
         return results
 
     def delete(self):
         db.session.delete(self)
         db.session.commit()
-        args = {'path': self.path}
-        self._submit_job('destroy', args)
+        self._submit_job('destroy', path=self.path)
 
-    def _submit_job(self, action, args):
-        request = self.gm_client.submit_job(action,
-                                            bytes(json.dumps(args)))
-        return request.result
+    def _submit_job(self, action, **kwargs):
+        with Connection():
+            queue = Queue('high', connection=redis_conn)
+            action = 'worker.{}'.format(action)
+            job = queue.enqueue(action, **kwargs)
+            while job.result is None:
+                time.sleep(0.5)
+
+        return job.result
