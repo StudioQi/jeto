@@ -1,12 +1,9 @@
-#-=- encoding: utf-8 -=-
-#from time import sleep
-#import vagrant
-import gearman
+# -=- encoding: utf-8 -=-
 import re
 from vagrantControl import db
-from vagrantControl import app
+# Kept only for debugging
+# from vagrantControl import app
 from flask.ext.sqlalchemy import orm
-#from flask import json
 from flask import request
 from sh import ls
 from settings import ETH
@@ -17,7 +14,16 @@ from redis import Redis
 redis_conn = Redis()
 
 
-class InvalidPath(Exception):
+class BaseException(Exception):
+    def __init__(self, msg):
+        self.msg = msg
+
+
+class InvalidPath(BaseException):
+    pass
+
+
+class InstanceNotFound(BaseException):
     pass
 
 
@@ -44,6 +50,13 @@ class VagrantBackend(BackendProvider):
 
     def get(self, instanceId):
         return VagrantInstance.query.get(int(instanceId))
+
+    def find(self, instanceId=None, path=None):
+        for instance in self.instances:
+            if instance.id == instanceId or instance.path == path:
+                return instance
+
+        return None
 
     def get_all_instances(self):
         return self.instances
@@ -110,15 +123,16 @@ class VagrantInstance(db.Model):
 
     @orm.reconstructor
     def init_on_load(self):
-        self.gm_client = gearman.GearmanClient(['localhost'])
-        #self.status = self._status()
-        #if 'running' in self.status:
-        #   self.ip = self._ip()
+        # self.status = self._status()
+        # if 'running' in self.status:
+        #    self.ip = self._ip()
+        pass
 
     def _status(self):
         results = self._submit_job('status', path=self.path)
         results = re.findall(r'.*\\n\\n(.*)\\n\\n.*', results, re.M)
-        app.logger.debug(results)
+        # We remove the whitespace in between each word
+        results = [' '.join(result.split()) for result in results]
         return results
 
     def _ip(self):
