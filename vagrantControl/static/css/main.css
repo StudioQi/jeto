@@ -96,6 +96,9 @@ padding-top: 80px;
 [ng\:cloak], [ng-cloak], .ng-cloak {
   display: none;
 }
+a {
+    padding:10px;
+}
 
 .force-show {
   display: block;
@@ -131,4 +134,25 @@ padding-top: 80px;
 }
 .loading .well .progress {
   margin-bottom:0;
+}
+
+#position {
+    border: 2px solid #c3c3c3;
+    border-radius: 20px;
+    background-color:none;
+    display:none;
+    height:25px;
+    position:absolute;
+    transition:border 0.5s;
+    width:25px;
+    z-index:99999;
+}
+#position.active {
+    border:6px solid gray;
+    transition:border 0.25s;
+}
+.leap-hover {
+    border:2px solid #c3c3c3;
+    background-color:lightgray;
+    border-radius:3px;
 }
