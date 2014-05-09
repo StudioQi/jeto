@@ -1,4 +1,4 @@
-#-=- encoding: utf-8 -=-
+# -=- encoding: utf-8 -=-
 from flask.ext.restful import Resource, fields, marshal_with, marshal
 from flask import request, json
 from vagrantControl.models import VagrantBackend
@@ -6,7 +6,7 @@ from settings import DOMAINS_API_URL, DOMAINS_API_PORT
 from settings import HTPASSWORD_API_URL, HTPASSWORD_API_PORT
 from vagrantControl import app
 import requests as req
-#from time import sleep
+# from time import sleep
 
 
 instance_fields = {
@@ -52,7 +52,8 @@ class InstancesApi(Resource):
         if 'state' in request.json and 'start' in request.json['state']:
             instanceId = int(request.json['id'])
             instance = self.backend.get(instanceId)
-            instance.start()
+            provider = request.json['state'].replace('start-', '')
+            instance.start(id, provider)
             return {
                 'instance': marshal(instance, instance_fields),
             }
@@ -97,7 +98,7 @@ class InstanceApi(Resource):
         instance = self._getInstance(id)
         instance.status = instance._status()
         instance.ip = instance._ip()
-        #app.logger.debug(instance.ip)
+        # app.logger.debug(instance.ip)
         return instance
 
     def post(self, id):

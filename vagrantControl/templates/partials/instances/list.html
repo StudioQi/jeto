@@ -41,14 +41,6 @@
                     <td>
                             [[ instance.path ]]
                     </td>
-                    {#
-                    <td>
-                            [[ instance.ip ]]
-                    </td>
-                    <td>
-                            [[ instance.status ]]
-                    </td>
-                    #}
                     <td>
                             [[ instance.environment ]]
                     </td>
@@ -67,6 +59,7 @@
                           <ul class="dropdown-menu" role="menu">
                             <li><a href="#" ng-click="control(instance.id, 'start-lxc')">LXC</a></li>
                             <li><a href="#" ng-click="control(instance.id, 'start-virtualbox')">VirtualBox</a></li>
+                            <li><a href="#" ng-click="control(instance.id, 'start-vsphere')">VirtualBox</a></li>
                           </ul>
                       </div>
                     </td>
