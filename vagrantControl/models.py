@@ -1,20 +1,18 @@
-#-=- encoding: utf-8 -=-
-#from time import sleep
-#import vagrant
+# -=- encoding: utf-8 -=-
 import gearman
 import re
 from vagrantControl import db
 from vagrantControl import app
+from vagrantControl.core import redis_conn
 from flask.ext.sqlalchemy import orm
-#from flask import json
+from flask import session
+# from flask import json
 from flask import request
 from sh import ls
 from settings import ETH
 
 import time
 from rq import Queue, Connection
-from redis import Redis
-redis_conn = Redis()
 
 
 class InvalidPath(Exception):
@@ -111,8 +109,8 @@ class VagrantInstance(db.Model):
     @orm.reconstructor
     def init_on_load(self):
         self.gm_client = gearman.GearmanClient(['localhost'])
-        #self.status = self._status()
-        #if 'running' in self.status:
+        # self.status = self._status()
+        # if 'running' in self.status:
         #   self.ip = self._ip()
 
     def _status(self):
@@ -151,6 +149,11 @@ class VagrantInstance(db.Model):
             queue = Queue('high', connection=redis_conn)
             action = 'worker.{}'.format(action)
             job = queue.enqueue(action, **kwargs)
+
+            if 'jobs' not in session:
+                session['jobs'] = []
+
+            session['jobs'].append(job.id)
             while job.result is None:
                 time.sleep(0.5)
 

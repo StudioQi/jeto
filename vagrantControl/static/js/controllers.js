@@ -81,13 +81,6 @@ function InstancesController($scope, Instances, $http, createDialog, $log) {
         });
     };
 
-    //$scope.status = {};
-    //pubsubCallback = function(status) {
-    //    $scope.$apply(function() {
-    //        $scope.status = JSON.parse(infos.data);
-    //    });
-    //};
-    //var source = new EventSource('/pubsub', pubsubCallback, false);
 }
 
 function InstanceController($scope, $routeParams, Instances, $http, $location) {
@@ -124,6 +117,18 @@ function InstanceController($scope, $routeParams, Instances, $http, $location) {
             $location.path('/instances');
         });
     };
+
+    $scope.console = {};
+    pubsubCallback = function(line) {
+        $scope.$apply(function () {
+            if(line.data !== ''){
+                $scope.console += line.data + '<br />';
+                $('#console').html($scope.console);
+            }
+        });
+    };
+    var source = new EventSource('/pubsub')
+    source.addEventListener('message', pubsubCallback, false);
 }
 
 function DomainsController($scope, $routeParams, Domains, $http, $location, createDialog, Htpassword) {

@@ -1,6 +1,6 @@
-from flask import render_template, send_file, Response
+from flask import render_template, send_file, Response, session
 from vagrantControl import app, babel
-from vagrantControl.core import api
+from vagrantControl.core import api, redis_conn
 from vagrantControl.services import InstanceApi, InstancesApi
 from vagrantControl.services import DomainsApi
 from vagrantControl.services import HtpasswordApi, HtpasswordListApi
@@ -24,8 +24,28 @@ def favicon():
 
 @app.route('/pubsub')
 def pubsub():
+    jobs = None
+    output = ''
+    if 'jobs' in session:
+        jobs = session['jobs']
+        for job in jobs:
+            console = _read_console(job)
+            output += console\
+                .replace('\n', '<br />')\
+                .replace('#BEGIN#', '')\
+                .replace('#END#', '')
+            if '#END#' in console:
+                session['jobs'].remove(job)
 
-    return Response('data: awdawd\n\n', mimetype='text/event-stream')
+    return Response('data: {}\n\n'.format(output),
+                    mimetype='text/event-stream')
+
+
+def _read_console(jobId):
+    console = redis_conn.get('{}:console'.format(jobId))
+    if console is None:
+        console = ''
+    return console
 
 
 @app.route('/partials/<partial>')
