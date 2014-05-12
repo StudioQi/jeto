@@ -23,6 +23,7 @@ domain_fields = {
     'domain': fields.String,
     'ip': fields.String,
     'htpasswd': fields.String,
+    'sslkey': fields.String,
 }
 
 htpassword_list_fields = {
@@ -151,16 +152,23 @@ class DomainsApi(Resource):
         }
 
     def post(self, slug=None):
-        domain = request.json['domain']
-        ip = request.json['ip']
-        htpasswd = request.json['htpasswd']
 
         if 'slug' in request.json:
             # Should mean we are editing a domain
             slug = request.json['slug']
             content = self.put(slug)
         else:
-            data = json.dumps({'site': domain, 'ip': ip, 'htpasswd': htpasswd})
+            domain = request.json['domain']
+            ip = request.json['ip']
+            htpasswd = None
+            sslkey = None
+            if 'htpasswd' in request.json:
+                htpasswd = request.json['htpasswd']
+            if 'sslkey' in request.json:
+                sslkey = request.json['sslkey']
+
+            data = json.dumps({'site': domain, 'ip': ip, 'htpasswd': htpasswd,
+                               'sslkey': sslkey})
             # Should mean we are adding a new domain
             r = req.post(self._get_url(),
                          headers=self._get_headers(),
@@ -178,9 +186,16 @@ class DomainsApi(Resource):
         domain = request.json['domain']
         ip = request.json['ip'].strip()
         htpasswd = None
+        sslkey = None
+
         if 'htpasswd' in request.json and request.json['htpasswd'] is not None:
             htpasswd = request.json['htpasswd'].strip()
-        data = json.dumps({'site': domain, 'ip': ip, 'htpasswd': htpasswd})
+        if 'sslkey' in request.json and request.json['sslkey'] is not None:
+            sslkey = request.json['sslkey'].strip()
+
+        data = json.dumps({'site': domain, 'ip': ip, 'htpasswd': htpasswd,
+                           'sslkey': sslkey})
+        app.logger.debug(data)
         r = req.put(self._get_url() + '/{}'.format(slug),
                     headers=self._get_headers(),
                     data=data)

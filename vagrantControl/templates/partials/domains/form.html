@@ -15,6 +15,12 @@
                         <option value="">--- {{ _('None') }} ---</option>
                     </select>
                 </div>
+                <div class="form-group">
+                    <label for="name">{{ _('SSL key') }}</label>
+                    <select name="sslkey" id="sslkey" ng-model="domainInfo.sslkey" class="form-control" ng-options="key.name for key in sslkeys">
+                        <option value="">--- {{ _('None') }} ---</option>
+                    </select>
+                </div>
             </form>
     </div>
 </div>

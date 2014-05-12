@@ -15,6 +15,7 @@
                         <th>{{ _('Domaine') }}</th>
                         <th>{{ _('IP') }}</th>
                         <th>{{ _('htpasswd') }}</th>
+                        <th>{{ _('ssl') }}</th>
                         <th></th>
                 </thead>
                 <tbody>
@@ -30,6 +31,9 @@
                                 </td>
                                 <td>
                                         [[ domain.htpasswd ]]
+                                </td>
+                                <td>
+                                        [[ domain.sslkey ]]
                                 </td>
                                 <td>
                                     <div class="btn-group">        
