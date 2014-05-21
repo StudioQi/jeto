@@ -377,3 +377,7 @@ function HtpasswordListController($scope, $routeParams, Htpassword, $http, $loca
         $location.path('/htpassword');
     };
 }
+
+function LoginController($scope, $window) {
+    $window.location.href = '/login';
+}

@@ -156,3 +156,15 @@ a {
     background-color:lightgray;
     border-radius:3px;
 }
+
+.navbar-nav > li > a {
+    line-height:40px;
+}
+.icon-google_plus {
+    height:40px;
+    margin-right:5px;
+    width:40px;
+}
+.icon-google_plus.loggedin {
+    border:1px solid gray;
+}

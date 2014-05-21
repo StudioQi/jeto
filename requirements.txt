@@ -3,6 +3,8 @@ Flask==0.10.1
 Flask-Babel==0.9
 Flask-RESTful==0.2.5
 Flask-SQLAlchemy==1.0
+Flask-OAuth
+Flask-Login
 Jinja2==2.7
 MarkupSafe==0.18
 SQLAlchemy==0.8.2

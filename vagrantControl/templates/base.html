@@ -46,6 +46,12 @@
               <li><a href="/instances">{{ _('Instances') }}</a></li>
               <li><a href="/domains">{{ _('Domains') }}</a></li>
               <li><a href="/htpassword">{{ _('Security') }}</a></li>
+              {% if g.user.is_authenticated() == False %}
+                 <li><a href="{{ url_for('login') }}" target="_self"><img class="icon-google_plus" src="{{url_for('static', filename="img/gplus-white.png")}}"></span>{{ _('Login') }}</a></li>
+              {% else %}
+                 <li><a href="{{ url_for('logout') }}" target="_self"><img
+                     class="icon-google_plus loggedin" src="{{ g.user.picture }}"></span>{{ _('Logout') }}</a></li>
+              {% endif %}
           </ul>
         </div><!--/.nav-collapse -->
       </div>

@@ -99,9 +99,9 @@ class VagrantBackend(BackendProvider):
 
 class VagrantInstance(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    path = db.Column(db.String)
-    name = db.Column(db.String)
-    environment = db.Column(db.String)
+    path = db.Column(db.String(256))
+    name = db.Column(db.String(128))
+    environment = db.Column(db.String(128))
 
     def __init__(self, id, path, name, environment):
         self.id = id
@@ -173,3 +173,30 @@ class VagrantInstance(db.Model):
                 time.sleep(0.5)
 
         return job.result
+
+class User(db.Model):
+    id = db.Column(db.String(64), primary_key=True)
+    name = db.Column(db.String(64))
+    email = db.Column(db.String(128), unique=True)
+    given_name = db.Column(db.String(128))
+    family_name = db.Column(db.String(128))
+    picture = db.Column(db.String(256))
+
+    def __unicode__(self):
+        return 'User {} : {}'.format(self.id, self.name)
+
+    def __str__(self):
+        return self.__unicode__()
+
+    def get_id(self):
+        return unicode(self.id)
+
+    def is_authenticated(self):
+        return True
+
+    def is_active(self):
+        return True
+
+    def is_anonymous(self):
+        return False
+

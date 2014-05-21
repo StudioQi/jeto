@@ -1,9 +1,13 @@
-from flask import render_template, send_file, Response, session
-from vagrantControl import app, babel
+from flask import render_template, send_file, Response, session, url_for, redirect, g
+from flask.ext.login import login_user, logout_user, current_user, login_required
+from requests import get, post
+from vagrantControl import app, babel, google, lm, db
 from vagrantControl.core import api, redis_conn
 from vagrantControl.services import InstanceApi, InstancesApi
 from vagrantControl.services import DomainsApi
 from vagrantControl.services import HtpasswordApi, HtpasswordListApi
+from vagrantControl.models import User
+import json
 
 
 @app.route('/')
@@ -13,13 +17,61 @@ from vagrantControl.services import HtpasswordApi, HtpasswordListApi
 @app.route('/domains/<id>')
 @app.route('/htpassword')
 @app.route('/htpassword/<slug>')
-def basic_pages(**kwargs):
+def index(**kwargs):
     return render_template('index.html')
 
 
 @app.route('/favicon.ico')
 def favicon():
     return send_file('static/img/favicon.ico')
+
+
+@app.route('/oauth2callback')
+@google.authorized_handler
+def authorized(resp):
+    access_token = resp['access_token']
+    session['access_token'] = access_token
+    if access_token is None:
+        return redirect(url_for('login'))
+
+    headers = {'Authorization': 'OAuth {}'.format(access_token)}
+    req = get('https://www.googleapis.com/oauth2/v1/userinfo', headers=headers)
+    data = req.json()
+    user = User.query.filter_by(id = int(data['id'])).first()
+    if user is None:
+        user = User(id = int(data['id']),
+                    name = data['name'],
+                    email = data['email'],
+                    given_name = data['given_name'],
+                    family_name = data['family_name'],
+                    picture = data['picture'])
+        db.session.add(user)
+        db.session.commit()
+
+    login_user(user)
+    return redirect(url_for('index'))
+
+
+@app.route('/login')
+def login():
+    callback = url_for('authorized', _external=True)
+    return google.authorize(callback=callback)
+
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    session.pop('access_token')
+    return redirect(url_for('index'))
+
+
+@google.tokengetter
+def get_access_token():
+    return session.get('access_token')
+
+@lm.user_loader
+def load_user(id):
+    return User.query.get(int(id))
 
 
 @app.route('/pubsub')
@@ -55,6 +107,11 @@ def partials(partial, typePartial=None):
         return render_template('partials/{}/{}'.format(typePartial, partial))
     else:
         return render_template('partials/{}'.format(partial))
+
+
+@app.before_request
+def before_request():
+    g.user = current_user
 
 
 @app.errorhandler(404)
