@@ -14,6 +14,8 @@ LANGUAGES = {
 }
 # oauth
 REDIRECT_URI = '/oauth2callback'
+GOOGLE_CLIENT_ID = ''
+GOOGLE_CLIENT_SECRET = ''
 
 try:
     from .settings_dev import *
