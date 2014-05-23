@@ -83,7 +83,7 @@ function InstancesController($scope, Instances, $http, createDialog, $log) {
             scope: $scope,
             btntype: 'danger',
             success: {
-                label: 'Delete',
+                label: 'Yes, delete it',
                 fn: function(){
                     instanceId = $scope.deleteId;
                     $http.delete('/api/instances/' + instanceId)

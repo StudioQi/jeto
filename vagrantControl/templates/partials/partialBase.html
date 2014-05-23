@@ -1,3 +1,20 @@
+{% block breadcrumb_setup %}
+{% endblock %}
+
+{% block breadcrumb_display %}
+    {% if breadcrumbs is defined %}
+        <ol class="breadcrumb">
+            {% for breadcrumb in breadcrumbs %}
+                {% if breadcrumb|length > 1 %}
+                    <li><a href="{{ breadcrumb[1] }}">{{ breadcrumb[0] }}</a></li>
+                {% else %}
+                    <li class="active">{{ breadcrumb[0] }}</li>
+                {% endif %}
+            {% endfor %}
+        </ol>
+    {% endif %}
+{% endblock %}
+
 {% with messages = get_flashed_messages() %}
 {% if messages %}
     <div class="row">
@@ -11,5 +28,6 @@
     </div>
 {% endif %}
 {% endwith %}
+
 {% block content %}
 {% endblock %}

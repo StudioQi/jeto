@@ -24,7 +24,7 @@ def index(**kwargs):
 @app.route('/htpassword')
 @app.route('/htpassword/<slug>')
 @login_required
-def limited():
+def limited(**kwargs):
     return render_template('index.html')
 
 

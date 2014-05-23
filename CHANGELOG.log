@@ -1,0 +1,7 @@
+23 May 2014
+----
+
+- Forcing user to login to use the app. Only G+ auth is supported for now, but
+  vagrant-control uses flask-oauth and can be configured to use any provider
+  (but no option from vagrant-control yet).
+- Adding breadcrumb according UX team ideas

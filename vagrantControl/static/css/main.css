@@ -174,3 +174,8 @@ a {
 .btn-group > a {
     line-height:30px;
 }
+.btn-danger {
+    color: #d43f3a;
+    background-color: #fff;
+    border-color: #fff;
+}
