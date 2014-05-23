@@ -41,16 +41,24 @@
         </button>
         <a class="navbar-brand" href="/">VagrantControl</a>
         <div class="navbar-collapse collapse pull-right">
-          <ul class="nav navbar-nav">
-              <li><a href="/">{{ _('Home') }}</a></li>
-              <li><a href="/instances">{{ _('Instances') }}</a></li>
-              <li><a href="/domains">{{ _('Domains') }}</a></li>
-              <li><a href="/htpassword">{{ _('Security') }}</a></li>
+          {% if g.user.is_authenticated() == True %}
+            <ul class="nav navbar-nav">
+                <li><a href="/">{{ _('Home') }}</a></li>
+                <li><a href="/instances">{{ _('Instances') }}</a></li>
+                <li><a href="/domains">{{ _('Domains') }}</a></li>
+                <li><a href="/htpassword">{{ _('Security') }}</a></li>
+            </ul>
+          {% endif %}
+          <ul class="nav navbar-nav navbar-right">
               {% if g.user.is_authenticated() == False %}
                  <li><a href="{{ url_for('login') }}" target="_self"><img class="icon-google_plus" src="{{url_for('static', filename="img/gplus-white.png")}}"></span>{{ _('Login') }}</a></li>
               {% else %}
-                 <li><a href="{{ url_for('logout') }}" target="_self"><img
-                     class="icon-google_plus loggedin" src="{{ g.user.picture }}"></span>{{ _('Logout') }}</a></li>
+                 <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img class="icon-google_plus loggedin" src="{{ g.user.picture }}"/>{{ g.user.name }} <b class="glyphicon caret"></b></a>
+                    <ul class="dropdown-menu"
+                        <li><a href="{{ url_for('logout') }}" target="_self"><span class="glyphicon glyphicon-log-out"></span> {{ _('Logout') }}</a></li>
+                    </ul>
+                </li>
               {% endif %}
           </ul>
         </div><!--/.nav-collapse -->
@@ -62,19 +70,16 @@
             </div>
         {% endblock %}
         <div class="row">
-            <div class="col-md-12" id="console">
-
-            </div>
-        </div>
-        <div class="row">
             <div class="col-md-12">
                 <hr>
                 <footer id="footer" class="footer">
                     <div class="footer-left">
+                      {% if g.user.is_authenticated() == True %}
                         <a href="/">{{ _('Home') }}</a> |
                         <a href="/instances">{{ _('Instances') }}</a> |
                         <a href="/domains">{{ _('Domains') }}</a> |
                         <a href="/htpassword">{{ _('Security') }}</a>
+                      {% endif %}
                     </div>
                 </footer>
             </div>

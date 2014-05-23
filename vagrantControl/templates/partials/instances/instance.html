@@ -1,3 +1,6 @@
+{% extends 'partials/partialBase.html' %}
+{% block content %}
+<h3>{{ _('Instance :') }} <b>[[ instance.name ]]</b></h3>
 <div class="row">
     <div class="col-md-4">
         <div class="panel panel-default">
@@ -43,7 +46,7 @@
 <div class="row">
     <div class="col-md-4 pull-left">
         <div class="btn-group pull-left">
-            <button type="button" class="btn btn-danger" ng-bind-html="[[instance.state]]" ng-click="delete()">{{ _('Delete') }}</button>
+            <button type="button" class="btn btn-danger pull-right glyphicon glyphicon-trash" ng-bind-html="[[instance.state]]" ng-click="delete()"><span class="sr-only">{{ _('Delete') }}</span></button>
         </div>
     </div>
     <div class="col-md-4 pull-right">
@@ -60,3 +63,4 @@
         </div>
     </div>
 </div>
+{% endblock %}

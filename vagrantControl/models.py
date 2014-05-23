@@ -3,7 +3,7 @@ import re
 from vagrantControl import db
 from vagrantControl.core import redis_conn
 # Kept only for debugging
-# from vagrantControl import app
+from vagrantControl import app
 from flask.ext.sqlalchemy import orm
 from flask import request, session
 from sh import ls
@@ -129,7 +129,10 @@ class VagrantInstance(db.Model):
 
     def _status(self):
         results = self._submit_job('status', path=self.path)
-        results = re.findall(r'.*\\n\\n(.*)\\n\\n.*', results, re.M)
+        results = re.findall(r'.*states:\\n\\n(.*)\\n\\nTh.*', results, re.M)
+        results = results[0].split('\\n')
+        app.logger.debug(results)
+        # results = results[0].replace('\\n', '<br/>').split()
         # We remove the whitespace in between each word
         results = [' '.join(result.split()) for result in results]
         return results
@@ -174,6 +177,7 @@ class VagrantInstance(db.Model):
 
         return job.result
 
+
 class User(db.Model):
     id = db.Column(db.String(64), primary_key=True)
     name = db.Column(db.String(64))
@@ -198,5 +202,4 @@ class User(db.Model):
         return True
 
     def is_anonymous(self):
-        return False
-
+        return True

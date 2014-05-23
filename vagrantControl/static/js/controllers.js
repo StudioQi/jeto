@@ -75,18 +75,37 @@ function InstancesController($scope, Instances, $http, createDialog, $log) {
     };
 
     $scope.delete = function(instanceId) {
-        $http.delete('/api/instances/' + instanceId)
-        .success(function(infos) {
-            setTimeout($scope.updateInfos, 100);
+        $scope.deleteId = instanceId;
+        createDialog({
+            id : 'createDialog', 
+            title: 'Delete instance',
+            backdrop: true, 
+            scope: $scope,
+            btntype: 'danger',
+            success: {
+                label: 'Delete',
+                fn: function(){
+                    instanceId = $scope.deleteId;
+                    $http.delete('/api/instances/' + instanceId)
+                    .success(function(infos) {
+                        setTimeout($scope.updateInfos, 100);
+                        $scope.deleteId = undefined;
+                    });
+                }
+            },
+            cancel: {
+                label: 'Cancel',
+            },
         });
     };
 
 }
 
-function InstanceController($scope, $routeParams, Instances, $http, $location) {
+function InstanceController($scope, $routeParams, Instances, $http, createDialog, $location) {
     $('.loading').show();
     var instancesQuery = Instances.get({id: $routeParams.id}, function(instance) {
         $scope.instance = instance;
+        console.log($scope.instance);
         $('.loading').hide();
     });
 
@@ -112,23 +131,41 @@ function InstanceController($scope, $routeParams, Instances, $http, $location) {
     };
 
     $scope.delete = function() {
-        $http.delete('/api/instances/' + $scope.instance.id)
-        .success(function(infos) {
-            $location.path('/instances');
+        createDialog('', {
+            id : 'deleteDialog', 
+            title: 'Delete instance',
+            backdrop: true, 
+            scope: $scope,
+            btntype: 'danger',
+            template: 'Are you sure you want to delete the instance <b>[[instance.name]]</b>?',
+            success: {
+                label: 'Delete',
+                fn: function(){
+                    $('.loading').show();
+                    $http.delete('/api/instances/' + $scope.instance.id)
+                        .success(function(infos) {
+                            $('.loading').hide();
+                            $location.path('/instances');
+                        });
+                }
+            },
+            cancel: {
+                label: 'Cancel',
+            },
         });
     };
 
     $scope.console = {};
-    pubsubCallback = function(line) {
+    pubsubCallback = function(consoleData) {
         $scope.$apply(function () {
-            if(line.data !== ''){
-                $scope.console += line.data + '<br />';
+            if(consoleData.data !== ''){
+                $scope.console = consoleData.data;
                 $('#console').html($scope.console);
             }
         });
     };
     var source = new EventSource('/pubsub')
-    // source.addEventListener('message', pubsubCallback, false);
+    source.addEventListener('message', pubsubCallback, false);
 }
 
 function DomainsController($scope, $routeParams, Domains, $http, $location, createDialog, Htpassword) {
@@ -228,10 +265,28 @@ function DomainsController($scope, $routeParams, Domains, $http, $location, crea
         });
     };
 
-    $scope.delete = function(slug) {
-        $http.delete('/api/domains/' + slug)
-        .success(function() {
-            $scope.update();
+    $scope.delete = function(domain) {
+        $scope.deleteDomain = domain.slug;
+        createDialog({
+            id : 'deleteDialog', 
+            title: 'Delete domain',
+            backdrop: true, 
+            scope: $scope,
+            btntype: 'danger',
+            template: 'Are you sure you want to delete <b>' + domain.slug +'</b> ?',
+            success: {
+                label: 'Delete',
+                fn: function(){
+                    slug = $scope.deleteDomain;
+                    $http.delete('/api/domains/' + slug)
+                    .success(function() {
+                        setTimeout($scope.update, 100);
+                    });
+                }
+            },
+            cancel: {
+                label: 'Cancel',
+            },
         });
     };
 }
@@ -302,11 +357,30 @@ function HtpasswordController($scope, $routeParams, Htpassword, $http, $location
     };
 
     $scope.delete = function(slug) {
-       var list = new Htpassword();
-       list.name = slug;
-       list.slug = slug;
-       list.$delete();
-       $scope.update();
+        $scope.deleteSlug = slug;
+        createDialog('', {
+            id : 'deleteDialog', 
+            title: 'Delete user list',
+            backdrop: true, 
+            scope: $scope,
+            btntype: 'danger',
+            template: 'Are you sure you want to delete <b>' + slug + '</b> ?',
+            success: {
+                label: 'Delete',
+                fn: function(){
+                    var list = new Htpassword();
+                    slug = $scope.deleteSlug;
+                    list.name = slug;
+                    list.slug = slug;
+                    list.$delete();
+                    $scope.update();
+                    $scope.deleteSlug = undefined;
+                }
+            },
+            cancel: {
+                label: 'Cancel',
+            },
+        });
     };
 }
 
@@ -332,6 +406,8 @@ function HtpasswordListController($scope, $routeParams, Htpassword, $http, $loca
     $scope.add = function(){
         $scope.item.users.push({'username':$scope.newItem.username, 'password': $scope.newItem.password, 'state': 'CREATE'});
         $scope.changed = true;
+        $scope.newItem['username'] = '';
+        $scope.newItem['password'] = '';
     };
 
     $scope.deleteUser = function(username){
@@ -369,15 +445,27 @@ function HtpasswordListController($scope, $routeParams, Htpassword, $http, $loca
         $location.path('/htpassword');
     };
 
-    $scope.delete = function(){
-        var list = new Htpassword();
-        list.name = $scope.item.slug;
-        list.slug = $scope.item.slug;
-        list.$delete();
-        $location.path('/htpassword');
+    $scope.delete = function() {
+        createDialog('', {
+            id : 'deleteDialog', 
+            title: 'Delete user list',
+            backdrop: true, 
+            scope: $scope,
+            btntype: 'danger',
+            template: 'Are you sure you want to delete <b>[[ item.slug ]]</b> ?',
+            success: {
+                label: 'Delete',
+                fn: function(){
+                    var list = new Htpassword();
+                    list.name = $scope.item.slug;
+                    list.slug = $scope.item.slug;
+                    list.$delete();
+                    $location.path('/htpassword');
+                }
+            },
+            cancel: {
+                label: 'Cancel',
+            },
+        });
     };
-}
-
-function LoginController($scope, $window) {
-    $window.location.href = '/login';
 }

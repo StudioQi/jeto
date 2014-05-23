@@ -1,3 +1,6 @@
+{% extends 'partials/partialBase.html' %}
+{% block content %}
+<h3>{{ _('User lists') }}</h3>
 <div class="row">
     <div class="col-md-12">
         <form class="form-inline">
@@ -18,15 +21,17 @@
                 <tbody>
                         <tr ng-repeat="list in lists">
                                 <td>
-                                    [[ list.slug ]]
+                                    <a href="/htpassword/[[ list.slug ]]">[[ list.slug ]]</a>
                                 </td>
                                 <td>
                                     [[ list.users.length ]]
                                 </td>
                                 <td>
-                                    <div class="btn-group">        
-                                        <a href="/htpassword/[[ list.slug ]]" class="btn btn-default">{{ _('View') }}</a>
-                                        <a href="#" ng-click="delete(list.slug)" class="btn btn-danger">{{ _('Delete') }}</a>
+                                    <div class="btn-group">
+                                        <a href="/htpassword/[[ list.slug ]]">{{ _('View') }}</a>
+                                    </div>
+                                    <div class="btn-group pull-right">        
+                                        <button href="#" ng-click="delete(list.slug)" class="btn btn-danger"><span class="glyphicon glyphicon-trash" /></button>
                                     </div>
                                 </td>
                         </tr>
@@ -34,3 +39,4 @@
         </table>
     </div>
 </div>
+{% endblock %}

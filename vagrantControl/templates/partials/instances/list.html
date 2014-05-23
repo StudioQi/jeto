@@ -1,3 +1,6 @@
+{% extends 'partials/partialBase.html' %}
+{% block content %}
+<h3>{{ _('Instances') }}</h3>
 <div class="row">
     <div class="col-md-12">
         <form class="form-inline">
@@ -36,7 +39,7 @@
                 <tbody>
                   <tr ng-repeat="instance in instances | filter:query.environment.type">
                     <td>
-                        [[ instance.name ]]
+                        <a href="/instances/[[ instance.id ]]" class="">[[ instance.name ]]</a>
                     </td>
                     <td>
                             [[ instance.path ]]
@@ -46,13 +49,13 @@
                     </td>
                     <td>
                       <div class="btn-group">        
-                          <a href="/instances/[[ instance.id ]]" class="btn btn-default">{{ _('View') }}</a>
+                          <a href="/instances/[[ instance.id ]]" class="">{{ _('View') }}</a>
                       </div>
-                      <div class="btn-group">        
-                          <a href="#" ng-click="delete(instance.id)" class="btn btn-danger"><span class="glyphicon glyphicon-trash" /></a>
+                      <div class="btn-group pull-right">        
+                          <button href="#" ng-click="delete(instance.id)" class="btn btn-danger"><span class="glyphicon glyphicon-trash" /></button>
                       </div>
                        <div class="btn-group pull-right">        
-                          <a href="#" ng-click="control(instance.id, 'stop')" class="btn btn-warning">{{ _('Stop') }}</a>
+                          <button ng-click="control(instance.id, 'stop')" class="btn btn-warning">{{ _('Stop') }}</button>
                           <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
                             {{ _('Start') }} <span class="caret"></span>
                           </button>
@@ -68,3 +71,4 @@
         </table>
     </div>
 </div>
+{% endblock %}

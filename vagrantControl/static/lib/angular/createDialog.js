@@ -13,6 +13,7 @@ angular.module('fundoo.services', []).factory('createDialog', ["$document", "$co
       backdropClass: "modal-backdrop",
       footerTemplate: null,
       modalClass: "modal",
+      btntype: 'primary',
     };
     var body = $document.find('body');
 
@@ -30,8 +31,8 @@ angular.module('fundoo.services', []).factory('createDialog', ["$document", "$co
 
       var key;
       var idAttr = options.id ? ' id="' + options.id + '" ' : '';
-      var defaultFooter = '<button class="btn btn-default" ng-click="$modalCancel()">[[$modalCancelLabel]]</button>' +
-        '<button class="btn btn-primary" ng-click="$modalSuccess()">[[$modalSuccessLabel]]</button>';
+      var defaultFooter = '<a href="#" ng-click="$modalCancel()">[[$modalCancelLabel]]</a>' +
+        '<button class="btn btn-' + options.btntype + '" ng-click="$modalSuccess()">[[$modalSuccessLabel]]</button>';
       var footerTemplate = '<div class="modal-footer">' +
         (options.footerTemplate || defaultFooter) +
         '</div>';

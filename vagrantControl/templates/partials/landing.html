@@ -1,9 +1,6 @@
-<div class="header-section">
-    <div class="row header-row">
-        <div class="span12 masthead">
-            <h1 class="heading">Bienvenue sur Crevette</h1>
-        </div>
-    </div>
+{% extends 'partials/partialBase.html' %}
+{% block content %}
+<div class="jumbotron">
+    <h1 class="heading">{{ _('Bienvenue sur Vagrant-Control') }}</h1>
 </div>
-<div class="header-push">
-</div>
+{% endblock %}

@@ -168,3 +168,9 @@ a {
 .icon-google_plus.loggedin {
     border:1px solid gray;
 }
+.btn-group.pull-right {
+    margin-left:10px;
+}
+.btn-group > a {
+    line-height:30px;
+}

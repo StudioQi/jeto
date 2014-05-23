@@ -1,23 +1,30 @@
-from flask import render_template, send_file, Response, session, url_for, redirect, g
-from flask.ext.login import login_user, logout_user, current_user, login_required
-from requests import get, post
+from flask import render_template, send_file, Response, session, url_for
+from flask import redirect, g, flash
+from flask.ext.login import login_user, logout_user
+from flask.ext.login import current_user, login_required
+from flask.ext.babel import gettext as _
+from requests import get
 from vagrantControl import app, babel, google, lm, db
 from vagrantControl.core import api, redis_conn
 from vagrantControl.services import InstanceApi, InstancesApi
 from vagrantControl.services import DomainsApi
 from vagrantControl.services import HtpasswordApi, HtpasswordListApi
 from vagrantControl.models import User
-import json
 
 
 @app.route('/')
+def index(**kwargs):
+    return render_template('index.html')
+
+
 @app.route('/instances')
 @app.route('/instances/<id>')
 @app.route('/domains')
 @app.route('/domains/<id>')
 @app.route('/htpassword')
 @app.route('/htpassword/<slug>')
-def index(**kwargs):
+@login_required
+def limited():
     return render_template('index.html')
 
 
@@ -37,14 +44,15 @@ def authorized(resp):
     headers = {'Authorization': 'OAuth {}'.format(access_token)}
     req = get('https://www.googleapis.com/oauth2/v1/userinfo', headers=headers)
     data = req.json()
-    user = User.query.filter_by(id = int(data['id'])).first()
+    app.logger.debug(data)
+    user = User.query.filter_by(id=int(data['id'])).first()
     if user is None:
-        user = User(id = int(data['id']),
-                    name = data['name'],
-                    email = data['email'],
-                    given_name = data['given_name'],
-                    family_name = data['family_name'],
-                    picture = data['picture'])
+        user = User(id=int(data['id']),
+                    name=data['name'],
+                    email=data['email'],
+                    given_name=data['given_name'],
+                    family_name=data['family_name'],
+                    picture=data['picture'])
         db.session.add(user)
         db.session.commit()
 
@@ -62,6 +70,7 @@ def login():
 def logout():
     logout_user()
     session.pop('access_token')
+    flash(_("I'll miss you..."))
     return redirect(url_for('index'))
 
 
@@ -69,9 +78,16 @@ def logout():
 def get_access_token():
     return session.get('access_token')
 
+
 @lm.user_loader
 def load_user(id):
     return User.query.get(int(id))
+
+
+@lm.unauthorized_handler
+def unauthorized_callback():
+    flash(_('Please login to use this page'))
+    return redirect(url_for('index'))
 
 
 @app.route('/pubsub')
@@ -100,9 +116,15 @@ def _read_console(jobId):
     return console
 
 
+@app.route('/partials/landing.html')
+def partials():
+    return render_template('partials/landing.html')
+
+
 @app.route('/partials/<partial>')
 @app.route('/partials/<typePartial>/<partial>')
-def partials(partial, typePartial=None):
+@login_required
+def partialsLimited(partial, typePartial=None):
     if typePartial:
         return render_template('partials/{}/{}'.format(typePartial, partial))
     else:

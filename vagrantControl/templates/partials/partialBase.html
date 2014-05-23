@@ -1,0 +1,15 @@
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="bs-callout bs-callout-warning">
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endif %}
+{% endwith %}
+{% block content %}
+{% endblock %}
