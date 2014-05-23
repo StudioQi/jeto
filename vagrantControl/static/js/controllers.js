@@ -74,7 +74,7 @@ function InstancesController($scope, Instances, $http, createDialog, $log) {
         });
     };
 
-    $scope.delete = function(instanceId) {
+    $scope.delete = function(instanceId, instanceName) {
         $scope.deleteId = instanceId;
         createDialog({
             id : 'createDialog', 
@@ -82,6 +82,7 @@ function InstancesController($scope, Instances, $http, createDialog, $log) {
             backdrop: true, 
             scope: $scope,
             btntype: 'danger',
+            template: 'Are you sure you want to delete <b>' + instanceName +'</b> ?',
             success: {
                 label: 'Yes, delete it',
                 fn: function(){

@@ -54,7 +54,7 @@
                           <a href="/instances/[[ instance.id ]]" class="">{{ _('View') }}</a>
                       </div>
                       <div class="btn-group pull-right">        
-                          <button href="#" ng-click="delete(instance.id)" class="btn btn-danger"><span class="glyphicon glyphicon-trash" /></button>
+                          <button href="#" ng-click="delete(instance.id, instance.name)" class="btn btn-danger"><span class="glyphicon glyphicon-trash" /></button>
                       </div>
                        <div class="btn-group pull-right">        
                           <button ng-click="control(instance.id, 'stop')" class="btn btn-warning">{{ _('Stop') }}</button>
