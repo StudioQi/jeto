@@ -70,6 +70,7 @@ def login():
 def logout():
     logout_user()
     session.pop('access_token')
+    session.pop('jobs')
     flash(_("I'll miss you..."))
     return redirect(url_for('index'))
 
@@ -90,20 +91,22 @@ def unauthorized_callback():
     return redirect(url_for('index'))
 
 
-@app.route('/pubsub')
-def pubsub():
+@app.route('/pubsub/<instanceId>')
+def pubsub(instanceId=None):
     jobs = None
     output = ''
     if 'jobs' in session:
         jobs = session['jobs']
         for job in jobs:
-            console = _read_console(job)
-            output += console\
-                .replace('\n', '<br />')\
-                .replace('#BEGIN#', '')\
-                .replace('#END#', '')
-            if '#END#' in console:
-                session['jobs'].remove(job)
+            if instanceId is not None and int(instanceId) == int(job['instanceId']):
+                console = _read_console(job['jobId'])
+                output += console\
+                    .replace('\n', '<br />')\
+                    .replace('#BEGIN#', '')\
+                    .replace('#END#', '')
+                if '#END#' in console:
+                    pass
+                    # session['jobs'].remove(job)
 
     return Response('data: {}\n\n'.format(output),
                     mimetype='text/event-stream')

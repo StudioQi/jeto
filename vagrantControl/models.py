@@ -72,6 +72,7 @@ class VagrantBackend(BackendProvider):
             db.session.add(instance)
             db.session.commit()
         else:
+            app.logger.debug('ho noes')
             raise InvalidPath('Path {} given is invalid or cant be read'
                               .format(request['path']))
 
@@ -83,6 +84,7 @@ class VagrantBackend(BackendProvider):
 
     def _check_instance(self, path):
         try:
+            app.logger.debug('yay')
             ls(path + '/Vagrantfile')
         except:
             return False
@@ -131,8 +133,6 @@ class VagrantInstance(db.Model):
         results = self._submit_job('status', path=self.path)
         results = re.findall(r'.*states:\\n\\n(.*)\\n\\nTh.*', results, re.M)
         results = results[0].split('\\n')
-        app.logger.debug(results)
-        # results = results[0].replace('\\n', '<br/>').split()
         # We remove the whitespace in between each word
         results = [' '.join(result.split()) for result in results]
         return results
@@ -171,7 +171,13 @@ class VagrantInstance(db.Model):
             if 'jobs' not in session:
                 session['jobs'] = []
 
-            session['jobs'].append(job.id)
+            app.logger.debug(job.id)
+            session['jobs'].append(
+                {
+                    'jobId': job.id,
+                    'instanceId': self.id
+                }
+            )
             while job.result is None:
                 time.sleep(0.5)
 

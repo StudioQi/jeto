@@ -106,7 +106,8 @@ function InstanceController($scope, $routeParams, Instances, $http, createDialog
     $('.loading').show();
     var instancesQuery = Instances.get({id: $routeParams.id}, function(instance) {
         $scope.instance = instance;
-        console.log($scope.instance);
+        $scope.source = new EventSource('/pubsub/' + $scope.instance.id);
+        $scope.source.addEventListener('message', pubsubCallback, false);
         $('.loading').hide();
     });
 
@@ -122,7 +123,7 @@ function InstanceController($scope, $routeParams, Instances, $http, createDialog
     };
 
     $scope.control = function(state) {
-        $('.loading').show();
+        // $('.loading').show();
         $http.post('/api/instances/' + $scope.instance.id, {
             state : state,
         })
@@ -160,13 +161,16 @@ function InstanceController($scope, $routeParams, Instances, $http, createDialog
     pubsubCallback = function(consoleData) {
         $scope.$apply(function () {
             if(consoleData.data !== ''){
+                console.log(consoleData.data);
                 $scope.console = consoleData.data;
                 $('#console').html($scope.console);
+                consoleDiv = $('#console').get(0);
+                if(consoleDiv !== undefined){
+                    consoleDiv.scrollTop = consoleDiv.scrollHeight;
+                }
             }
         });
     };
-    var source = new EventSource('/pubsub')
-    source.addEventListener('message', pubsubCallback, false);
 }
 
 function DomainsController($scope, $routeParams, Domains, $http, $location, createDialog, Htpassword) {
