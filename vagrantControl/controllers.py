@@ -44,17 +44,33 @@ def authorized(resp):
     headers = {'Authorization': 'OAuth {}'.format(access_token)}
     req = get('https://www.googleapis.com/oauth2/v1/userinfo', headers=headers)
     data = req.json()
-    app.logger.debug(data)
+
+    if 'GOOGLE_LIMIT_DOMAIN' in app.config and \
+            app.config['GOOGLE_LIMIT_DOMAIN'] and \
+            'hd' not in data or\
+            data['hd'] != app.config['GOOGLE_LIMIT_DOMAIN']:
+
+        flash(_('Domain not allowed, please use an email associated with\
+              the domain : {}').format(app.config['GOOGLE_LIMIT_DOMAIN']))
+
+        return redirect(url_for('index'))
+
     user = User.query.filter_by(id=int(data['id'])).first()
-    if user is None:
+    if user:
+        user.name = data['name']
+        user.given_name = data['given_name']
+        user.family_name = data['family_name']
+        user.picture = data['picture']
+    else:
         user = User(id=int(data['id']),
                     name=data['name'],
                     email=data['email'],
                     given_name=data['given_name'],
                     family_name=data['family_name'],
                     picture=data['picture'])
-        db.session.add(user)
-        db.session.commit()
+
+    db.session.add(user)
+    db.session.commit()
 
     login_user(user)
     return redirect(url_for('index'))
@@ -70,7 +86,8 @@ def login():
 def logout():
     logout_user()
     session.pop('access_token')
-    session.pop('jobs')
+    if 'jobs' in session:
+        session.pop('jobs')
     flash(_("I'll miss you..."))
     return redirect(url_for('index'))
 
@@ -97,16 +114,19 @@ def pubsub(instanceId=None):
     output = ''
     if 'jobs' in session:
         jobs = session['jobs']
+        app.logger.debug('salut')
+        # session['jobs'] = []
         for job in jobs:
-            if instanceId is not None and int(instanceId) == int(job['instanceId']):
+            if instanceId is not None and \
+                    int(instanceId) == int(job['instanceId']):
                 console = _read_console(job['jobId'])
+                app.logger.debug(console)
                 output += console\
                     .replace('\n', '<br />')\
                     .replace('#BEGIN#', '')\
                     .replace('#END#', '')
                 if '#END#' in console:
-                    pass
-                    # session['jobs'].remove(job)
+                    session['jobs'].remove(job)
 
     return Response('data: {}\n\n'.format(output),
                     mimetype='text/event-stream')

@@ -166,6 +166,7 @@ a {
     width:40px;
 }
 .icon-google_plus.loggedin {
+    border-radius:50%;
     border:1px solid gray;
 }
 .btn-group.pull-right {

@@ -4,7 +4,7 @@ from flask import request, json
 from vagrantControl.models import VagrantBackend
 from settings import DOMAINS_API_URL, DOMAINS_API_PORT
 from settings import HTPASSWORD_API_URL, HTPASSWORD_API_PORT
-from vagrantControl import app
+# from vagrantControl import app
 import requests as req
 # from time import sleep
 
@@ -144,7 +144,7 @@ class InstanceApi(Resource):
 class DomainsApi(Resource):
     def get(self):
         r = req.get(self._get_url(), headers=self._get_headers())
-        app.logger.debug(r.json())
+        # app.logger.debug(r.json())
         domains = r.json()['domains']
 
         return {
@@ -195,7 +195,7 @@ class DomainsApi(Resource):
 
         data = json.dumps({'site': domain, 'ip': ip, 'htpasswd': htpasswd,
                            'sslkey': sslkey})
-        app.logger.debug(data)
+        # app.logger.debug(data)
         r = req.put(self._get_url() + '/{}'.format(slug),
                     headers=self._get_headers(),
                     data=data)

@@ -3,7 +3,7 @@ import re
 from vagrantControl import db
 from vagrantControl.core import redis_conn
 # Kept only for debugging
-from vagrantControl import app
+# from vagrantControl import app
 from flask.ext.sqlalchemy import orm
 from flask import request, session
 from sh import ls
@@ -72,7 +72,6 @@ class VagrantBackend(BackendProvider):
             db.session.add(instance)
             db.session.commit()
         else:
-            app.logger.debug('ho noes')
             raise InvalidPath('Path {} given is invalid or cant be read'
                               .format(request['path']))
 
@@ -84,7 +83,6 @@ class VagrantBackend(BackendProvider):
 
     def _check_instance(self, path):
         try:
-            app.logger.debug('yay')
             ls(path + '/Vagrantfile')
         except:
             return False
@@ -110,7 +108,7 @@ class VagrantInstance(db.Model):
         self.path = path
         self.name = name
         self.environment = environment
-        self.init_on_load()
+        # self.init_on_load()
 
     def __unicode__(self):
         return self.path
@@ -126,7 +124,7 @@ class VagrantInstance(db.Model):
     def init_on_load(self):
         # self.status = self._status()
         # if 'running' in self.status:
-        #    self.ip = self._ip()
+        #     self.ip = self._ip()
         pass
 
     def _status(self):
@@ -168,18 +166,19 @@ class VagrantInstance(db.Model):
             action = 'worker.{}'.format(action)
             job = queue.enqueue(action, **kwargs)
 
-            if 'jobs' not in session:
-                session['jobs'] = []
+            if action != 'status':
+                if 'jobs' not in session:
+                    session['jobs'] = []
 
-            app.logger.debug(job.id)
-            session['jobs'].append(
-                {
-                    'jobId': job.id,
-                    'instanceId': self.id
-                }
-            )
-            while job.result is None:
-                time.sleep(0.5)
+                # app.logger.debug(job.id)
+                session['jobs'].append(
+                    {
+                        'jobId': job.id,
+                        'instanceId': self.id
+                    }
+                )
+                while job.result is None:
+                    time.sleep(0.5)
 
         return job.result
 
