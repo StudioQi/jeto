@@ -105,12 +105,13 @@ a {
 }
 
 .navbar-brand {
-  background: url('/static/img/nav-logo.png') no-repeat;
+  background-repeat: no-repeat;
   display: block;
-  width: 117px;
   height: 70px;
   margin: 5px auto;
-  text-indent: -99999px; -webkit-background-size: 117px 99px; -moz-background-size: 117px 99px; background-size: 117px 99px;
+  text-indent: -99999px; 
+  -webkit-background-size: 120px 100px; -moz-background-size: 120px 100px; background-size: 120px 100px;
+  width: 117px;
 }
 
 .btn-glow {

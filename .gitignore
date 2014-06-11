@@ -7,3 +7,4 @@ ignore
 settings_dev.py
 settings_pheromone.py
 .ropeproject
+vagrantControl/static/img/nav-logo.png

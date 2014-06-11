@@ -1,4 +1,6 @@
-#-=- encoding: utf-8 -=-
+# -=- encoding: utf-8 -=-
+from flask import url_for
+
 DEBUG = True
 ETH = 'eth0'
 SECRET_KEY = 'waiquohzi7OpealeiquahChaipautheiy1Giefah0thaw2ieD1Hae5eereimeix8\
@@ -17,6 +19,9 @@ REDIRECT_URI = '/oauth2callback'
 GOOGLE_CLIENT_ID = ''
 GOOGLE_CLIENT_SECRET = ''
 GOOGLE_LIMIT_DOMAIN = ''
+#BRAND_IMAGE_EXTERNAL = 'https://www.google.ca//images/srpr/logo11w.png'
+#BRAND_IMAGE_ASSET_FILENAME = 'img/nav-logo.png'
+BRAND_IMAGE_ASSET_FILENAME = None
 
 try:
     from .settings_dev import *

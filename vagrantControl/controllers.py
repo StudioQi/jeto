@@ -14,7 +14,7 @@ from vagrantControl.models import User
 
 @app.route('/')
 def index(**kwargs):
-    return render_template('index.html')
+    return render_template('index.html', brand_image=get_brand_image())
 
 
 @app.route('/instances')
@@ -25,7 +25,7 @@ def index(**kwargs):
 @app.route('/htpassword/<slug>')
 @login_required
 def limited(**kwargs):
-    return render_template('index.html')
+    return render_template('index.html', brand_image=get_brand_image())
 
 
 @app.route('/favicon.ico')
@@ -167,6 +167,14 @@ def page_not_found(e):
 @babel.localeselector
 def get_locale():
     return 'fr'
+
+
+def get_brand_image():
+    if 'BRAND_IMAGE_ASSET_FILENAME' in app.config and app.config['BRAND_IMAGE_ASSET_FILENAME'] is not None:
+        return url_for('static', app.config['BRAND_IMAGE_ASSET_FILENAME'])
+    if 'BRAND_IMAGE_EXTERNAL' in app.config and app.config['BRAND_IMAGE_EXTERNAL'] is not None:
+        return app.config['BRAND_IMAGE_EXTERNAL']
+    return None
 
 api.add_resource(
     InstanceApi,
