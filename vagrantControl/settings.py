@@ -19,8 +19,7 @@ REDIRECT_URI = '/oauth2callback'
 GOOGLE_CLIENT_ID = ''
 GOOGLE_CLIENT_SECRET = ''
 GOOGLE_LIMIT_DOMAIN = ''
-#BRAND_IMAGE_EXTERNAL = 'https://www.google.ca//images/srpr/logo11w.png'
-#BRAND_IMAGE_ASSET_FILENAME = 'img/nav-logo.png'
+BRAND_IMAGE_EXTERNAL = None
 BRAND_IMAGE_ASSET_FILENAME = None
 
 try:
