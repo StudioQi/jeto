@@ -5,12 +5,22 @@ from vagrantControl.core import redis_conn
 # Kept only for debugging
 # from vagrantControl import app
 from flask.ext.sqlalchemy import orm
+from flask.ext.login import current_user
 from flask import request, session
 from sh import ls
 from settings import ETH
 
 import time
 from rq import Queue, Connection
+
+
+def is_async():
+    if request.json and\
+            'async' in request.json and\
+            request.json['async'] is True:
+        return True
+
+    return False
 
 
 class BaseException(Exception):
@@ -147,12 +157,10 @@ class VagrantInstance(db.Model):
             environment=self.environment,
             provider=provider
         )
-        self.status = self._status()
         return results
 
     def stop(self):
         results = self._submit_job('stop', path=self.path)
-        self.status = self._status()
         return results
 
     def delete(self):
@@ -164,7 +172,9 @@ class VagrantInstance(db.Model):
         with Connection():
             queue = Queue('high', connection=redis_conn)
             action = 'worker.{}'.format(action)
-            job = queue.enqueue(action, **kwargs)
+            job = queue.enqueue_call(func=action, timeout=600, kwargs=kwargs)
+
+            # job = queue.enqueue(action, **kwargs)
 
             if action != 'status':
                 if 'jobs' not in session:
@@ -174,11 +184,14 @@ class VagrantInstance(db.Model):
                 session['jobs'].append(
                     {
                         'jobId': job.id,
-                        'instanceId': self.id
+                        'instanceId': self.id,
+                        'userId': current_user.id,
+                        'action': action
                     }
                 )
-                while job.result is None:
-                    time.sleep(0.5)
+                if is_async() is False:
+                    while job.result is None:
+                        time.sleep(0.5)
 
         return job.result
 

@@ -4,6 +4,7 @@ from flask.ext.login import login_user, logout_user
 from flask.ext.login import current_user, login_required
 from flask.ext.babel import gettext as _
 from requests import get
+
 from vagrantControl import app, babel, google, lm, db
 from vagrantControl.core import api, redis_conn
 from vagrantControl.services import InstanceApi, InstancesApi
@@ -170,11 +171,17 @@ def get_locale():
 
 
 def get_brand_image():
-    if 'BRAND_IMAGE_ASSET_FILENAME' in app.config and app.config['BRAND_IMAGE_ASSET_FILENAME'] is not None:
-        return url_for('static', filename=app.config['BRAND_IMAGE_ASSET_FILENAME'])
-    if 'BRAND_IMAGE_EXTERNAL' in app.config and app.config['BRAND_IMAGE_EXTERNAL'] is not None:
+    if 'BRAND_IMAGE_ASSET_FILENAME' in app.config and\
+            app.config['BRAND_IMAGE_ASSET_FILENAME'] is not None:
+        return url_for(
+            'static',
+            filename=app.config['BRAND_IMAGE_ASSET_FILENAME']
+        )
+    if 'BRAND_IMAGE_EXTERNAL' in app.config and\
+            app.config['BRAND_IMAGE_EXTERNAL'] is not None:
         return app.config['BRAND_IMAGE_EXTERNAL']
     return None
+
 
 api.add_resource(
     InstanceApi,

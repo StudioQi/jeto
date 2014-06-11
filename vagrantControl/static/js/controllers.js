@@ -123,9 +123,10 @@ function InstanceController($scope, $routeParams, Instances, $http, createDialog
     };
 
     $scope.control = function(state) {
-        $('.loading').show();
+        // $('.loading').show();
         $http.post('/api/instances/' + $scope.instance.id, {
             state : state,
+            async: true
         })
         .success(function(result) {
            setTimeout($scope.updateInfos, 100);
