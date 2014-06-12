@@ -8,7 +8,7 @@ This is currently a work in progress. The interface will, or should, depending o
 ## License
 
 [Creative Commons Attribution 3.0 Unported] [2]
-  [2]: https://raw.github.com/PierrePaul/amazonControl/master/LICENSE.txt
+  [2]: https://raw.github.com/Pheromone/vagrant-control/master/LICENSE.txt
 
 # Note 
 

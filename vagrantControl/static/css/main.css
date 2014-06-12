@@ -185,3 +185,27 @@ a {
     max-height:150px;
     overflow:auto;
 }
+
+/* ansiconv */
+.ansi_fore { color: #FFFFFF; }
+.ansi_back { background-color: #000000; }
+.ansi1 { font-weight: bold; }
+.ansi3 { font-weight: italic; }
+.ansi4 { text-decoration: underline; }
+.ansi9 { text-decoration: line-through; }
+.ansi30 { color: #000000; }
+.ansi31 { color: #E70000; }
+.ansi32 { color: #007E00; }
+.ansi33 { color: #FFFF00; }
+.ansi34 { color: #0000FF; }
+.ansi35 { color: #FF00FF; }
+.ansi36 { color: #009999; }
+.ansi37 { color: #FFFFFF; }
+.ansi40 { background-color: #000000; }
+.ansi41 { background-color: #FF0000; }
+.ansi42 { background-color: #007E00; }
+.ansi43 { background-color: #FFFF00; }
+.ansi44 { background-color: #0000FF; }
+.ansi45 { background-color: #FF00FF; }
+.ansi46 { background-color: #00FFFF; }
+.ansi47 { background-color: #FFFFFF; }

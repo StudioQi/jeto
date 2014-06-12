@@ -4,7 +4,7 @@ from flask import request, json
 from vagrantControl.models import VagrantBackend
 from settings import DOMAINS_API_URL, DOMAINS_API_PORT
 from settings import HTPASSWORD_API_URL, HTPASSWORD_API_PORT
-# from vagrantControl import app
+from vagrantControl import app
 import requests as req
 # from time import sleep
 
@@ -97,6 +97,7 @@ class InstanceApi(Resource):
     @marshal_with(instance_fields)
     def get(self, id):
         instance = self._getInstance(id)
+        app.logger.debug('here here')
         instance.status = instance._status()
         instance.ip = instance._ip()
 #       app.logger.debug(instance.ip)
@@ -119,16 +120,17 @@ class InstanceApi(Resource):
         if 'state' in request.json and 'start' in request.json['state']:
             provider = request.json['state'].replace('start-', '')
             self.start(id, provider)
+        if 'state' in request.json and 'provision' in request.json['state']:
+            self.provision(id)
 
-        return self.get(id)
+    def provision(self, id):
+        self.backend.provision(id)
 
     def stop(self, id):
         self.backend.stop(id)
-        return self.get(id)
 
     def start(self, id, provider):
         self.backend.start(id, provider)
-        return self.get(id)
 
     def delete(self, id):
         instanceId = int(id)
