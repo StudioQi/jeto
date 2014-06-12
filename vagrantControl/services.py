@@ -120,6 +120,11 @@ class InstanceApi(Resource):
         if 'state' in request.json and 'start' in request.json['state']:
             provider = request.json['state'].replace('start-', '')
             self.start(id, provider)
+        if 'state' in request.json and 'provision' in request.json['state']:
+            self.provision(id)
+
+    def provision(self, id):
+        self.backend.provision(id)
 
     def stop(self, id):
         self.backend.stop(id)

@@ -4,6 +4,7 @@ from flask.ext.login import login_user, logout_user
 from flask.ext.login import current_user, login_required
 from flask.ext.babel import gettext as _
 from requests import get
+import ansiconv
 
 from vagrantControl import app, babel, google, lm, db
 from vagrantControl.core import api, redis_conn
@@ -126,6 +127,7 @@ def pubsub(instanceId=None):
                     .replace('\n', '<br />')\
                     .replace('#BEGIN#', '')\
                     .replace('#END#', '')
+                output = ansiconv.to_html(output)
                 if '#END#' in console:
                     session['jobs'].remove(job)
 

@@ -98,6 +98,10 @@ class VagrantBackend(BackendProvider):
             return False
         return True
 
+    def provision(self, instanceId):
+        instance = VagrantInstance.query.get(instanceId)
+        return instance.provision()
+
     def stop(self, instanceId):
         instance = VagrantInstance.query.get(instanceId)
         return instance.stop()
@@ -157,6 +161,10 @@ class VagrantInstance(db.Model):
             environment=self.environment,
             provider=provider
         )
+        return results
+
+    def provision(self):
+        results = self._submit_job('provision', path=self.path)
         return results
 
     def stop(self):
