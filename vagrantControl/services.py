@@ -99,7 +99,7 @@ class InstanceApi(Resource):
         instance = self._getInstance(id)
         instance.status = instance._status()
         instance.ip = instance._ip()
-        # app.logger.debug(instance.ip)
+#       app.logger.debug(instance.ip)
         return instance
 
     def post(self, id):
