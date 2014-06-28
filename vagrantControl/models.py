@@ -55,7 +55,7 @@ class BackendProvider():
 
 class VagrantBackend(BackendProvider):
     def __init__(self):
-        self.instances = VagrantInstance.query.all()
+        self.instances = VagrantInstance.query.order_by('name')
 
     def get(self, instanceId):
         return VagrantInstance.query.get(int(instanceId))
