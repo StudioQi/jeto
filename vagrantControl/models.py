@@ -164,7 +164,11 @@ class VagrantInstance(db.Model):
         return results
 
     def provision(self):
-        results = self._submit_job('provision', path=self.path)
+        results = self._submit_job(
+            'provision',
+            path=self.path,
+            environment=self.environment
+        )
         return results
 
     def stop(self):
