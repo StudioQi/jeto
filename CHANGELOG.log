@@ -1,4 +1,11 @@
-23 May 2014
+July 23 2014
+----
+- Default sorting order (A-Z) for every module. Complete control on the sorting to come in future releases.
+- Fix the name filter option on the instances page
+- Now passing the ENVIRONMENT while provisioning a machine.
+- Removing check for the filesystem. The vagrant-worker might (and actually should) be on another machine than the vagrant-control, so it makes sense for vagrant-control to _not_ be able to check if the path exists.
+
+May 23 2014
 ----
 
 - Forcing user to login to use the app. Only G+ auth is supported for now, but

@@ -6,17 +6,7 @@
 <div class="row">
     <div class="col-md-12">
         <form class="form-inline">
-            <input ng-model="query.$" class="form-control" placeholder="Search" style="width:200px"/>
-            {#
-            <select ng-model="query.status" class="form-control" style="width:200px">
-                <option></option>
-                <option value="running">{{ _('Running only') }}</option>
-                <option value="poweroff">{{ _('Stopped') }}</option>
-                <option value="aborted">{{ _('Aborted') }}</option>
-                <option value="not created">{{ _('Not created') }}</option>
-                <option value="saved">{{ _('Suspended') }}</option>
-            </select>
-            #}
+            <input ng-model="query.name" class="form-control" placeholder="Search" style="width:200px"/>
             <select ng-model="query.environment" class="form-control" style="width:200px" ng-options="s.label for s in states">
                 <option value="">{{ _('All') }}</option>
             </select>
@@ -39,7 +29,7 @@
                     <th></th>
                 </thead>
                 <tbody>
-                  <tr ng-repeat="instance in instances | filter:query.environment.type">
+                  <tr ng-repeat="instance in instances | filter:query.environment.type | filter:query.name">
                     <td>
                         <a href="/instances/[[ instance.id ]]" class="">[[ instance.name ]]</a>
                     </td>

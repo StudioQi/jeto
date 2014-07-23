@@ -7,7 +7,6 @@ from vagrantControl.core import redis_conn
 from flask.ext.sqlalchemy import orm
 from flask.ext.login import current_user
 from flask import request, session
-from sh import ls
 from settings import ETH
 
 import time
@@ -78,25 +77,14 @@ class VagrantBackend(BackendProvider):
 
         instance = VagrantInstance(None, request['path'], request['name'],
                                    environment)
-        if self._check_instance(request['path']):
-            db.session.add(instance)
-            db.session.commit()
-        else:
-            raise InvalidPath('Path {} given is invalid or cant be read'
-                              .format(request['path']))
+        db.session.add(instance)
+        db.session.commit()
 
         return instance
 
     def delete(self, instanceId):
         instance = VagrantInstance.query.get(instanceId)
         instance.delete()
-
-    def _check_instance(self, path):
-        try:
-            ls(path + '/Vagrantfile')
-        except:
-            return False
-        return True
 
     def provision(self, instanceId):
         instance = VagrantInstance.query.get(instanceId)

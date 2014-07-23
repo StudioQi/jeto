@@ -162,7 +162,6 @@ function InstanceController($scope, $routeParams, Instances, $http, createDialog
     pubsubCallback = function(consoleData) {
         $scope.$apply(function () {
             if(consoleData.data !== ''){
-                console.log(consoleData.data);
                 $scope.console = consoleData.data;
                 $('#console').html($scope.console);
                 consoleDiv = $('#console').get(0);
@@ -178,7 +177,6 @@ function DomainsController($scope, $routeParams, Domains, $http, $location, crea
     $scope.update = function() {
         Domains.get({}, function(infos) {
             $scope.domains = infos.domains;
-            console.log($scope.domains);
             $scope.domains.sort(function(a, b){ return a.domain > b.domain; });
             $scope.resource = infos;
         });
@@ -303,7 +301,6 @@ function HtpasswordController($scope, $routeParams, Htpassword, $http, $location
     $scope.update = function() {
         Htpassword.get({}, function(infos) {
             $scope.lists = infos.lists;
-            console.log($scope.lists);
             $scope.lists.sort(function(a, b){ return a.slug > b.slug; });
             $scope.resource = infos;
         });
