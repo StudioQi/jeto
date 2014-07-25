@@ -1,0 +1,4 @@
+/* Controllers */
+
+function AdminController($scope) {
+}

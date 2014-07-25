@@ -25,6 +25,7 @@ def index(**kwargs):
 @app.route('/domains/<id>')
 @app.route('/htpassword')
 @app.route('/htpassword/<slug>')
+@app.route('/admin')
 @login_required
 def limited(**kwargs):
     return render_template('index.html', brand_image=get_brand_image())
@@ -151,6 +152,7 @@ def partials():
 @app.route('/partials/<typePartial>/<partial>')
 @login_required
 def partialsLimited(partial, typePartial=None):
+    print typePartial
     if typePartial:
         return render_template('partials/{}/{}'.format(typePartial, partial))
     else:

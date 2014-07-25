@@ -1,0 +1,21 @@
+{% extends 'partials/partialBase.html' %}
+{% block content %}
+  <link rel="stylesheet" href="/static/css/admin.css" />
+  <div class="row">
+    <div class="col-md-2">
+      <ul class="nav nav-sidebar">
+        <li><a href="#">{{ _('Projects') }}</a></li>
+        <li><a href="#">{{ _('Teams') }}</a></li>
+        <li><a href="#">{{ _('Hosts') }}</a></li>
+        <li><a href="#">{{ _('Users') }}</a></li>
+      </ul>
+    </div>
+    <div id="content" class="col-md-10 main">
+      <h1 class="page-header">{{ _('Administration') }}</h1>
+      <div class="row">
+        {% block contentAdmin %}
+        {% endblock %}
+      </div>
+    </div>
+  </div>
+{% endblock %}
