@@ -1,7 +1,7 @@
 # -=- encoding: utf-8 -=-
 from flask.ext.restful import Resource, fields, marshal_with, marshal
 from flask import request, json
-from vagrantControl.models import VagrantBackend
+from vagrantControl.models.vagrant import VagrantBackend
 from settings import DOMAINS_API_URL, DOMAINS_API_PORT
 from settings import HTPASSWORD_API_URL, HTPASSWORD_API_PORT
 from vagrantControl import app

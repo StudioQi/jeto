@@ -1,38 +1,15 @@
 # -=- encoding: utf-8 -=-
-import re
+
 from vagrantControl import db
-from vagrantControl.core import redis_conn
-# Kept only for debugging
-# from vagrantControl import app
+from vagrantControl.core import redis_conn, is_async
+from vagrantControl.settings import ETH
+
+import re
+import time
+from flask import request, session
 from flask.ext.sqlalchemy import orm
 from flask.ext.login import current_user
-from flask import request, session
-from settings import ETH
-
-import time
 from rq import Queue, Connection
-
-
-def is_async():
-    if request.json and\
-            'async' in request.json and\
-            request.json['async'] is True:
-        return True
-
-    return False
-
-
-class BaseException(Exception):
-    def __init__(self, msg):
-        self.msg = msg
-
-
-class InvalidPath(BaseException):
-    pass
-
-
-class InstanceNotFound(BaseException):
-    pass
 
 
 class BackendProvider():
@@ -104,6 +81,10 @@ class VagrantInstance(db.Model):
     path = db.Column(db.String(256))
     name = db.Column(db.String(128))
     environment = db.Column(db.String(128))
+    project_id = db.Column(
+        db.Integer,
+        db.ForeignKey('project_id')
+    )
 
     def __init__(self, id, path, name, environment):
         self.id = id
@@ -194,30 +175,3 @@ class VagrantInstance(db.Model):
                         time.sleep(0.5)
 
         return job.result
-
-
-class User(db.Model):
-    id = db.Column(db.String(64), primary_key=True)
-    name = db.Column(db.String(64))
-    email = db.Column(db.String(128), unique=True)
-    given_name = db.Column(db.String(128))
-    family_name = db.Column(db.String(128))
-    picture = db.Column(db.String(256))
-
-    def __unicode__(self):
-        return 'User {} : {}'.format(self.id, self.name)
-
-    def __str__(self):
-        return self.__unicode__()
-
-    def get_id(self):
-        return unicode(self.id)
-
-    def is_authenticated(self):
-        return True
-
-    def is_active(self):
-        return True
-
-    def is_anonymous(self):
-        return True

@@ -35,5 +35,5 @@ google = oauth.remote_app('google',
 lm = LoginManager(app)
 
 import vagrantControl.core
-import vagrantControl.models
+# import vagrantControl.models
 import vagrantControl.controllers

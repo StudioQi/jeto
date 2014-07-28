@@ -11,7 +11,7 @@ from vagrantControl.core import api, redis_conn
 from vagrantControl.services import InstanceApi, InstancesApi
 from vagrantControl.services import DomainsApi
 from vagrantControl.services import HtpasswordApi, HtpasswordListApi
-from vagrantControl.models import User
+from vagrantControl.models.user import User
 
 
 @app.route('/')
@@ -25,9 +25,14 @@ def index(**kwargs):
 @app.route('/domains/<id>')
 @app.route('/htpassword')
 @app.route('/htpassword/<slug>')
-@app.route('/admin')
 @login_required
 def limited(**kwargs):
+    return render_template('index.html', brand_image=get_brand_image())
+
+
+@app.route('/admin')
+@login_required
+def limitedAdmin(**kwargs):
     return render_template('index.html', brand_image=get_brand_image())
 
 
@@ -185,6 +190,10 @@ def get_brand_image():
             app.config['BRAND_IMAGE_EXTERNAL'] is not None:
         return app.config['BRAND_IMAGE_EXTERNAL']
     return None
+
+
+def is_admin():
+    print current_user
 
 
 api.add_resource(

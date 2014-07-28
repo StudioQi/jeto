@@ -1,6 +1,110 @@
 {% extends 'partials/admin/partialBase.html' %}
 {% block contentAdmin %}
-  <div class="col-md-12">
-    <p>yay2</p>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">{{ _('Projects') }}</div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>{{ _('Name') }}</th>
+                <th>{{ _('Number of machines') }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                  <td>bleh</td>
+                  <td>2</td>
+              </tr>
+              <tr>
+                  <td>bleh</td>
+                  <td>2</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="panel-footer">
+            <a href="/admin/projects">{{ _('View all projects') }}</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">{{ _('Teams') }}</div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>{{ _('Name') }}</th>
+                <th>{{ _('Number of users') }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                  <td>bleh</td>
+                  <td>2</td>
+              </tr>
+              <tr>
+                  <td>bleh</td>
+                  <td>2</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="panel-footer">
+            <a href="/admin/teams">{{ _('View all teams') }}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">{{ _('Hosts') }}</div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>{{ _('Name') }}</th>
+                <th>{{ _('Number of users') }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                  <td>bleh</td>
+                  <td>2</td>
+              </tr>
+              <tr>
+                  <td>bleh</td>
+                  <td>2</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="panel-footer">
+            <a href="/admin/hosts">View all hosts</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">{{ _('Users') }}</div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>{{ _('Name') }}</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                  <td>bleh</td>
+                  <td>2</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="panel-footer">
+            <a href="/admin/users">{{ _('View all users') }}</a>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 {% endblock %}
