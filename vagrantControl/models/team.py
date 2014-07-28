@@ -3,7 +3,7 @@
 from vagrantControl import db
 
 teams_users = db.Table(
-    'tags',
+    'teams_users',
     db.Column(
         'team_id',
         db.Integer,

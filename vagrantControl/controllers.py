@@ -1,5 +1,5 @@
 from flask import render_template, send_file, Response, session, url_for
-from flask import redirect, g, flash
+from flask import redirect, g, flash, abort
 from flask.ext.login import login_user, logout_user
 from flask.ext.login import current_user, login_required
 from flask.ext.babel import gettext as _
@@ -11,6 +11,8 @@ from vagrantControl.core import api, redis_conn
 from vagrantControl.services import InstanceApi, InstancesApi
 from vagrantControl.services import DomainsApi
 from vagrantControl.services import HtpasswordApi, HtpasswordListApi
+from vagrantControl.services import ProjectApi
+from vagrantControl.services import HostApi
 from vagrantControl.models.user import User
 
 
@@ -31,8 +33,13 @@ def limited(**kwargs):
 
 
 @app.route('/admin')
+@app.route('/admin/<subType>')
+@app.route('/admin/<subType>/<id>')
 @login_required
 def limitedAdmin(**kwargs):
+    if not current_user.is_admin():
+        return abort(403)
+
     return render_template('index.html', brand_image=get_brand_image())
 
 
@@ -155,10 +162,21 @@ def partials():
 
 @app.route('/partials/<partial>')
 @app.route('/partials/<typePartial>/<partial>')
+@app.route('/partials/<typePartial>/<subType>/<partial>')
 @login_required
-def partialsLimited(partial, typePartial=None):
-    print typePartial
-    if typePartial:
+def partialsLimited(partial, typePartial=None, subType=None):
+    if typePartial is not None and typePartial == 'admin':
+        if not current_user.is_admin():
+            return render_template('partials/403.html'.format(partial))
+
+        if subType is not None:
+            return render_template(
+                'partials/admin/{}/{}'.format(subType, partial)
+            )
+
+        return render_template('partials/admin/{}'.format(partial))
+
+    elif typePartial:
         return render_template('partials/{}/{}'.format(typePartial, partial))
     else:
         return render_template('partials/{}'.format(partial))
@@ -169,9 +187,14 @@ def before_request():
     g.user = current_user
 
 
+@app.errorhandler(403)
+def page_not_authorized(e):
+    return render_template('403.html', brand_image=get_brand_image()), 403
+
+
 @app.errorhandler(404)
 def page_not_found(e):
-    return render_template('404.html'), 404
+    return render_template('404.html', brand_image=get_brand_image()), 404
 
 
 @babel.localeselector
@@ -190,10 +213,6 @@ def get_brand_image():
             app.config['BRAND_IMAGE_EXTERNAL'] is not None:
         return app.config['BRAND_IMAGE_EXTERNAL']
     return None
-
-
-def is_admin():
-    print current_user
 
 
 api.add_resource(
@@ -227,3 +246,9 @@ api.add_resource(
     '/api/htpassword/<slug>',
     endpoint='htpasswordlist'
 )
+
+api.add_resource(ProjectApi, '/api/projects', endpoint='projects')
+api.add_resource(ProjectApi, '/api/projects/<int:id>')
+
+api.add_resource(HostApi, '/api/hosts', endpoint='hosts')
+api.add_resource(HostApi, '/api/hosts/<int:id>')

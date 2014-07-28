@@ -1,0 +1,14 @@
+<div class="row-fluid">
+    <div>
+       <form class="form">
+           <div class="form-group">
+               <label for="name">{{ _('Name') }}</label>
+               <input type="text" name="name" id="name" ng-model="hostInfo.name" placeholder="{{ _('Name of the host') }}" class="form-control"/>
+           </div>
+           <div class="form-group">
+               <label for="name">{{ _('Parameters') }}</label>
+               <textarea class="form-control" name="params" id="params" ng-model="hostInfo.params" placeholder="{{ _('Any parameters to be sent to vagrant for this host') }}"></textarea>
+           </div>
+       </form>
+    </div>
+</div>

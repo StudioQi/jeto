@@ -4,16 +4,12 @@
 from vagrantControl import db
 
 
-class Project(db.Model):
+class Host(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128))
-    instances = db.relationship(
-        'VagrantInstance',
-        backref='project',
-        lazy='dynamic'
-    )
+    params = db.Column(db.Text)
 
-    def __init__(self, id, name, instances=[]):
+    def __init__(self, id, name, params):
         self.id = id
         self.name = name
-        self.instances = instances
+        self.params = params

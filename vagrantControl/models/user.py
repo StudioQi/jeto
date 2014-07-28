@@ -13,10 +13,15 @@ class User(db.Model):
     given_name = db.Column(db.String(128))
     family_name = db.Column(db.String(128))
     picture = db.Column(db.String(256))
-    role = db.Column(db.SmallInteger, default=ROLE_DEV)
+    role = db.Column(db.String(32), default=ROLE_DEV)
+    last_login = db.Column(db.DateTime)
 
     def __unicode__(self):
-        return 'User {} : {}'.format(self.id, self.name)
+        return 'User {} : {}, Role :{}'.format(
+            self.id,
+            self.name,
+            self.role
+        )
 
     def __str__(self):
         return self.__unicode__()
@@ -32,3 +37,8 @@ class User(db.Model):
 
     def is_anonymous(self):
         return True
+
+    def is_admin(self):
+        if self.role == ROLE_ADMIN:
+            return True
+        return False

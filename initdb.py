@@ -1,6 +1,6 @@
 #-=- encoding: utf-8 -=-
 from vagrantControl import db
-from vagrantControl.models import VagrantInstance
+# from vagrantControl.models.vagrant import VagrantInstance
 
 db.create_all()
 #mock = VagrantInstance(1, '/home/lefebvre/Workbench/vagrant/', 'beikou', 'validation')

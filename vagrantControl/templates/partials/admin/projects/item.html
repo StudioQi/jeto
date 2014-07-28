@@ -1,0 +1,42 @@
+{% set breadcrumbs = [(_('Administration'),'/admin'),(_('Projects'), '/admin/projects'), ('[[ project.name ]]',),] %}
+{% set titleSuffix = 'Projects - [[ project.name ]]' %}
+{% extends 'partials/admin/partialBase.html' %}
+
+{% block contentAdmin %}
+<h3>{{ _('Project :') }} <b>[[ project.name ]]</b></h3>
+<div class="row">
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                [[ project.name ]]
+            </div>
+            <table class="table">
+                <tr>
+                    <th>{{ _('ID') }}</th>
+                    <td>[[ project.id ]]</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="col-md-6 pull-right">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {{ _('Machines assigned to project') }}
+            </div>
+            <table class="table table-bordered">
+                <tr>
+                    <th>{{ _('ID') }}</th>
+                    <th>{{ _('Name') }}</th>
+                    <th>{{ _('Path') }}</th>
+                </tr>
+                <tr>
+                    <td>id of first machine</td>
+                    <td>name of first machine</td>
+                    <td>path of first machine</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

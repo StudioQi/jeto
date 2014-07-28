@@ -83,7 +83,7 @@ class VagrantInstance(db.Model):
     environment = db.Column(db.String(128))
     project_id = db.Column(
         db.Integer,
-        db.ForeignKey('project_id')
+        db.ForeignKey('project.id')
     )
 
     def __init__(self, id, path, name, environment):

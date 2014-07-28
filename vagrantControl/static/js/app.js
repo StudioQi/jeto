@@ -31,6 +31,30 @@ angular.module('AngularFlask', ['angularFlaskServices', 'angularFlaskFilters', '
                     templateUrl: '/partials/admin/index.html',
                     controller: IndexController
                 })
+                .when('/admin/projects', {
+                    templateUrl: '/partials/admin/projects/list.html',
+                    controller: ProjectsListController
+                })
+                .when('/admin/projects/:id', {
+                    templateUrl: '/partials/admin/projects/item.html',
+                    controller: ProjectController
+                })
+                .when('/admin/teams', {
+                    templateUrl: '/partials/admin/teams/list.html',
+                    controller: IndexController
+                })
+                .when('/admin/hosts', {
+                    templateUrl: '/partials/admin/hosts/list.html',
+                    controller: HostsListController
+                })
+                .when('/admin/hosts/:id', {
+                    templateUrl: '/partials/admin/hosts/item.html',
+                    controller: HostController
+                })
+                .when('/admin/users', {
+                    templateUrl: '/partials/admin/users/list.html',
+                    controller: IndexController
+                })
                 .otherwise({
                     redirectTo: '/'
                 });

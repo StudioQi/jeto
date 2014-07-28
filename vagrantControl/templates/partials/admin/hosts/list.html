@@ -1,0 +1,38 @@
+{% set titleSuffix = 'Hosts' %}
+{% extends 'partials/admin/partialBase.html' %}
+{% block contentAdmin %}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <button type="button" class="btn btn-default" ng-click="create()">{{ _('Create a new host') }}</button>
+        <hr />
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12 table-responsive">
+        <table class="table table-hover table-bordered">
+          <thead>
+            <th>{{ _("Name") }}</th>
+            <th></th>
+          </thead>
+          <tbody>
+            <tr ng-repeat="host in hosts">
+              <td>
+                  <a href="/admin/hosts/[[ host.id ]]">[[ host.name ]]</a>
+              </td>
+              <td>
+                  <div class="btn-group pull-left">
+                    <a href="/admin/hosts/[[ host.id ]]">{{ _('View') }}</a>
+                  </div>
+                  <div class="btn-group pull-right">
+                    <button href="#" ng-click="delete(host)" class="btn btn-danger"><span class="glyphicon glyphicon-trash" /></button>
+                  </div>
+              </td>
+            </tr> 
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock %}

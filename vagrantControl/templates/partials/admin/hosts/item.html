@@ -1,0 +1,32 @@
+{% set breadcrumbs = [(_('Administration'),'/admin'),(_('Host'), '/admin/hosts'), ('[[ host.name ]]',),] %}
+{% set titleSuffix = 'Hosts - [[ host.name ]]' %}
+{% extends 'partials/admin/partialBase.html' %}
+
+{% block contentAdmin %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                [[ host.name ]]
+            </div>
+            <table class="table">
+                <tr>
+                    <th>{{ _('ID') }}</th>
+                    <td>[[ host.id ]]</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {{ _('Parameters') }} 
+            </div>
+
+            <div class="panel-body">
+                [[ host.params ]]
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
