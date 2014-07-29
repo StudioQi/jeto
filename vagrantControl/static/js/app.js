@@ -59,6 +59,10 @@ angular.module('AngularFlask', ['angularFlaskServices', 'angularFlaskFilters', '
                     templateUrl: '/partials/admin/users/list.html',
                     controller: UsersListController
                 })
+                .when('/admin/users/:id', {
+                    templateUrl: '/partials/admin/users/item.html',
+                    controller: UserController
+                })
                 .otherwise({
                     redirectTo: '/'
                 });

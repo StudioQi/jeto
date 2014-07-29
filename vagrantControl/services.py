@@ -40,6 +40,10 @@ htpassword_list_fields = {
 }
 
 user_fields = {
+    'id': fields.String,
+    'name': fields.String,
+    'email': fields.String,
+    'role': fields.String,
 }
 
 host_fields = {

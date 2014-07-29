@@ -53,4 +53,13 @@ angular.module('angularFlaskServices', ['ngResource'])
             }
         });
     })
+    .factory('Users', function($resource) {
+        return $resource('/api/users/:id', {id:'@id'}, {
+            query: {
+                method: 'GET',
+                params: { id: '' },
+                isArray: true
+            }
+        });
+    })
 ;
