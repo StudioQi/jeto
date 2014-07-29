@@ -1,12 +1,11 @@
-{% set breadcrumbs = [(_('Administration'),'/admin'),(_('Projects'),),] %}
-{% set titleSuffix = 'Projects' %}
+{% set breadcrumbs = [(_('Administration'),'/admin'),(_('Users'),),] %}
+{% set titleSuffix = 'Users' %}
 {% extends 'partials/admin/partialBase.html' %}
 {% block contentAdmin %}
-
   <div class="container">
     <div class="row">
       <div class="col-md-12">
-        <button type="button" class="btn btn-default" ng-click="create()">{{ _('Create a new project') }}</button>
+        <button type="button" class="btn btn-default" ng-click="create()">{{ _('Create a new user') }}</button>
         <hr />
       </div>
     </div>
@@ -19,16 +18,16 @@
             <th></th>
           </thead>
           <tbody>
-            <tr ng-repeat="project in projects">
+            <tr ng-repeat="user in users">
               <td>
-                  <a href="/admin/projects/[[ project.id ]]">[[ project.name ]]</a>
+                  <a href="/admin/users/[[ user.id ]]">[[ user.name ]]</a>
               </td>
               <td>
                   <div class="btn-group pull-left">
-                    <a href="/admin/projects/[[ project.id ]]">{{ _('View') }}</a>
+                    <a href="/admin/users/[[ user.id ]]">{{ _('View') }}</a>
                   </div>
                   <div class="btn-group pull-right">
-                    <button href="#" ng-click="delete(project)" class="btn btn-danger"><span class="glyphicon glyphicon-trash" /></button>
+                    <button href="#" ng-click="delete(user)" class="btn btn-danger"><span class="glyphicon glyphicon-trash" /></button>
                   </div>
               </td>
             </tr> 

@@ -1,8 +1,8 @@
-function HostsListController($scope, $routeParams, Hosts, $http, $location, createDialog) {
+function TeamsListController($scope, $routeParams, Teams, $http, $location, createDialog) {
     $scope.update = function() {
-        Hosts.get({}, function(infos) {
-            $scope.hosts = infos.hosts;
-            $scope.hosts.sort(function(a, b){ return a.name > b.name; });
+        Teams.get({}, function(infos) {
+            $scope.teams = infos.teams;
+            $scope.teams.sort(function(a, b){ return a.name > b.name; });
             $scope.resource = infos;
             $('.loading').hide();
         })
@@ -10,29 +10,27 @@ function HostsListController($scope, $routeParams, Hosts, $http, $location, crea
     $scope.update();
     $scope.resetInfos = function(){
        setTimeout($scope.update, 100);
-       $scope.hostInfo = {
+       $scope.teamInfo = {
            'name': '',
-           'provider': '',
-           'params': '',
        };
     };
     $scope.resetInfos();
 
 
     $scope.create = function() {
-        createDialog('/partials/admin/hosts/form.html',{ 
+        createDialog('/partials/admin/teams/form.html',{ 
            id : 'createDialog', 
-           title: 'Create a new host',
+           title: 'Create a new team',
            backdrop: true, 
            scope: $scope,
            success: {
                label: 'Create',
                fn: function(){
                    $('.loading').show();
-                   var host = new Hosts();
-                   host.name = $scope.hostInfo.name;
-                   host.params = $scope.hostInfo.params;
-                   host.provider = $scope.hostInfo.provider;
+                   var host = new Teams();
+                   host.name = $scope.teamInfo.name;
+                   host.params = $scope.teamInfo.params;
+                   host.provider = $scope.teamInfo.provider;
                    host.state = 'create';
                    host.$save();
                    setTimeout($scope.resetInfos, 100);
@@ -44,21 +42,21 @@ function HostsListController($scope, $routeParams, Hosts, $http, $location, crea
         });
     };
 
-    $scope.delete = function(host) {
-        $scope.deleteHostId = host.id;
+    $scope.delete = function(item) {
+        $scope.deleteItemId = item.id;
         createDialog({
             id : 'deleteDialog', 
-            title: 'Delete host',
+            title: 'Delete team',
             backdrop: true, 
             scope: $scope,
             btntype: 'danger',
-            template: 'Are you sure you want to delete <b>' + host.name +'</b> ?',
+            template: 'Are you sure you want to delete <b>' + item.name +'</b> ?',
             success: {
                 label: 'Delete',
                 fn: function(){
                     $('.loading').show();
-                    id = $scope.deleteHostId;
-                    $http.delete('/api/hosts/' + id)
+                    id = $scope.deleteItemId;
+                    $http.delete('/api/teams/' + id)
                     .success(function() {
                         setTimeout($scope.update, 100);
                     });
@@ -71,10 +69,10 @@ function HostsListController($scope, $routeParams, Hosts, $http, $location, crea
     };
 }
 
-function HostController($scope, $routeParams, Hosts, $http, $location) {
+function TeamController($scope, $routeParams, Teams, $http, $location) {
     $scope.update = function() {
-        Hosts.get({id: $routeParams.id}, function(infos) {
-            $scope.host = infos.host;
+        Teams.get({id: $routeParams.id}, function(infos) {
+            $scope.team = infos.team;
             $scope.resource = infos;
         })
     };

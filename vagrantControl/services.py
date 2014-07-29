@@ -9,6 +9,8 @@ from vagrantControl import db
 from vagrantControl.models.vagrant import VagrantBackend
 from vagrantControl.models.project import Project
 from vagrantControl.models.host import Host
+from vagrantControl.models.team import Team
+from vagrantControl.models.user import User
 
 from settings import DOMAINS_API_URL, DOMAINS_API_PORT
 from settings import HTPASSWORD_API_URL, HTPASSWORD_API_PORT
@@ -43,6 +45,7 @@ user_fields = {
 host_fields = {
     'id': fields.String,
     'name': fields.String,
+    'provider': fields.String,
     'params': fields.String,
 }
 
@@ -378,7 +381,12 @@ class HostApi(RestrictedResource):
 
     def post(self, id=None):
         if 'state' in request.json and request.json['state'] == 'create':
-            host = Host(None, request.json['name'], request.json['params'])
+            host = Host(
+                None,
+                request.json['name'],
+                request.json['params'],
+                request.json['provider']
+            )
             db.session.add(host)
             db.session.commit()
         else:
@@ -395,4 +403,76 @@ class HostApi(RestrictedResource):
     def delete(self, id):
         host = Host.query.get(id)
         db.session.delete(host)
+        db.session.commit()
+
+
+class TeamApi(RestrictedResource):
+    def get(self, id=None):
+        if id is None:
+            teams = Team.query.order_by('name')
+            return {
+                'teams': map(lambda t: marshal(t, team_fields), teams),
+            }
+        else:
+            team = Team.query.get(id)
+            return {'team': marshal(team, team_fields)}
+
+    def post(self, id=None):
+        if 'state' in request.json and request.json['state'] == 'create':
+            team = Team(
+                None,
+                request.json['name'],
+            )
+            db.session.add(team)
+            db.session.commit()
+        else:
+            team = Team.query.get(id)
+            # @TODO add update support
+
+        return {
+            'team': marshal(team, team_fields),
+        }
+
+    def put(self, id):
+        pass
+
+    def delete(self, id):
+        team = Team.query.get(id)
+        db.session.delete(team)
+        db.session.commit()
+
+
+class UserApi(RestrictedResource):
+    def get(self, id=None):
+        if id is None:
+            users = User.query.order_by('name')
+            return {
+                'users': map(lambda t: marshal(t, user_fields), users),
+            }
+        else:
+            user = User.query.get(id)
+            return {'user': marshal(user, user_fields)}
+
+    def post(self, id=None):
+        if 'state' in request.json and request.json['state'] == 'create':
+            user = User(
+                None,
+                request.json['name'],
+            )
+            db.session.add(user)
+            db.session.commit()
+        else:
+            user = User.query.get(id)
+            # @TODO add update support
+
+        return {
+            'user': marshal(user, user_fields),
+        }
+
+    def put(self, id):
+        pass
+
+    def delete(self, id):
+        user = User.query.get(id)
+        db.session.delete(user)
         db.session.commit()

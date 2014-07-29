@@ -13,6 +13,8 @@ from vagrantControl.services import DomainsApi
 from vagrantControl.services import HtpasswordApi, HtpasswordListApi
 from vagrantControl.services import ProjectApi
 from vagrantControl.services import HostApi
+from vagrantControl.services import TeamApi
+from vagrantControl.services import UserApi
 from vagrantControl.models.user import User
 
 
@@ -252,3 +254,9 @@ api.add_resource(ProjectApi, '/api/projects/<int:id>')
 
 api.add_resource(HostApi, '/api/hosts', endpoint='hosts')
 api.add_resource(HostApi, '/api/hosts/<int:id>')
+
+api.add_resource(TeamApi, '/api/teams', endpoint='teams')
+api.add_resource(TeamApi, '/api/teams/<int:id>')
+
+api.add_resource(UserApi, '/api/users', endpoint='users')
+api.add_resource(UserApi, '/api/users/<int:id>')

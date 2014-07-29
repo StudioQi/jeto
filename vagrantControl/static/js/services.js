@@ -44,4 +44,13 @@ angular.module('angularFlaskServices', ['ngResource'])
             }
         });
     })
+    .factory('Teams', function($resource) {
+        return $resource('/api/teams/:id', {id:'@id'}, {
+            query: {
+                method: 'GET',
+                params: { id: '' },
+                isArray: true
+            }
+        });
+    })
 ;

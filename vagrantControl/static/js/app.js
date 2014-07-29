@@ -41,7 +41,11 @@ angular.module('AngularFlask', ['angularFlaskServices', 'angularFlaskFilters', '
                 })
                 .when('/admin/teams', {
                     templateUrl: '/partials/admin/teams/list.html',
-                    controller: IndexController
+                    controller: TeamsListController
+                })
+                .when('/admin/teams/:id', {
+                    templateUrl: '/partials/admin/teams/item.html',
+                    controller: TeamController
                 })
                 .when('/admin/hosts', {
                     templateUrl: '/partials/admin/hosts/list.html',
@@ -53,7 +57,7 @@ angular.module('AngularFlask', ['angularFlaskServices', 'angularFlaskFilters', '
                 })
                 .when('/admin/users', {
                     templateUrl: '/partials/admin/users/list.html',
-                    controller: IndexController
+                    controller: UsersListController
                 })
                 .otherwise({
                     redirectTo: '/'

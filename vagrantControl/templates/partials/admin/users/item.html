@@ -1,0 +1,33 @@
+{% set breadcrumbs = [(_('Administration'),'/admin'),(_('Users'), '/admin/users'), ('[[ user.name ]]',),] %}
+{% set titleSuffix = 'Users - [[ user.name ]]' %}
+{% extends 'partials/admin/partialBase.html' %}
+
+{% block contentAdmin %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                [[ user.name ]]
+            </div>
+            <table class="table">
+                <tr>
+                    <th>{{ _('ID') }}</th>
+                    <td>[[ user.id ]]</td>
+                </tr>
+                <tr>
+                    <th>{{ _('Name') }}</th>
+                    <td>[[ user.name ]]</td>
+                </tr>
+                <tr>
+                    <th>{{ _('Email') }}</th>
+                    <td>[[ user.email ]]</td>
+                </tr>
+                <tr>
+                    <th>{{ _('Role') }}</th>
+                    <td>[[ user.role ]]</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

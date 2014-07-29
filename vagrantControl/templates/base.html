@@ -19,6 +19,8 @@
     <script src="/static/js/controllers/instances.js"></script>
     <script src="/static/js/controllers/project.js"></script>
     <script src="/static/js/controllers/host.js"></script>
+    <script src="/static/js/controllers/team.js"></script>
+    <script src="/static/js/controllers/user.js"></script>
     <script src="/static/js/services.js"></script>
     <script src="/static/js/filters.js"></script>
 
@@ -53,7 +55,7 @@
                 <li><a href="/instances">{{ _('Instances') }}</a></li>
                 <li><a href="/domains">{{ _('Domains') }}</a></li>
                 <li><a href="/htpassword">{{ _('Security') }}</a></li>
-                <li><a href="/admin">{{ _('Administration') }}</a></li>
+                {% if g.user.is_admin() %}<li><a href="/admin">{{ _('Administration') }}</a></li>{% endif %}
             </ul>
           {% endif %}
           <ul class="nav navbar-nav navbar-right">

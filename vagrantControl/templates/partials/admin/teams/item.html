@@ -1,5 +1,5 @@
-{% set breadcrumbs = [(_('Administration'),'/admin'),(_('Host'), '/admin/hosts'), ('[[ host.name ]]',),] %}
-{% set titleSuffix = 'Hosts - [[ host.name ]]' %}
+{% set breadcrumbs = [(_('Administration'),'/admin'),(_('Teams'), '/admin/teams'), ('[[ team.name ]]',),] %}
+{% set titleSuffix = 'Teams - [[ team.name ]]' %}
 {% extends 'partials/admin/partialBase.html' %}
 
 {% block contentAdmin %}
@@ -7,16 +7,16 @@
     <div class="col-md-6">
         <div class="panel panel-default">
             <div class="panel-heading">
-                [[ host.name ]]
+                [[ team.name ]]
             </div>
             <table class="table">
                 <tr>
                     <th>{{ _('ID') }}</th>
-                    <td>[[ host.id ]]</td>
+                    <td>[[ team.id ]]</td>
                 </tr>
                 <tr>
                     <th>{{ _('Provider') }}</th>
-                    <td>[[ host.provider ]]</td>
+                    <td>[[ team.provider ]]</td>
                 </tr>
             </table>
         </div>
@@ -24,11 +24,10 @@
     <div class="col-md-6">
         <div class="panel panel-default">
             <div class="panel-heading">
-                {{ _('Parameters') }} 
+                {{ _('Users') }} 
             </div>
 
             <div class="panel-body">
-                [[ host.params ]]
             </div>
         </div>
     </div>
