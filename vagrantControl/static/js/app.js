@@ -29,7 +29,7 @@ angular.module('AngularFlask', ['angularFlaskServices', 'angularFlaskFilters', '
                 })
                 .when('/admin', {
                     templateUrl: '/partials/admin/index.html',
-                    controller: IndexController
+                    controller: AdminController
                 })
                 .when('/admin/projects', {
                     templateUrl: '/partials/admin/projects/list.html',

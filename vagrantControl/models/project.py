@@ -10,7 +10,6 @@ class Project(db.Model):
     instances = db.relationship(
         'VagrantInstance',
         backref='project',
-        lazy='dynamic'
     )
 
     def __init__(self, id, name, instances=[]):

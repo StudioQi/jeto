@@ -56,11 +56,13 @@ host_fields = {
 project_fields = {
     'id': fields.String,
     'name': fields.String,
+    'instances': fields.Nested(instance_fields)
 }
 
 team_fields = {
     'id': fields.String,
     'name': fields.String,
+    'users': fields.Nested(user_fields)
 }
 
 
@@ -414,6 +416,7 @@ class TeamApi(RestrictedResource):
     def get(self, id=None):
         if id is None:
             teams = Team.query.order_by('name')
+            print teams[1].users
             return {
                 'teams': map(lambda t: marshal(t, team_fields), teams),
             }

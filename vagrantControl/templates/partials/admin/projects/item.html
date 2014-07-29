@@ -29,11 +29,13 @@
                     <th>{{ _('ID') }}</th>
                     <th>{{ _('Name') }}</th>
                     <th>{{ _('Path') }}</th>
+                    <th></th>
                 </tr>
-                <tr>
-                    <td>id of first machine</td>
-                    <td>name of first machine</td>
-                    <td>path of first machine</td>
+                <tr ng-repeat="instance in project.instances">
+                    <td>[[ instance.id ]]</td>
+                    <td>[[ instance.name ]]</td>
+                    <td>[[ instance.path ]]</td>
+                    <td><a href="/instances/[[ instance.id ]]">{{ _('View') }}</a></td>
                 </tr>
             </table>
         </div>

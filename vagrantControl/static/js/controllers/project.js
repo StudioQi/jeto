@@ -71,7 +71,6 @@ function ProjectController($scope, $routeParams, Projects, $http, $location) {
     $scope.update = function() {
         Projects.get({id: $routeParams.id}, function(infos) {
             $scope.project = infos.project;
-            console.log($scope.project);
             $scope.resource = infos;
         })
     };

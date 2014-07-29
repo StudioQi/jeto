@@ -9,7 +9,7 @@
             <div class="panel-heading">
                 [[ team.name ]]
             </div>
-            <table class="table">
+            <table class="table table-bordered">
                 <tr>
                     <th>{{ _('ID') }}</th>
                     <td>[[ team.id ]]</td>
@@ -22,9 +22,18 @@
             <div class="panel-heading">
                 {{ _('Users') }} 
             </div>
-
-            <div class="panel-body">
-            </div>
+            <table class="table table-bordered">
+                <tr>
+                    <th>{{ _('Name') }}</th>
+                    <th>{{ _('E-mail') }}</th>
+                    <th></th>
+                </tr>
+                <tr ng-repeat="user in team.users">
+                    <td>[[ user.name ]]</td>
+                    <td>[[ user.email ]]</td>
+                    <td><a href="/admin/users/[[ user.id ]]">{{ _('View') }}</a></td>
+                </tr>
+            </table>
         </div>
     </div>
 </div>
