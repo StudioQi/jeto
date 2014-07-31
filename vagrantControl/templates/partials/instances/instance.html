@@ -9,7 +9,7 @@
             <div class="panel-heading">
                 [[ instance.name ]]
             </div>
-            <table class="table">
+            <table class="table table-bordered">
                 <tr>
                     <th>{{ _('ID') }}</th>
                     <td>[[ instance.id ]]</td>
@@ -21,6 +21,10 @@
                 <tr>
                     <th>{{ _('Environment') }}</th>
                     <td>[[ instance.environment ]]</td>
+                </tr>
+                <tr>
+                    <th>{{ _('Project') }}</th>
+                    <td>[[ instance.project.name ]]</td>
                 </tr>
             </table>
         </div>

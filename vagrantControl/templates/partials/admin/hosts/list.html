@@ -31,6 +31,11 @@
                   </div>
               </td>
             </tr> 
+            <tr ng-show="!hosts.length">
+                <td colspan="2">
+                    {{ _('No host are defined. Use the button at the top of the page') }}
+                </td>
+            </tr>
           </tbody>
         </table>
       </div>

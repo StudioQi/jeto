@@ -69,15 +69,66 @@ function TeamsListController($scope, $routeParams, Teams, $http, $location, crea
     };
 }
 
-function TeamController($scope, $routeParams, Teams, $http, $location) {
-    $scope.update = function() {
+function TeamController($scope, $routeParams, Teams, Users, $http, $location) {
+    // Will fetch the team and all the infos with it
+    $scope.init = function() {
         Teams.get({id: $routeParams.id}, function(infos) {
             $scope.team = infos.team;
             $scope.resource = infos;
-        })
+            $scope.update();
+        });
     };
-    $scope.update();
-    $scope.resetInfos = function(){
-       setTimeout($scope.update, 100);
+    // Will fetch all users and remove those already in team.users
+    // Used in the "Add user" box, also called to filter out values
+    // when a new user is added into the team
+    $scope.update = function() {
+        Users.get({}, function(infos) {
+            $scope.users = infos.users.filter(function(value) {
+                keepItem = true;
+                angular.forEach($scope.team.users, function(teamUser){
+                    if(keepItem == true && value.id == teamUser.id){
+                        keepItem = false;
+                    }
+                });
+                return keepItem;
+            });
+        });
+    }
+
+    $scope.init();
+    $scope.add = function() {
+        if($scope.newUser !== ''){
+            Users.get({id: $scope.newUser}, function(infos) {
+                user = infos.user;
+                found = false;
+                angular.forEach($scope.team.users, function(value) {
+                    if(found == false && value.id == user.id){
+                        found = true;
+                    }
+                }, this);
+                if(found == false){
+                    $scope.team.users.push(infos.user);
+                }
+                $scope.update();
+            });
+        }
+    }
+    $scope.removeUser = function(user) {
+        $scope.team.users = $scope.team.users.filter(function(value) {
+            return user.id != value.id;
+        });
+        $scope.update();
+    }
+    $scope.save = function() {
+        lstUsers = Array();
+        angular.forEach($scope.team.users, function(value) {
+            lstUsers.push(value.id);
+        }, lstUsers);
+        $http.put('/api/teams/' + $scope.team.id, {
+            users: lstUsers
+        })
+        .success(function(){
+            $location.path('/admin/teams');
+        });
     };
 }

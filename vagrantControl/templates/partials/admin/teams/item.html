@@ -4,7 +4,7 @@
 
 {% block contentAdmin %}
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-3">
         <div class="panel panel-default">
             <div class="panel-heading">
                 [[ team.name ]]
@@ -17,11 +17,26 @@
             </table>
         </div>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-9">
         <div class="panel panel-default">
             <div class="panel-heading">
                 {{ _('Users') }} 
             </div>
+            <div class="panel-body">
+            <form class="form">
+                <div class="row">
+                    <div class="col-md-9">
+                        <select ui-select2 ng-model="newUser" data-placeholder="{{ _('Select user') }}" class="form-control">
+                            <option></option>
+                            <option ng-repeat="user in users" value="[[ user.id ]]">[[ user.name ]]</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn btn-success pull-right" ng-click="add()">{{ _('Add to the team') }}</button>
+                    </div>
+                </div>
+            </form>
+        </div>
             <table class="table table-bordered">
                 <tr>
                     <th>{{ _('Name') }}</th>
@@ -32,8 +47,29 @@
                     <td>[[ user.name ]]</td>
                     <td>[[ user.email ]]</td>
                     <td><a href="/admin/users/[[ user.id ]]">{{ _('View') }}</a></td>
+                    <td><button ng-click="removeUser(user)" class="btn btn-danger"><span class="glyphicon glyphicon-trash" /><span class="sr-only">{{ _('Delete') }}</button></td>
+                </tr>
+                <tr ng-show="!team.users.length">
+                    <td colspan="4">
+                        {{ _('This team is empty! Add new user in the team at the top of the page.') }}
+                    </td>
                 </tr>
             </table>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="btn-group">
+            <button ng-click="delete(team)" class="btn btn-danger"><span class="glyphicon glyphicon-trash" /><span class="sr-only">{{ _('Delete') }}</button>
+        </div>
+    </div>
+    <div class="col-md-6 pull-right">
+        <div class="btn-group pull-right">
+            <button ng-click="save()" class="btn btn-primary">{{ _('Save') }}</button>
+        </div>
+        <div class="btn-group pull-right">
+            <a href="/admin/teams">{{ _('Cancel') }}</a>
         </div>
     </div>
 </div>

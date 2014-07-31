@@ -1,4 +1,4 @@
-angular.module('AngularFlask', ['angularFlaskServices', 'angularFlaskFilters', 'fundoo.services'])
+angular.module('AngularFlask', ['angularFlaskServices', 'angularFlaskFilters', 'fundoo.services', 'ui.select2'])
     .config(['$routeProvider', '$locationProvider', '$interpolateProvider',
         function($routeProvider, $locationProvider, $interpolateProvider) {
             $locationProvider.html5Mode(true);

@@ -10,7 +10,7 @@
             <div class="panel-heading">
                 [[ project.name ]]
             </div>
-            <table class="table">
+            <table class="table table-bordered">
                 <tr>
                     <th>{{ _('ID') }}</th>
                     <td>[[ project.id ]]</td>
@@ -36,6 +36,11 @@
                     <td>[[ instance.name ]]</td>
                     <td>[[ instance.path ]]</td>
                     <td><a href="/instances/[[ instance.id ]]">{{ _('View') }}</a></td>
+                </tr>
+                <tr ng-show="!project.instances.length">
+                    <td colspan="4">
+                        {{ _('No machine are assigned to this project yet.') }}
+                    </td>
                 </tr>
             </table>
         </div>

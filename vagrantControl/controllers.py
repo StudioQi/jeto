@@ -1,8 +1,13 @@
 from flask import render_template, send_file, Response, session, url_for
-from flask import redirect, g, flash, abort
+from flask import redirect, g, flash, abort, current_app
 from flask.ext.login import login_user, logout_user
 from flask.ext.login import current_user, login_required
 from flask.ext.babel import gettext as _
+
+from flask.ext.principal import Identity, AnonymousIdentity
+from flask.ext.principal import identity_changed, identity_loaded
+from flask.ext.principal import UserNeed, RoleNeed
+
 from requests import get
 import ansiconv
 
@@ -86,11 +91,45 @@ def authorized(resp):
                     family_name=data['family_name'],
                     picture=data['picture'])
 
+    identity_changed.send(current_app._get_current_object(),
+                          identity=Identity(user.id))
     db.session.add(user)
     db.session.commit()
 
     login_user(user)
     return redirect(url_for('index'))
+
+@identity_loaded.connect_via(app)
+def on_identity_loaded(sender, identity):
+    identity.user = current_user
+    if hasattr(current_user, 'id'):
+        identity.provides.add(UserNeed(current_user.id))
+        identity.provides.add(RoleNeed(current_user.role))
+        _set_permissions(current_user.permissions_grids)
+        if current_user.teams:
+            for team in current_user.teams:
+                _set_permissions(team.permissions_grids)
+
+
+def _set_permissions(permissions_grids):
+    if permissions_grids is not None:
+        for permission in permissions_grids:
+            if permission.objectType == 'Host' and permission.action == 'View':
+                identity.provides.add(ViewHostPermission(permission.objectId))
+            if permission.objectType == 'Project':
+                project = Project.query.get(permission.objectId)
+                for instance in project.instances:
+                    if ViewHostPermission(instance.host.id).can():
+                        if permission.action == 'start':
+                            identity.provides.add(StartInstancePermission(instance.id))
+                        if permission.action == 'stop':
+                            identity.provides.add(StartInstancePermission(instance.id))
+                        if permission.action == 'provision':
+                            identity.provides.add(ProvisionInstancePermission(instance.id))
+                        if permission.action == 'destroy':
+                            identity.provides.add(DestroyInstancePermission(instance.id))
+                        if permission.action == 'view':
+                            identity.provides.add(ViewInstancePermission(instance.id))
 
 
 @app.route('/login')
@@ -105,6 +144,13 @@ def logout():
     session.pop('access_token')
     if 'jobs' in session:
         session.pop('jobs')
+
+    # Remove session keys set by Flask-Principal
+    for key in ('identity.name', 'identity.auth_type'):
+        session.pop(key, None)
+
+    identity_changed.send(current_app._get_current_object(),
+                          identity=AnonymousIdentity())
     flash(_("I'll miss you..."))
     return redirect(url_for('index'))
 
@@ -259,4 +305,4 @@ api.add_resource(TeamApi, '/api/teams', endpoint='teams')
 api.add_resource(TeamApi, '/api/teams/<int:id>')
 
 api.add_resource(UserApi, '/api/users', endpoint='users')
-api.add_resource(UserApi, '/api/users/<int:id>')
+api.add_resource(UserApi, '/api/users/<id>')

@@ -1,11 +1,4 @@
-function InstancesController($scope, Instances, $http, createDialog, $log) {
-    var instancesQuery = Instances.get({}, function(infos) {
-        $scope.instances = infos.instances;
-        $scope.stopped = infos.stopped;
-        $scope.running = infos.running;
-        $scope.resource = infos;
-    });
-
+function InstancesController($scope, Instances, Projects, Hosts, $http, createDialog, $log) {
     $scope.states = [
         {label: 'Development', type:'dev'},
         {label: 'Sandbox', type:'sandbox'},
@@ -14,18 +7,24 @@ function InstancesController($scope, Instances, $http, createDialog, $log) {
     ];
 
     $scope.updateInfos = function() {
-        var instancesQuery = Instances.get({}, function(infos) {
+        Instances.get({}, function(infos) {
             $scope.instances = infos.instances;
-            $scope.stopped = infos.stopped;
-            $scope.running = infos.running;
-            $scope.resource = infos;
-            $('.loading').hide();
         });
+        Projects.get({}, function(infos) {
+            $scope.projects = infos.projects;
+        });
+        Hosts.get({}, function(infos) {
+            $scope.hosts = infos.hosts;
+        });
+        $('.loading').hide();
     };
+    $scope.updateInfos();
 
     $scope.instanceInfo = {
         'name': '',
+        'environment': '',
         'path': '',
+        'project': '',
     };
 
     $scope.create = function() {
@@ -42,6 +41,7 @@ function InstancesController($scope, Instances, $http, createDialog, $log) {
                    instance.name = $scope.instanceInfo.name;
                    instance.path = $scope.instanceInfo.path;
                    instance.environment = $scope.instanceInfo.environment;
+                   instance.project = $scope.instanceInfo.project;
                    instance.state = 'create';
                    instance.$save();
                    setTimeout($scope.updateInfos, 100);

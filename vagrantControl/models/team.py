@@ -23,9 +23,12 @@ class Team(db.Model):
     users = db.relationship(
         'User',
         secondary=teams_users,
-        backref=db.backref('users', lazy='dynamic')
+        backref=db.backref('users', lazy='dynamic'),
     )
-
+    permissions_grids = db.relationship(
+        'TeamPermissionsGrids',
+        backref='team',
+    )
     def __init__(self, id, name, users=[]):
         self.id = id
         self.name = name

@@ -6,6 +6,7 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.babel import Babel
 from flask_oauth import OAuth
 from flask.ext.login import LoginManager
+from flask.ext.principal import Principal
 
 handler = FileHandler('/var/log/vagrant-control/debug.log')
 formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
@@ -19,6 +20,7 @@ app.logger.addHandler(handler)
 db = SQLAlchemy(app)
 babel = Babel(app)
 oauth = OAuth()
+principal = Principal(app)
 
 google = oauth.remote_app('google',
                           base_url='https://www.google.com/accounts/',
@@ -35,6 +37,7 @@ google = oauth.remote_app('google',
 lm = LoginManager(app)
 
 import vagrantControl.core
+import vagrantControl.models.permission
 import vagrantControl.models.vagrant
 import vagrantControl.models.team
 import vagrantControl.models.host

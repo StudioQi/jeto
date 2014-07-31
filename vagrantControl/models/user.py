@@ -1,6 +1,7 @@
 # -=- encoding: utf-8 -=-
 
 from vagrantControl import db
+from vagrantControl.models.team import teams_users
 
 ROLE_DEV = 'dev'
 ROLE_ADMIN = 'admin'
@@ -15,6 +16,27 @@ class User(db.Model):
     picture = db.Column(db.String(256))
     role = db.Column(db.String(32), default=ROLE_DEV)
     last_login = db.Column(db.DateTime)
+    teams = db.relationship(
+        'Team',
+        secondary=teams_users,
+        backref=db.backref('teams', lazy='dynamic')
+    )
+    permissions_grids = db.relationship(
+        'UserPermissionsGrids',
+        backref='user',
+    )
+
+    def __init__(self, id, name, email, given_name,
+                 family_name, picture, role=ROLE_DEV, last_login=None,
+                 permissions_grids=None):
+        self.id = id
+        self.name = name
+        self.email = email
+        self.given_name = given_name
+        self.family_name = family_name
+        self.picture = picture
+        self.role = role
+        self.last_login = last_login
 
     def __unicode__(self):
         return 'User {} : {}, Role :{}'.format(

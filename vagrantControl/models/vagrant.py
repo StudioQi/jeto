@@ -1,8 +1,9 @@
 # -=- encoding: utf-8 -=-
 
-from vagrantControl import db
+from vagrantControl import db, app
 from vagrantControl.core import redis_conn, is_async
 from vagrantControl.settings import ETH
+from vagrantControl.models.project import Project
 
 import re
 import time
@@ -52,8 +53,11 @@ class VagrantBackend(BackendProvider):
         else:
             environment = ''
 
+        project = Project.query.get(request['project'])
+        app.logger.debug(project)
         instance = VagrantInstance(None, request['path'], request['name'],
                                    environment)
+        instance.project = project
         db.session.add(instance)
         db.session.commit()
 
@@ -84,6 +88,10 @@ class VagrantInstance(db.Model):
     project_id = db.Column(
         db.Integer,
         db.ForeignKey('project.id')
+    )
+    host_id = db.Column(
+        db.Integer,
+        db.ForeignKey('host.id')
     )
 
     def __init__(self, id, path, name, environment):

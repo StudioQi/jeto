@@ -6,6 +6,7 @@ Flask-SQLAlchemy==1.0
 Flask-OAuth
 Flask-Login
 Flask-Script==2.0.5
+Flask-Principal==0.4.0
 Jinja2==2.7
 MarkupSafe==0.18
 SQLAlchemy==0.8.2

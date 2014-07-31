@@ -5,7 +5,7 @@ from flask import request, json, abort
 from flask.ext.restful import Resource, fields, marshal_with, marshal
 from flask.ext.login import current_user
 
-from vagrantControl import db
+from vagrantControl import db, app
 from vagrantControl.models.vagrant import VagrantBackend
 from vagrantControl.models.project import Project
 from vagrantControl.models.host import Host
@@ -17,6 +17,12 @@ from settings import HTPASSWORD_API_URL, HTPASSWORD_API_PORT
 # from time import sleep
 
 
+
+project_wo_instance_fields = {
+    'id': fields.String,
+    'name': fields.String,
+}
+
 instance_fields = {
     'id': fields.String,
     'name': fields.String,
@@ -24,6 +30,13 @@ instance_fields = {
     'status': fields.List(fields.String),
     'ip': fields.String,
     'environment': fields.String,
+    'project': fields.Nested(project_wo_instance_fields),
+}
+
+project_fields = {
+    'id': fields.String,
+    'name': fields.String,
+    'instances': fields.Nested(instance_fields)
 }
 
 domain_fields = {
@@ -51,12 +64,6 @@ host_fields = {
     'name': fields.String,
     'provider': fields.String,
     'params': fields.String,
-}
-
-project_fields = {
-    'id': fields.String,
-    'name': fields.String,
-    'instances': fields.Nested(instance_fields)
 }
 
 team_fields = {
@@ -304,7 +311,6 @@ class HtpasswordListApi(Resource, HtpasswordService):
     def put(self, slug):
         users = request.json['users']
         for user in users:
-            print user
             if 'state' in user:
                 if user['state'] == 'DELETE':
                     req.delete(self._get_url(slug) +
@@ -416,7 +422,6 @@ class TeamApi(RestrictedResource):
     def get(self, id=None):
         if id is None:
             teams = Team.query.order_by('name')
-            print teams[1].users
             return {
                 'teams': map(lambda t: marshal(t, team_fields), teams),
             }
@@ -441,7 +446,15 @@ class TeamApi(RestrictedResource):
         }
 
     def put(self, id):
-        pass
+        team = Team.query.get(id)
+        usersId = request.json['users']
+        users = []
+        for userId in usersId:
+            users.append(User.query.get(userId))
+
+        team.users = users
+        db.session.add(team)
+        db.session.commit()
 
     def delete(self, id):
         team = Team.query.get(id)

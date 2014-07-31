@@ -9,6 +9,10 @@ class Host(db.Model):
     name = db.Column(db.String(128))
     params = db.Column(db.Text)
     provider = db.Column(db.String(128))
+    instances = db.relationship(
+        'VagrantInstance',
+        backref='host',
+    )
 
     def __init__(self, id, name, params, provider):
         self.id = id
