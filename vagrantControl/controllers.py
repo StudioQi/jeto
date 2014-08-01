@@ -179,11 +179,9 @@ def pubsub(instanceId=None):
         jobs = session['jobs']
         # session['jobs'] = []
         for job in jobs:
-            app.logger.debug(job)
             if instanceId is not None and \
                     int(instanceId) == int(job['instanceId']):
                 console = _read_console(job['jobId'])
-                app.logger.debug(console)
                 output += console\
                     .replace('\n', '<br />')\
                     .replace('#BEGIN#', '')\

@@ -26,25 +26,36 @@
                     <th>{{ _('Project') }}</th>
                     <td>[[ instance.project.name ]]</td>
                 </tr>
+                <tr>
+                    <th>{{ _('Host') }}</th>
+                    <td>[[ instance.host.name ]] - [[ instance.host.provider ]]</td>
+                </tr>
             </table>
         </div>
     </div>
 
-    <div class="col-md-6 pull-right">
+    <div class="col-md-6 pull-right" ng-repeat="machine in instance.status">
         <div class="panel panel-default">
             <div class="panel-heading">
-                Status
+                Status <em>[[ machine.name ]]</em>
             </div>
             <table class="table table-bordered">
                 <tr>
                     <th>Currently</th>
-                    <td><span ng-bind="instance.status"></span></td>
+                    <td><span ng-bind="machine.status"></span></td>
                 </tr>
                 <tr>
                     <th>IP</th>
                     <td><span ng-bind="instance.ip"></span></td>
                 </tr>
             </table>
+            <div class="panel-footer">
+                <div class="btn-group">        
+                    <button type="button" class="btn btn-warning" ng-bind-html="[[instance.state]]" ng-click="control('stop')">{{ _('Stop') }}</button>
+                    <button type="button" class="btn btn-primary" ng-bind-html="[[instance.state]]" ng-click="control('provision')">{{ _('Provision') }}</button>
+                    <button type="button" class="btn btn-primary">{{ _('Start') }}</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -56,18 +67,6 @@
         </div>
     </div>
     <div class="col-md-4 pull-right">
-         <div class="btn-group pull-right">        
-            <button type="button" class="btn btn-warning" ng-bind-html="[[instance.state]]" ng-click="control('stop')">{{ _('Stop') }}</button>
-            <button type="button" class="btn btn-primary" ng-bind-html="[[instance.state]]" ng-click="control('provision')">{{ _('Provision') }}</button>
-            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-              {{ _('Start') }} <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu" role="menu">
-              <li><a href="#" ng-click="control('start-lxc')">LXC</a></li>
-              <li><a href="#" ng-click="control('start-virtualbox')">VirtualBox</a></li>
-              <li><a href="#" ng-click="control('start-vsphere')">vSphere</a></li>
-            </ul>
-        </div>
     </div>
 </div>
 <br />

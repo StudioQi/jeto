@@ -30,6 +30,7 @@
           <thead>
               <th>{{ _("Name") }}</th>
               <th>{{ _("Project") }}</th>
+              <th>{{ _("Hosts") }}</th>
               <th>{{ _("Path") }}</th>
               <th>{{ _("Environment") }}</th>
               <th></th>
@@ -43,6 +44,9 @@
                   [[ instance.project.name ]]
               </td>
               <td>
+                  [[ instance.host.name ]]
+              </td>
+              <td>
                   [[ instance.path ]]
               </td>
               <td>
@@ -54,17 +58,6 @@
                 </div>
                 <div class="btn-group pull-right">        
                     <button href="#" ng-click="delete(instance.id, instance.name)" class="btn btn-danger"><span class="glyphicon glyphicon-trash" /></button>
-                </div>
-                 <div class="btn-group pull-right">        
-                    <button ng-click="control(instance.id, 'stop')" class="btn btn-warning">{{ _('Stop') }}</button>
-                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                      {{ _('Start') }} <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu" role="menu">
-                      <li><a href="#" ng-click="control(instance.id, 'start-lxc')">LXC</a></li>
-                      <li><a href="#" ng-click="control(instance.id, 'start-virtualbox')">VirtualBox</a></li>
-                      <li><a href="#" ng-click="control(instance.id, 'start-vsphere')">vSphere</a></li>
-                    </ul>
                 </div>
               </td>
             </tr>

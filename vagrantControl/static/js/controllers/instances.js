@@ -42,6 +42,7 @@ function InstancesController($scope, Instances, Projects, Hosts, $http, createDi
                    instance.path = $scope.instanceInfo.path;
                    instance.environment = $scope.instanceInfo.environment;
                    instance.project = $scope.instanceInfo.project;
+                   instance.host = $scope.instanceInfo.host;
                    instance.state = 'create';
                    instance.$save();
                    setTimeout($scope.updateInfos, 100);
@@ -82,6 +83,7 @@ function InstancesController($scope, Instances, Projects, Hosts, $http, createDi
                 label: 'Yes, delete it',
                 fn: function(){
                     instanceId = $scope.deleteId;
+                    $('.loading').show();
                     $http.delete('/api/instances/' + instanceId)
                     .success(function(infos) {
                         setTimeout($scope.updateInfos, 100);

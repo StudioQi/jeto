@@ -5,7 +5,7 @@ from flask import request, json, abort
 from flask.ext.restful import Resource, fields, marshal_with, marshal
 from flask.ext.login import current_user
 
-from vagrantControl import db, app
+from vagrantControl import db
 from vagrantControl.models.vagrant import VagrantBackend
 from vagrantControl.models.project import Project
 from vagrantControl.models.host import Host
@@ -16,21 +16,32 @@ from settings import DOMAINS_API_URL, DOMAINS_API_PORT
 from settings import HTPASSWORD_API_URL, HTPASSWORD_API_PORT
 # from time import sleep
 
-
-
 project_wo_instance_fields = {
     'id': fields.String,
     'name': fields.String,
+}
+
+host_fields = {
+    'id': fields.String,
+    'name': fields.String,
+    'provider': fields.String,
+    'params': fields.String,
+}
+
+status_fields = {
+    'name': fields.String,
+    'status': fields.String,
 }
 
 instance_fields = {
     'id': fields.String,
     'name': fields.String,
     'path': fields.String,
-    'status': fields.List(fields.String),
+    'status': fields.Nested(status_fields),
     'ip': fields.String,
     'environment': fields.String,
     'project': fields.Nested(project_wo_instance_fields),
+    'host': fields.Nested(host_fields),
 }
 
 project_fields = {
@@ -57,13 +68,6 @@ user_fields = {
     'name': fields.String,
     'email': fields.String,
     'role': fields.String,
-}
-
-host_fields = {
-    'id': fields.String,
-    'name': fields.String,
-    'provider': fields.String,
-    'params': fields.String,
 }
 
 team_fields = {
@@ -185,7 +189,6 @@ class InstanceApi(Resource):
 class DomainsApi(Resource):
     def get(self):
         r = req.get(self._get_url(), headers=self._get_headers())
-        # app.logger.debug(r.json())
         domains = r.json()['domains']
 
         return {
@@ -236,7 +239,6 @@ class DomainsApi(Resource):
 
         data = json.dumps({'site': domain, 'ip': ip, 'htpasswd': htpasswd,
                            'sslkey': sslkey})
-        # app.logger.debug(data)
         r = req.put(self._get_url() + '/{}'.format(slug),
                     headers=self._get_headers(),
                     data=data)

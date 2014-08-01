@@ -2,7 +2,7 @@ function InstanceController($scope, $routeParams, Instances, $http, createDialog
     $('.loading').show();
     Instances.get({id: $routeParams.id}, function(instance) {
         $scope.instance = instance;
-        console.log(instance);
+        console.log(instance.status);
         $scope.source = new EventSource('/pubsub/' + $scope.instance.id);
         $scope.source.addEventListener('message', pubsubCallback, false);
         $('.loading').hide();

@@ -4,9 +4,11 @@ from vagrantControl import db, app
 from vagrantControl.core import redis_conn, is_async
 from vagrantControl.settings import ETH
 from vagrantControl.models.project import Project
+from vagrantControl.models.host import Host
 
 import re
 import time
+import csv
 from flask import request, session
 from flask.ext.sqlalchemy import orm
 from flask.ext.login import current_user
@@ -54,10 +56,11 @@ class VagrantBackend(BackendProvider):
             environment = ''
 
         project = Project.query.get(request['project'])
-        app.logger.debug(project)
+        host = Host.query.get(request['host'])
         instance = VagrantInstance(None, request['path'], request['name'],
                                    environment)
         instance.project = project
+        instance.host = host
         db.session.add(instance)
         db.session.commit()
 
@@ -120,8 +123,29 @@ class VagrantInstance(db.Model):
 
     def _status(self):
         results = self._submit_job('status', path=self.path)
+        app.logger.debug(results)
+        results = results.split('\\n')
+        data = {}
+        data['timestamp'] = []
+        data['target'] = []
+        data['type'] = []
+        data['data'] = []
+
+        dictReader = csv.DictReader(results[1:-1], fieldnames = ['timestamp', 'target', 'type', 'data'], delimiter=',', restkey='data')
+        for row in dictReader:
+            for key in row:
+                data[key].append(row[key])
+
+        app.logger.debug(data)
+        return ''
         results = re.findall(r'.*states:\\n\\n(.*)\\n\\nTh.*', results, re.M)
         results = results[0].split('\\n')
+        machines = []
+        for result in results:
+            machineName, status = result.split('           ')
+            machines.append({'name': machineName, 'status': status})
+
+        return machines
         # We remove the whitespace in between each word
         results = [' '.join(result.split()) for result in results]
         return results
@@ -136,7 +160,7 @@ class VagrantInstance(db.Model):
             path=self.path,
             eth=ETH,
             environment=self.environment,
-            provider=provider
+            host=self.host
         )
         return results
 
@@ -169,7 +193,6 @@ class VagrantInstance(db.Model):
                 if 'jobs' not in session:
                     session['jobs'] = []
 
-                # app.logger.debug(job.id)
                 session['jobs'].append(
                     {
                         'jobId': job.id,

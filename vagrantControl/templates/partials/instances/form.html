@@ -2,6 +2,13 @@
     <div>
             <form class="form">
                 <div class="form-group">
+                    <label for="project">{{ _('Host') }}</label>
+                    <select name="host" id="host" ui-select2 ng-model="instanceInfo.host" class="form-control">
+                        <option value=""></option>
+                        <option ng-repeat="host in hosts" value="[[ host.id ]]">[[ host.name ]]</option>
+                    </select>
+                </div>
+                <div class="form-group">
                     <label for="project">{{ _('Project') }}</label>
                     <select name="project" id="project" ui-select2 ng-model="instanceInfo.project" class="form-control">
                         <option value=""></option>
