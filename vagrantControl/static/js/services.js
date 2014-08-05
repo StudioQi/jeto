@@ -8,6 +8,15 @@ angular.module('angularFlaskServices', ['ngResource'])
             }
         });
     })
+    .factory('MachineIP', function($resource) {
+        return $resource('/api/instances/:id/:machineName/ip', {id:'@id'}, {
+            query: {
+                method: 'GET',
+                params: { id: '', machineName: '' },
+                isArray: false
+            }
+        });
+    })
     .factory('Domains', function($resource) {
         return $resource('/api/domains/:slug', {slug:'@slug'}, {
             query: {

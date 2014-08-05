@@ -189,6 +189,7 @@ def pubsub(instanceId=None):
                 output = ansiconv.to_html(output)
                 if '#END#' in console:
                     session['jobs'].remove(job)
+                app.logger.debug(console)
 
     return Response('data: {}\n\n'.format(output),
                     mimetype='text/event-stream')
@@ -271,6 +272,12 @@ api.add_resource(
     InstancesApi,
     '/api/instances',
     endpoint='instances'
+)
+
+api.add_resource(
+    InstanceApi,
+    '/api/instances/<int:id>/<machineName>/ip',
+    endpoint='machines'
 )
 
 api.add_resource(

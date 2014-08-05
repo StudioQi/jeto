@@ -1,14 +1,12 @@
 # -=- encoding: utf-8 -=-
 
-from vagrantControl import db, app
+from vagrantControl import db
+from vagrantControl import app
 from vagrantControl.core import redis_conn, is_async
-from vagrantControl.settings import ETH
 from vagrantControl.models.project import Project
 from vagrantControl.models.host import Host
 
-import re
 import time
-import csv
 from flask import request, session
 from flask.ext.sqlalchemy import orm
 from flask.ext.login import current_user
@@ -70,17 +68,17 @@ class VagrantBackend(BackendProvider):
         instance = VagrantInstance.query.get(instanceId)
         instance.delete()
 
-    def provision(self, instanceId):
+    def provision(self, instanceId, machineName):
         instance = VagrantInstance.query.get(instanceId)
-        return instance.provision()
+        return instance.provision(machineName)
 
-    def stop(self, instanceId):
+    def stop(self, instanceId, machineName):
         instance = VagrantInstance.query.get(instanceId)
-        return instance.stop()
+        return instance.stop(machineName)
 
-    def start(self, instanceId, provider):
+    def start(self, instanceId, machineName):
         instance = VagrantInstance.query.get(instanceId)
-        return instance.start(provider)
+        return instance.start(machineName)
 
 
 class VagrantInstance(db.Model):
@@ -123,57 +121,88 @@ class VagrantInstance(db.Model):
 
     def _status(self):
         results = self._submit_job('status', path=self.path)
-        app.logger.debug(results)
+        machines = self._parse_status(results)
+        machinesFormatted = []
+        for machine, value in machines.iteritems():
+            machinesFormatted.append(
+                {
+                    'name': machine,
+                    'status': value['state-human-short'],
+                    #'ip': value['ip']
+                }
+            )
+
+        return machinesFormatted
+
+    def _parse_status(self, results):
         results = results.split('\\n')
-        data = {}
-        data['timestamp'] = []
-        data['target'] = []
-        data['type'] = []
-        data['data'] = []
-
-        dictReader = csv.DictReader(results[1:-1], fieldnames = ['timestamp', 'target', 'type', 'data'], delimiter=',', restkey='data')
-        for row in dictReader:
-            for key in row:
-                data[key].append(row[key])
-
-        app.logger.debug(data)
-        return ''
-        results = re.findall(r'.*states:\\n\\n(.*)\\n\\nTh.*', results, re.M)
-        results = results[0].split('\\n')
-        machines = []
+        results = results[1:-3]
+        formatted = []
+        item = []
         for result in results:
-            machineName, status = result.split('           ')
-            machines.append({'name': machineName, 'status': status})
+            result = result.replace('\\', ' ')
+            if ',' in result and len(item) > 0:
+                formatted.append(item)
+                item = []
 
+            if ',' in result:
+                item = result.split(',')
+                item[-1] = item[-1].replace('%!(VAGRANT_COMMA)', ',')
+                formatted.append(item)
+            else:
+                result = result.replace('%!(VAGRANT_COMMA)', ',')
+                item[-1] = item[-1] + result
+
+        withoutTimestamp = []
+        for item in formatted:
+            withoutTimestamp.append(item[1:])
+
+        machines = {}
+        for item in withoutTimestamp:
+            if item[0] not in machines:
+                machines[item[0]] = {}
+
+            machines[item[0]][item[1]] = item[2]
+
+        # for machineName, value in machines.iteritems():
+        #     machines[machineName]['ip'] = self._ip(machineName)
+
+        app.logger.debug(machines)
         return machines
-        # We remove the whitespace in between each word
-        results = [' '.join(result.split()) for result in results]
+
+    def _ip(self, machineName):
+        results = self._submit_job(
+            'ip',
+            path=self.path,
+            machineName=machineName
+        )
         return results
 
-    def _ip(self):
-        results = self._submit_job('ip', path=self.path)
-        return results
-
-    def start(self, provider=None):
+    def start(self, machineName='default'):
         results = self._submit_job(
             'run',
+            machineName=machineName,
             path=self.path,
-            eth=ETH,
             environment=self.environment,
             host=self.host
         )
         return results
 
-    def provision(self):
+    def provision(self, machineName):
         results = self._submit_job(
             'provision',
             path=self.path,
-            environment=self.environment
+            environment=self.environment,
+            machineName=machineName,
         )
         return results
 
-    def stop(self):
-        results = self._submit_job('stop', path=self.path)
+    def stop(self, machineName):
+        results = self._submit_job(
+            'stop',
+            path=self.path,
+            machineName=machineName
+        )
         return results
 
     def delete(self):

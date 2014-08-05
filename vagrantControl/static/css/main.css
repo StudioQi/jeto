@@ -84,9 +84,6 @@
 .bs-callout-info {
     background-color: #f4f8fa;
     border-color: #bce8f1;
-    h4 {
-        color: #3a87ad;
-    }
 }
 
 body {
@@ -140,7 +137,7 @@ a {
 #position {
     border: 2px solid #c3c3c3;
     border-radius: 20px;
-    background-color:none;
+/*background-color:none;*/
     display:none;
     height:25px;
     position:absolute;
@@ -209,3 +206,15 @@ a {
 .ansi45 { background-color: #FF00FF; }
 .ansi46 { background-color: #00FFFF; }
 .ansi47 { background-color: #FFFFFF; }
+
+.icon-refresh-animate {
+  animation-name: rotateThis;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+@keyframes rotateThis {
+  from { transform: scale( 1 ) rotate( 0deg );   }
+  to   { transform: scale( 1 ) rotate( 360deg ); }
+}

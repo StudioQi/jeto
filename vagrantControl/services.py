@@ -6,6 +6,7 @@ from flask.ext.restful import Resource, fields, marshal_with, marshal
 from flask.ext.login import current_user
 
 from vagrantControl import db
+from vagrantControl import app
 from vagrantControl.models.vagrant import VagrantBackend
 from vagrantControl.models.project import Project
 from vagrantControl.models.host import Host
@@ -31,6 +32,7 @@ host_fields = {
 status_fields = {
     'name': fields.String,
     'status': fields.String,
+    'ip': fields.String,
 }
 
 instance_fields = {
@@ -38,7 +40,6 @@ instance_fields = {
     'name': fields.String,
     'path': fields.String,
     'status': fields.Nested(status_fields),
-    'ip': fields.String,
     'environment': fields.String,
     'project': fields.Nested(project_wo_instance_fields),
     'host': fields.Nested(host_fields),
@@ -139,12 +140,16 @@ class InstanceApi(Resource):
     def __init__(self):
         self.backend = VagrantBackend()
 
-    @marshal_with(instance_fields)
-    def get(self, id):
+    def get(self, id, machineName=None):
         instance = self._getInstance(id)
-        instance.status = instance._status()
-        instance.ip = instance._ip()
-        return instance
+
+        if machineName is None:
+            instance.status = instance._status()
+        else:
+            app.logger.debug(instance._ip(machineName))
+            return {'ip': instance._ip(machineName)}
+
+        return marshal(instance, instance_fields)
 
     def post(self, id):
         instance = self._getInstance(id)
@@ -158,22 +163,24 @@ class InstanceApi(Resource):
         if changed:
             instance.save()
 
+        if 'machine' in request.json:
+            machineName = request.json['machine']
+
         if 'state' in request.json and request.json['state'] == 'stop':
-            self.stop(id)
+            self.stop(id, machineName)
         if 'state' in request.json and 'start' in request.json['state']:
-            provider = request.json['state'].replace('start-', '')
-            self.start(id, provider)
+            self.start(id, machineName)
         if 'state' in request.json and 'provision' in request.json['state']:
-            self.provision(id)
+            self.provision(id, machineName)
 
-    def provision(self, id):
-        self.backend.provision(id)
+    def provision(self, id, machineName):
+        self.backend.provision(id, machineName)
 
-    def stop(self, id):
-        self.backend.stop(id)
+    def stop(self, id, machineName):
+        self.backend.stop(id, machineName)
 
-    def start(self, id, provider):
-        self.backend.start(id, provider)
+    def start(self, id, machineName):
+        self.backend.start(id, machineName)
 
     def delete(self, id):
         instanceId = int(id)

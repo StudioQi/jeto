@@ -46,14 +46,14 @@
                 </tr>
                 <tr>
                     <th>IP</th>
-                    <td><span ng-bind="instance.ip"></span></td>
+                    <td><span ng-bind="machine.ip"></span><button class="btn btn-default pull-right" ng-click="refreshIP($event, machine.name)"><span class="glyphicon glyphicon-refresh"></span></button></td>
                 </tr>
             </table>
             <div class="panel-footer">
                 <div class="btn-group">        
-                    <button type="button" class="btn btn-warning" ng-bind-html="[[instance.state]]" ng-click="control('stop')">{{ _('Stop') }}</button>
-                    <button type="button" class="btn btn-primary" ng-bind-html="[[instance.state]]" ng-click="control('provision')">{{ _('Provision') }}</button>
-                    <button type="button" class="btn btn-primary">{{ _('Start') }}</button>
+                    <button class="btn btn-warning" ng-click="control('stop', machine.name)">{{ _('Stop') }}</button>
+                    <button class="btn btn-primary" ng-click="control('provision', machine.name)">{{ _('Provision') }}</button>
+                    <button class="btn btn-primary" ng-click="control('start', machine.name)">{{ _('Start') }}</button>
                 </div>
             </div>
         </div>
