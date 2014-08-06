@@ -32,10 +32,13 @@
                 </tr>
             </table>
         </div>
+        <div class="btn-group pull-left">
+            <button type="button" class="btn btn-danger pull-right glyphicon glyphicon-trash" ng-bind-html="[[instance.state]]" ng-click="delete()"><span class="sr-only">{{ _('Delete') }}</span></button>
+        </div>
     </div>
 
-    <div class="col-md-6 pull-right" ng-repeat="machine in instance.status">
-        <div class="panel panel-default">
+    <div class="col-md-6 pull-right">
+        <div class="panel panel-default" ng-repeat="machine in instance.status">
             <div class="panel-heading">
                 Status <em>[[ machine.name ]]</em>
             </div>
@@ -51,25 +54,14 @@
             </table>
             <div class="panel-footer">
                 <div class="btn-group">        
-                    <button class="btn btn-warning" ng-click="control('stop', machine.name)">{{ _('Stop') }}</button>
-                    <button class="btn btn-primary" ng-click="control('provision', machine.name)">{{ _('Provision') }}</button>
-                    <button class="btn btn-primary" ng-click="control('start', machine.name)">{{ _('Start') }}</button>
+                    <button class="btn btn-warning" ng-click="control('stop', machine.name)" ng-disabled="machine.stopDisabled">{{ _('Stop') }}</button>
+                    <button class="btn btn-primary" ng-click="control('provision', machine.name)" ng-disabled="machine.stopDisabled">{{ _('Provision') }}</button>
+                    <button class="btn btn-primary" ng-click="control('start', machine.name)" ng-disabled="!machine.stopDisabled">{{ _('Start') }}</button>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<div class="row">
-    <div class="col-md-4 pull-left">
-        <div class="btn-group pull-left">
-            <button type="button" class="btn btn-danger pull-right glyphicon glyphicon-trash" ng-bind-html="[[instance.state]]" ng-click="delete()"><span class="sr-only">{{ _('Delete') }}</span></button>
-        </div>
-    </div>
-    <div class="col-md-4 pull-right">
-    </div>
-</div>
-<br />
 <div class="row">
     <div class="cold-md-8 well" id="console">
     </div>

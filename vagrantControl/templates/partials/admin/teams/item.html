@@ -16,6 +16,9 @@
                 </tr>
             </table>
         </div>
+        <div class="btn-group">
+            <button ng-click="delete(team)" class="btn btn-danger"><span class="glyphicon glyphicon-trash" /><span class="sr-only">{{ _('Delete') }}</span></button>
+        </div>
     </div>
     <div class="col-md-9">
         <div class="panel panel-default">
@@ -23,20 +26,20 @@
                 {{ _('Users') }} 
             </div>
             <div class="panel-body">
-            <form class="form">
-                <div class="row">
-                    <div class="col-md-9">
-                        <select ui-select2 ng-model="newUser" data-placeholder="{{ _('Select user') }}" class="form-control">
-                            <option></option>
-                            <option ng-repeat="user in users" value="[[ user.id ]]">[[ user.name ]]</option>
-                        </select>
+                <form class="form">
+                    <div class="row">
+                        <div class="col-md-9">
+                            <select ui-select2 ng-model="newUser" data-placeholder="{{ _('Select user') }}" class="form-control">
+                                <option></option>
+                                <option ng-repeat="user in users" value="[[ user.id ]]">[[ user.name ]]</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-success pull-right" ng-click="add()">{{ _('Add to the team') }}</button>
+                        </div>
                     </div>
-                    <div class="col-md-3">
-                        <button class="btn btn-success pull-right" ng-click="add()">{{ _('Add to the team') }}</button>
-                    </div>
-                </div>
-            </form>
-        </div>
+                </form>
+            </div>
             <table class="table table-bordered">
                 <tr>
                     <th>{{ _('Name') }}</th>
@@ -47,7 +50,7 @@
                     <td>[[ user.name ]]</td>
                     <td>[[ user.email ]]</td>
                     <td><a href="/admin/users/[[ user.id ]]">{{ _('View') }}</a></td>
-                    <td><button ng-click="removeUser(user)" class="btn btn-danger"><span class="glyphicon glyphicon-trash" /><span class="sr-only">{{ _('Delete') }}</button></td>
+                    <td><button ng-click="removeUser(user)" class="btn btn-danger"><span class="glyphicon glyphicon-trash" /><span class="sr-only">{{ _('Delete') }}</span></button></td>
                 </tr>
                 <tr ng-show="!team.users.length">
                     <td colspan="4">
@@ -56,14 +59,92 @@
                 </tr>
             </table>
         </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {{ _('Permissions') }} 
+            </div>
+            <div class="panel-body">
+                <form class="form-horizontal">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <select ui-select2 ng-model="newPermission.objectType" data-placeholder="{{ _('Select an object type') }}" class="form-control">
+                                <option></option>
+                                <option value="host">{{ _('Host') }}</option>
+                                <option value="project">{{ _('Project') }}</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <select ui-select2 ng-model="newPermission.objectId" data-placeholder="{{ _('Select an object') }}" class="form-control">
+                                <option></option>
+                                <option ng-repeat="object in newPermission.objects" value="[[ object.id ]]">[[ object.name ]]</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row" ng-show="newPermission.objectType == 'host'">
+                        <div class="col-md-12">
+                            <div class="checkbox-inline">
+                                <label><input type="checkbox" name="ViewHost" id="ViewHost" checked="checked"/>{{ _('View instances on this host') }}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" ng-show="newPermission.objectType == 'project'">
+                        <div class="col-md-6">
+                            <div class="checkbox-inline">
+                                <label><input type="checkbox" name="ViewInstances" id="ViewInstances" checked="checked"/>{{ _('View instances') }}</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="checkbox-inline">
+                                <label><input type="checkbox" name="ProvisionInstances" />{{ _('Provision instances') }}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" ng-show="newPermission.objectType == 'project'">
+                        <div class="col-md-6">
+                            <div class="checkbox-inline">
+                                <label><input type="checkbox" name="CreateInstances" />{{ _('Create instances') }}</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="checkbox-inline">
+                                <label><input type="checkbox" name="EditInstances" />{{ _('Edit instances') }}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" ng-show="newPermission.objectType == 'project'">
+                        <div class="col-md-12">
+                            <div class="checkbox-inline">
+                                <label><input type="checkbox" name="DeleteInstances" />{{ _('Delete instances') }}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <br />
+                            <button class="btn btn-success pull-right" ng-click="add()">{{ _('Add permission') }}</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <table class="table table-bordered">
+                <tr>
+                    <th>{{ _('Object type') }}</th>
+                    <th>{{ _('Object Name') }}</th>
+                    <th>{{ _('Permissions') }}</th>
+                    <th></th>
+                </tr>
+                <tr ng-repeat="permission in team.permissions_grids">
+                </tr>
+                <tr ng-show="!team.permissions_grids.length">
+                    <td colspan="4">
+                        {{ _('This team has no permission for now.') }}
+                    </td>
+                </tr>
+            </table>
+        </div>
     </div>
 </div>
 <div class="row">
-    <div class="col-md-6">
-        <div class="btn-group">
-            <button ng-click="delete(team)" class="btn btn-danger"><span class="glyphicon glyphicon-trash" /><span class="sr-only">{{ _('Delete') }}</button>
-        </div>
-    </div>
     <div class="col-md-6 pull-right">
         <div class="btn-group pull-right">
             <button ng-click="save()" class="btn btn-primary">{{ _('Save') }}</button>

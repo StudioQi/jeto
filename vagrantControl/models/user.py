@@ -1,5 +1,7 @@
 # -=- encoding: utf-8 -=-
 
+from flask.ext.principal import UserNeed, RoleNeed, Permission
+
 from vagrantControl import db
 from vagrantControl.models.team import teams_users
 
@@ -64,3 +66,8 @@ class User(db.Model):
         if self.role == ROLE_ADMIN:
             return True
         return False
+
+    def has_permission(self, permissionType, objectId):
+        permission = permissionType(objectId)
+        admin = Permission(RoleNeed(ROLE_ADMIN))
+        return permission.can() or admin.can()

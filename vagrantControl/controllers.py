@@ -6,7 +6,7 @@ from flask.ext.babel import gettext as _
 
 from flask.ext.principal import Identity, AnonymousIdentity
 from flask.ext.principal import identity_changed, identity_loaded
-from flask.ext.principal import UserNeed, RoleNeed
+from flask.ext.principal import UserNeed, RoleNeed, Permission
 
 from requests import get
 import ansiconv
@@ -21,6 +21,9 @@ from vagrantControl.services import HostApi
 from vagrantControl.services import TeamApi
 from vagrantControl.services import UserApi
 from vagrantControl.models.user import User
+from vagrantControl.models.project import Project
+from vagrantControl.models.permission import DestroyInstancePermission, ViewInstancePermission, StartInstancePermission, ProvisionInstancePermission
+from vagrantControl.models.permission import ViewHostPermission
 
 
 @app.route('/')
@@ -98,6 +101,7 @@ def authorized(resp):
 
     login_user(user)
     return redirect(url_for('index'))
+
 
 @identity_loaded.connect_via(app)
 def on_identity_loaded(sender, identity):

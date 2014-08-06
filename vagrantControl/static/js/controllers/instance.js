@@ -1,18 +1,24 @@
 function InstanceController($scope, $routeParams, Instances, MachineIP, $http, createDialog, $location) {
     $('.loading').show();
-    Instances.get({id: $routeParams.id}, function(instance) {
-        $scope.instance = instance;
-        $scope.source = new EventSource('/pubsub/' + $scope.instance.id);
-        $scope.source.addEventListener('message', pubsubCallback, false);
-        $('.loading').hide();
-    });
-
     $scope.updateInfos = function() {
-        var instanceQuery = Instances.get({id: $routeParams.id}, function(instance) {
+        Instances.get({id: $routeParams.id}, function(instance) {
             $scope.instance = instance;
+            angular.forEach($scope.instance.status, function(value, key) {
+                $scope.instance.status[key]['stopDisabled'] = false;
+                if(value['status'] != 'running'){
+                    $scope.instance.status[key]['stopDisabled'] = true;
+                } 
+            });
+
+            if($scope.source == undefined){
+                $scope.source = new EventSource('/pubsub/' + $scope.instance.id);
+                $scope.source.addEventListener('message', pubsubCallback, false);
+            }
+
             $('.loading').hide();
         });
     };
+    $scope.updateInfos();
 
     $scope.refreshIP = function(event, machineName) {
         clickedElement = angular.element(event.currentTarget); 
@@ -32,7 +38,6 @@ function InstanceController($scope, $routeParams, Instances, MachineIP, $http, c
     };
 
     $scope.control = function(state, machineName) {
-        // $('.loading').show();
         $http.post('/api/instances/' + $scope.instance.id, {
             state : state,
             machine: machineName,

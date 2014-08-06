@@ -12,6 +12,7 @@ from vagrantControl.models.project import Project
 from vagrantControl.models.host import Host
 from vagrantControl.models.team import Team
 from vagrantControl.models.user import User
+from vagrantControl.models.permission import ViewHostPermission
 
 from settings import DOMAINS_API_URL, DOMAINS_API_PORT
 from settings import HTPASSWORD_API_URL, HTPASSWORD_API_PORT
@@ -392,9 +393,14 @@ class ProjectApi(RestrictedResource):
 class HostApi(RestrictedResource):
     def get(self, id=None):
         if id is None:
-            hosts = Host.query.order_by('name')
+            hostsAll = Host.query.order_by('name')
+            permittedHosts = []
+            for host in hostsAll:
+                if current_user.has_permission(ViewHostPermission, host.id):
+                    permittedHosts.append(host)
+
             return {
-                'hosts': map(lambda t: marshal(t, host_fields), hosts),
+                'hosts': map(lambda t: marshal(t, host_fields), permittedHosts),
             }
         else:
             host = Host.query.get(id)
