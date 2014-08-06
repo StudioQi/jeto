@@ -83,38 +83,38 @@
                     <div class="row" ng-show="newPermission.objectType == 'host'">
                         <div class="col-md-12">
                             <div class="checkbox-inline">
-                                <label><input type="checkbox" name="ViewHost" id="ViewHost" checked="checked"/>{{ _('View instances on this host') }}</label>
+                                <label><input type="checkbox" ng-model="newPermission.ViewHost"/><span>{{ _('View instances on this host') }}</span></label>
                             </div>
                         </div>
                     </div>
                     <div class="row" ng-show="newPermission.objectType == 'project'">
                         <div class="col-md-6">
                             <div class="checkbox-inline">
-                                <label><input type="checkbox" name="ViewInstances" id="ViewInstances" checked="checked"/>{{ _('View instances') }}</label>
+                                <label><input type="checkbox" ng-model="newPermission.ViewInstances"/><span>{{ _('View instances') }}</span></label>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="checkbox-inline">
-                                <label><input type="checkbox" name="ProvisionInstances" />{{ _('Provision instances') }}</label>
+                                <label><input type="checkbox" ng-model="newPermission.ProvisionInstances" /><span>{{ _('Provision instances') }}</span></label>
                             </div>
                         </div>
                     </div>
                     <div class="row" ng-show="newPermission.objectType == 'project'">
                         <div class="col-md-6">
                             <div class="checkbox-inline">
-                                <label><input type="checkbox" name="CreateInstances" />{{ _('Create instances') }}</label>
+                                <label><input type="checkbox" ng-model="newPermission.CreateInstances" /><span>{{ _('Create instances') }}</span></label>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="checkbox-inline">
-                                <label><input type="checkbox" name="EditInstances" />{{ _('Edit instances') }}</label>
+                                <label><input type="checkbox" ng-model="newPermission.EditInstances" /><span>{{ _('Edit instances') }}</span></label>
                             </div>
                         </div>
                     </div>
                     <div class="row" ng-show="newPermission.objectType == 'project'">
                         <div class="col-md-12">
                             <div class="checkbox-inline">
-                                <label><input type="checkbox" name="DeleteInstances" />{{ _('Delete instances') }}</label>
+                                <label><input type="checkbox" ng-model="newPermission.DeleteInstances" /><span>{{ _('Delete instances') }}</span></label>
                             </div>
                         </div>
                     </div>

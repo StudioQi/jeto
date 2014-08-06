@@ -16,7 +16,6 @@ function TeamsListController($scope, $routeParams, Teams, $http, $location, crea
     };
     $scope.resetInfos();
 
-
     $scope.create = function() {
         createDialog('/partials/admin/teams/form.html',{ 
            id : 'createDialog', 
@@ -69,13 +68,38 @@ function TeamsListController($scope, $routeParams, Teams, $http, $location, crea
     };
 }
 
-function TeamController($scope, $routeParams, Teams, Users, $http, $location) {
+function TeamController($scope, $routeParams, Teams, Users, Hosts, Projects, $http, $location) {
     // Will fetch the team and all the infos with it
     $scope.init = function() {
         Teams.get({id: $routeParams.id}, function(infos) {
             $scope.team = infos.team;
             $scope.resource = infos;
             $scope.update();
+        });
+        $scope.newPermission = { 
+            'objectType' : '',
+            'objectId': '',
+            'objects': Array(),
+            'ViewHost': true,
+            'ViewInstances': true,
+            'ProvisionInstances': false,
+            'CreateInstances': false,
+            'EditInstances': false,
+            'DeleteInstances': false,
+        };
+        $scope.$watch('newPermission.objectType', function(newType, oldType) {
+            if(newType != oldType){
+                if(newType == 'host'){
+                    Hosts.get({}, function(infos) {
+                        $scope.newPermission.objects = infos.hosts;
+                    });
+                } else if(newType == 'project'){
+                    Projects.get({}, function(infos) {
+                        $scope.newPermission.objects = infos.projects;
+                    });
+                }
+                console.log($scope.newPermission);
+            }
         });
     };
     // Will fetch all users and remove those already in team.users
@@ -94,6 +118,7 @@ function TeamController($scope, $routeParams, Teams, Users, $http, $location) {
             });
         });
     }
+
 
     $scope.init();
     $scope.add = function() {

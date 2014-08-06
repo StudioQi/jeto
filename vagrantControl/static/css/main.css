@@ -218,3 +218,24 @@ a {
   from { transform: scale( 1 ) rotate( 0deg );   }
   to   { transform: scale( 1 ) rotate( 360deg ); }
 }
+
+div.checkbox-inline {
+    padding-left: 0;
+}
+
+input[type="checkbox"] {
+  display:none;
+}
+
+input[type="checkbox"] + span:before {
+  font-family: 'Glyphicons Halflings';
+  padding-right: 3px;
+}
+
+input[type="checkbox"] + span:before {
+  content: "\e157"; /* check-empty */
+}
+
+input[type="checkbox"]:checked + span:before {
+  content: "\e067"; /* check */
+}
