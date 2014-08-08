@@ -1,4 +1,4 @@
-function DomainsController($scope, $routeParams, Domains, $http, $location, createDialog, Htpassword) {
+function DomainsController($scope, $routeParams, Domains, $http, createDialog, Htpassword) {
     $scope.update = function() {
         Domains.get({}, function(infos) {
             $scope.domains = infos.domains;

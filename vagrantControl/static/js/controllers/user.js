@@ -1,4 +1,4 @@
-function UsersListController($scope, $routeParams, Users, $http, $location) {
+function UsersListController($scope, $routeParams, Users) {
     $scope.update = function() {
         Users.get({}, function(infos) {
             $scope.users = infos.users;
@@ -10,7 +10,7 @@ function UsersListController($scope, $routeParams, Users, $http, $location) {
     $scope.update();
 }
 
-function UserController($scope, $routeParams, Users, $http, $location) {
+function UserController($scope, $routeParams, Users) {
     $scope.update = function() {
         Users.get({id: $routeParams.id}, function(infos) {
             $scope.user = infos.user;

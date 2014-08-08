@@ -72,10 +72,17 @@ user_fields = {
     'role': fields.String,
 }
 
+team_permissions_grids_fields = {
+    'id': fields.Integer,
+    'objectId': fields.Integer,
+    'objectType': fields.String,
+    'action': fields.String,
+}
 team_fields = {
     'id': fields.String,
     'name': fields.String,
-    'users': fields.Nested(user_fields)
+    'users': fields.Nested(user_fields),
+    'permissions_grids': fields.Nested(team_permissions_grids_fields),
 }
 
 

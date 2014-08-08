@@ -74,19 +74,19 @@ function TeamController($scope, $routeParams, Teams, Users, Hosts, Projects, $ht
         Teams.get({id: $routeParams.id}, function(infos) {
             $scope.team = infos.team;
             $scope.resource = infos;
+            console.log($scope.team);
             $scope.update();
         });
-        $scope.newPermission = { 
-            'objectType' : '',
-            'objectId': '',
-            'objects': Array(),
-            'ViewHost': true,
-            'ViewInstances': true,
-            'ProvisionInstances': false,
-            'CreateInstances': false,
-            'EditInstances': false,
-            'DeleteInstances': false,
-        };
+
+        Hosts.get({}, function(infos) {
+            $scope.hosts = infos.hosts;
+        });
+
+        Projects.get({}, function(infos) {
+            $scope.projects = infos.projects;
+        });
+
+        $scope.clearInfos();
         $scope.$watch('newPermission.objectType', function(newType, oldType) {
             if(newType != oldType){
                 if(newType == 'host'){
@@ -98,10 +98,23 @@ function TeamController($scope, $routeParams, Teams, Users, Hosts, Projects, $ht
                         $scope.newPermission.objects = infos.projects;
                     });
                 }
-                console.log($scope.newPermission);
             }
         });
     };
+    $scope.clearInfos = function() {
+        $scope.newPermission = { 
+            'objectType' : '',
+            'objectId': '',
+            'objects': Array(),
+            'ViewHost': true,
+            'ViewInstances': true,
+            'ProvisionInstances': false,
+            'StartInstances': false,
+            'StopInstances': false,
+            'DestroyInstances': false,
+        };
+
+    }
     // Will fetch all users and remove those already in team.users
     // Used in the "Add user" box, also called to filter out values
     // when a new user is added into the team
@@ -154,6 +167,77 @@ function TeamController($scope, $routeParams, Teams, Users, Hosts, Projects, $ht
         })
         .success(function(){
             $location.path('/admin/teams');
+        });
+    };
+    $scope.addPermission = function() {
+        if($scope.newPermission.objectType == 'project'){
+            $scope.newPermission.ViewHost = false;
+        }
+        if($scope.newPermission.objectType == 'host'){
+            $scope.newPermission.ViewInstances = false;
+        }
+
+        newPermission = {
+            'objectId': $scope.newPermission.objectId,
+            'objectType': $scope.newPermission.objectType,
+        }
+
+        if($scope.newPermission.ViewHost || $scope.newPermission.ViewInstances){
+            permission = angular.copy(newPermission);
+            permission['action'] = 'view';
+            $scope.team.permissions_grids.push(permission);
+        }
+        if($scope.newPermission.StartInstances){
+            permission = angular.copy(newPermission);
+            permission['action'] = 'start';
+            $scope.team.permissions_grids.push(permission);
+        }
+        if($scope.newPermission.StopInstances){
+            permission = angular.copy(newPermission);
+            permission['action'] = 'stop';
+            $scope.team.permissions_grids.push(permission);
+        }
+        if($scope.newPermission.DestroyInstances){
+            permission = angular.copy(newPermission);
+            permission['action'] = 'destroy';
+            $scope.team.permissions_grids.push(permission);
+        }
+        if($scope.newPermission.ProvisionInstances){
+            permission = angular.copy(newPermission);
+            permission['action'] = 'provision';
+            $scope.team.permissions_grids.push(permission);
+        }
+
+        $scope.clearInfos();
+    }
+
+    $scope.getObjectName = function(objectId, objectType) {
+        var found;
+        if(objectType == 'host') {
+            angular.forEach($scope.hosts, function(host) { 
+                if(host.id == objectId) {
+                    found = host;
+                }
+            }, found);
+        } else if (objectType == 'project') {
+            angular.forEach($scope.projects, function(project) { 
+                if(project.id == objectId) {
+                    found = project;
+                }
+            }, found);
+        }
+
+        if(found != undefined){
+            return found.name;
+        }
+        return undefined;
+    };
+
+    $scope.removePermission = function(permission) {
+        angular.forEach($scope.team.permissions_grids, function(value, key){
+            if(value.objectType == permission.objectType && value.objectId == permission.objectId && value.action == permission.action){
+                $scope.team.permissions_grids.splice(key, 1);
+            }
         });
     };
 }

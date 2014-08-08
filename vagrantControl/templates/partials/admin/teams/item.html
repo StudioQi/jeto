@@ -68,7 +68,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <select ui-select2 ng-model="newPermission.objectType" data-placeholder="{{ _('Select an object type') }}" class="form-control">
-                                <option></option>
+                                <option value=""></option>
                                 <option value="host">{{ _('Host') }}</option>
                                 <option value="project">{{ _('Project') }}</option>
                             </select>
@@ -102,26 +102,26 @@
                     <div class="row" ng-show="newPermission.objectType == 'project'">
                         <div class="col-md-6">
                             <div class="checkbox-inline">
-                                <label><input type="checkbox" ng-model="newPermission.CreateInstances" /><span>{{ _('Create instances') }}</span></label>
+                                <label><input type="checkbox" ng-model="newPermission.StartInstances" /><span>{{ _('Start instances') }}</span></label>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="checkbox-inline">
-                                <label><input type="checkbox" ng-model="newPermission.EditInstances" /><span>{{ _('Edit instances') }}</span></label>
+                                <label><input type="checkbox" ng-model="newPermission.StopInstances" /><span>{{ _('Stop instances') }}</span></label>
                             </div>
                         </div>
                     </div>
                     <div class="row" ng-show="newPermission.objectType == 'project'">
                         <div class="col-md-12">
                             <div class="checkbox-inline">
-                                <label><input type="checkbox" ng-model="newPermission.DeleteInstances" /><span>{{ _('Delete instances') }}</span></label>
+                                <label><input type="checkbox" ng-model="newPermission.DestroyInstances" /><span>{{ _('Destroy instances') }}</span></label>
                             </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-12">
                             <br />
-                            <button class="btn btn-success pull-right" ng-click="add()">{{ _('Add permission') }}</button>
+                            <button class="btn btn-success pull-right" ng-click="addPermission()">{{ _('Add permission') }}</button>
                         </div>
                     </div>
                 </form>
@@ -134,6 +134,18 @@
                     <th></th>
                 </tr>
                 <tr ng-repeat="permission in team.permissions_grids">
+                    <td>[[ permission.objectType ]]</td>
+                    <td>[[ getObjectName(permission.objectId, permission.objectType) ]]</td>
+                    <td>
+                        <span ng-show="permission.action == 'view'">View instances on [[ permission.objectType ]]</span>
+                        <span ng-show="permission.action == 'start'">Start instances</span>
+                        <span ng-show="permission.action == 'stop'">Stop instances</span>
+                        <span ng-show="permission.action == 'provision'">Provision instances</span>
+                        <span ng-show="permission.action == 'destroy'">Destroy instances</span>
+                    </td>
+                    <td>
+                        <button ng-click="removePermission(permission)" class="btn btn-danger"><span class="glyphicon glyphicon-trash" /><span class="sr-only">{{ _('Delete') }}</span></button>
+                    </td>
                 </tr>
                 <tr ng-show="!team.permissions_grids.length">
                     <td colspan="4">

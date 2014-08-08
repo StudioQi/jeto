@@ -1,4 +1,4 @@
-function HostsListController($scope, $routeParams, Hosts, $http, $location, createDialog) {
+function HostsListController($scope, $routeParams, Hosts, $http, createDialog) {
     $scope.update = function() {
         Hosts.get({}, function(infos) {
             $scope.hosts = infos.hosts;
@@ -17,7 +17,6 @@ function HostsListController($scope, $routeParams, Hosts, $http, $location, crea
        };
     };
     $scope.resetInfos();
-
 
     $scope.create = function() {
         createDialog('/partials/admin/hosts/form.html',{ 
@@ -71,7 +70,7 @@ function HostsListController($scope, $routeParams, Hosts, $http, $location, crea
     };
 }
 
-function HostController($scope, $routeParams, Hosts, $http, $location) {
+function HostController($scope, $routeParams, Hosts) {
     $scope.update = function() {
         Hosts.get({id: $routeParams.id}, function(infos) {
             $scope.host = infos.host;

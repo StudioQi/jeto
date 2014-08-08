@@ -118,7 +118,7 @@ def on_identity_loaded(sender, identity):
 def _set_permissions(permissions_grids):
     if permissions_grids is not None:
         for permission in permissions_grids:
-            if permission.objectType == 'Host' and permission.action == 'View':
+            if permission.objectType == 'Host' and permission.action == 'view':
                 identity.provides.add(ViewHostPermission(permission.objectId))
             if permission.objectType == 'Project':
                 project = Project.query.get(permission.objectId)

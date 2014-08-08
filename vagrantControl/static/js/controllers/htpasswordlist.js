@@ -31,7 +31,8 @@ function HtpasswordListController($scope, $routeParams, Htpassword, $http, $loca
                     $scope.item.users.splice(key, 1);
                 } else {
                     $scope.item.users[key].state = 'DELETE';
-                    $scope.changed = true; }
+                    $scope.changed = true; 
+                }
             }
         });
     };
