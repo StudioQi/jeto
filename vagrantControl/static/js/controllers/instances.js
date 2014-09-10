@@ -20,6 +20,41 @@ function InstancesController($scope, Instances, Projects, Hosts, $http, createDi
     };
     $scope.updateInfos();
 
+    getProject = function(projectId){
+        project = $scope.projects.filter(
+            function(element){
+                if(element.id == projectId){
+                    return true;
+                }
+            }
+        );
+        return project[0];
+    }
+
+    $scope.selectProject = function(projectId){
+        project = getProject(projectId);
+        $scope.showGitReference = false;
+        $scope.showBasePath = false;
+
+        if(project.git_address){
+            $scope.showGitReference = true;
+        }
+        if(project.base_path){
+            $scope.showBasePath = true;
+        }
+        $scope.refreshGitReferences();
+    }
+
+    $scope.refreshGitReferences = function(){
+        refreshIcon = angular.element('.glyphicon-refresh');
+        refreshIcon.addClass('icon-refresh-animate');
+        $http.get('/api/projects/' + $scope.instanceInfo.project + '/git-references')
+        .success(function(result) {
+            $scope.gitReferences = result.gitReferences;
+            refreshIcon.removeClass('icon-refresh-animate');
+        });
+    }
+
     $scope.instanceInfo = {
         'name': '',
         'environment': '',
@@ -43,6 +78,7 @@ function InstancesController($scope, Instances, Projects, Hosts, $http, createDi
                    instance.environment = $scope.instanceInfo.environment;
                    instance.project = $scope.instanceInfo.project;
                    instance.host = $scope.instanceInfo.host;
+                   instance.gitReference = $scope.instanceInfo.gitReference;
                    instance.state = 'create';
                    instance.$save();
                    setTimeout($scope.updateInfos, 100);

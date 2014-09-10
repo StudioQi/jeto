@@ -57,6 +57,9 @@ class VagrantBackend(BackendProvider):
         host = Host.query.get(request['host'])
         instance = VagrantInstance(None, request['path'], request['name'],
                                    environment)
+        if 'gitReference' in request:
+            instance.git_reference = request['gitReference']
+
         instance.project = project
         instance.host = host
         db.session.add(instance)
@@ -94,12 +97,14 @@ class VagrantInstance(db.Model):
         db.Integer,
         db.ForeignKey('host.id')
     )
+    git_reference = db.Column(db.String(128))
 
-    def __init__(self, id, path, name, environment):
+    def __init__(self, id, path, name, environment, git_reference=None):
         self.id = id
         self.path = path
         self.name = name
         self.environment = environment
+        self.git_reference = git_reference
         # self.init_on_load()
 
     def __unicode__(self):
@@ -128,7 +133,7 @@ class VagrantInstance(db.Model):
                 {
                     'name': machine,
                     'status': value['state-human-short'],
-                    #'ip': value['ip']
+                    # 'ip': value['ip']
                 }
             )
 

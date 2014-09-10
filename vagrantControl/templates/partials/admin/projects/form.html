@@ -1,10 +1,35 @@
 <div class="row-fluid">
-    <div>
-       <form class="form">
+    <form class="form">
+        <div class="col-md-12">
            <div class="form-group">
                <label for="name">{{ _('Name') }}</label>
                <input type="text" name="name" id="name" ng-model="projectInfo.name" placeholder="{{ _('Super project') }}" class="form-control"/>
            </div>
-       </form>
-    </div>
+        </div>
+        <div class="col-md-12">
+            <div id="tabs">
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="active"><a href="#git" role="tab" data-toggle="tab" ng-click="resetTabInfos();">Git</a></li>
+                    <li><a href="#direct_path" role="tab" data-toggle="tab" ng-click="resetTabInfos();">Direct path</a></li>
+                </ul>
+            </div>
+            <div class="tab-content well">
+                <div class="tab-pane active" id="git">
+                    <p>{{ _('When adding a new instance to a project connected to git, the branches and tags of the project will be fetched. The interface will give them the choice of which branch/tag to deploy.') }}</p>
+                    <div class="form-group">
+                        <label for="git_address">{{ _('Address') }}</label>
+                        <input type="text" class="form-control" id="git_address" ng-model="projectInfo.git_address" />
+                    </div>
+                </div>
+                <div class="tab-pane" id="direct_path">
+                    <p>{{ _('When adding a new instance, you will be asked a path on the machine where the project is. If you put a base path here, it will be pre-filled in the web interface.') }}</p>
+                    <div class="form-group">
+                        <label for="base_path">{{ _('Base path') }}</label>
+                        <input type="text" class="form-control" id="base_path" ng-model="projectInfo.base_path" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
 </div>

@@ -7,15 +7,22 @@ function ProjectsListController($scope, $routeParams, Projects, $http, $location
             $('.loading').hide();
         })
     };
+
     $scope.update();
     $scope.resetInfos = function(){
        setTimeout($scope.update, 100);
        $scope.projectInfo = {
            'name': '',
+           'base_path': '',
+           'git_address': '',
        };
     };
-    $scope.resetInfos();
 
+    $scope.resetInfos();
+    $scope.resetTabInfos = function() {
+        $scope.projectInfo.base_path = '';
+        $scope.projectInfo.git_address = '';
+    }
 
     $scope.create = function() {
         createDialog('/partials/admin/projects/form.html',{ 
@@ -29,6 +36,8 @@ function ProjectsListController($scope, $routeParams, Projects, $http, $location
                    $('.loading').show();
                    var project = new Projects();
                    project.name = $scope.projectInfo.name;
+                   project.base_path = $scope.projectInfo.base_path;
+                   project.git_address = $scope.projectInfo.git_address;
                    project.state = 'create';
                    project.$save();
                    setTimeout($scope.resetInfos, 100);

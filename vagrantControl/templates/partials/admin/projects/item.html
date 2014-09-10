@@ -15,6 +15,14 @@
                     <th>{{ _('ID') }}</th>
                     <td>[[ project.id ]]</td>
                 </tr>
+                <tr ng-show="project.base_path">
+                    <th>{{ _('Base path') }}</th>
+                    <td>[[ project.base_path ]]</td>
+                </tr>
+                <tr ng-show="project.git_address">
+                    <th>{{ _('Git address') }}</th>
+                    <td>[[ project.git_address ]]</td>
+                </tr>
             </table>
         </div>
     </div>
@@ -29,12 +37,14 @@
                     <th>{{ _('ID') }}</th>
                     <th>{{ _('Name') }}</th>
                     <th>{{ _('Path') }}</th>
+                    <th>{{ _('Git reference') }}</th>
                     <th></th>
                 </tr>
                 <tr ng-repeat="instance in project.instances">
                     <td>[[ instance.id ]]</td>
                     <td>[[ instance.name ]]</td>
                     <td>[[ instance.path ]]</td>
+                    <td>[[ instance.git_reference ]]</td>
                     <td><a href="/instances/[[ instance.id ]]">{{ _('View') }}</a></td>
                 </tr>
                 <tr ng-show="!project.instances.length">

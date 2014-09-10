@@ -2,7 +2,8 @@
 import requests as req
 from functools import wraps
 from flask import request, json, abort
-from flask.ext.restful import Resource, fields, marshal_with, marshal
+from flask.ext.restful import Resource, fields, marshal
+# from flask.ext.restful import marshal_with
 from flask.ext.login import current_user
 
 from vagrantControl import db
@@ -21,6 +22,8 @@ from settings import HTPASSWORD_API_URL, HTPASSWORD_API_PORT
 project_wo_instance_fields = {
     'id': fields.String,
     'name': fields.String,
+    'git_address': fields.String,
+    'base_path': fields.String,
 }
 
 host_fields = {
@@ -40,17 +43,19 @@ instance_fields = {
     'id': fields.String,
     'name': fields.String,
     'path': fields.String,
+    'git_reference': fields.String,
     'status': fields.Nested(status_fields),
     'environment': fields.String,
     'project': fields.Nested(project_wo_instance_fields),
     'host': fields.Nested(host_fields),
 }
 
-project_fields = {
-    'id': fields.String,
-    'name': fields.String,
-    'instances': fields.Nested(instance_fields)
-}
+project_fields = dict(
+    project_wo_instance_fields,
+    **{
+        'instances': fields.Nested(instance_fields)
+    }
+)
 
 domain_fields = {
     'slug': fields.String,
@@ -379,6 +384,11 @@ class ProjectApi(RestrictedResource):
     def post(self, id=None):
         if 'state' in request.json and request.json['state'] == 'create':
             project = Project(None, request.json['name'])
+            if 'git_address' in request.json:
+                project.git_address = request.json['git_address']
+            elif 'base_path' in request.json:
+                project.base_path = request.json['base_path']
+
             db.session.add(project)
             db.session.commit()
         else:
@@ -407,7 +417,9 @@ class HostApi(RestrictedResource):
                     permittedHosts.append(host)
 
             return {
-                'hosts': map(lambda t: marshal(t, host_fields), permittedHosts),
+                'hosts': map(
+                    lambda t: marshal(t, host_fields), permittedHosts
+                ),
             }
         else:
             host = Host.query.get(id)

@@ -1,32 +1,40 @@
 <div class="row-fluid">
     <div>
-            <form class="form">
-                <div class="form-group">
-                    <label for="project">{{ _('Host') }}</label>
-                    <select name="host" id="host" ui-select2 ng-model="instanceInfo.host" class="form-control">
-                        <option value=""></option>
-                        <option ng-repeat="host in hosts" value="[[ host.id ]]">[[ host.name ]]</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="project">{{ _('Project') }}</label>
-                    <select name="project" id="project" ui-select2 ng-model="instanceInfo.project" class="form-control">
-                        <option value=""></option>
-                        <option ng-repeat="project in projects" value="[[ project.id ]]">[[ project.name ]]</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="name">{{ _('Name') }}</label>
-                    <input type="text" name="name" id="name" ng-model="instanceInfo.name" placeholder="{{ _('Super project') }}" class="form-control"/>
-                </div>
-                <div class="form-group">
-                    <label for="name">{{ _('Environment') }}</label>
-                    <input type="text" name="environment" id="environment" ng-model="instanceInfo.environment" placeholder="{{ _('validation') }}" class="form-control"/>
-                </div>
-                <div class="form-group">
-                    <label for="path">{{ _('Path') }}</label>
-                    <input type="text" name="path" id="path" ng-model="instanceInfo.path" placeholder="/shared/project" class="form-control"/>
-                </div>
-            </form>
+        <form class="form">
+            <div class="form-group">
+                <label for="project">{{ _('Project') }}</label>
+                <select name="project" id="project" ui-select2 ng-model="instanceInfo.project" class="form-control" ng-click="selectProject(instanceInfo.project)">
+                    <option value=""></option>
+                    <option ng-repeat="project in projects" value="[[ project.id ]]">[[ project.name ]]</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="project">{{ _('Host') }}</label>
+                <select name="host" id="host" ui-select2 ng-model="instanceInfo.host" class="form-control">
+                    <option value=""></option>
+                    <option ng-repeat="host in hosts" value="[[ host.id ]]">[[ host.name ]]</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="name">{{ _('Name') }}</label>
+                <input type="text" name="name" id="name" ng-model="instanceInfo.name" placeholder="{{ _('Super project') }}" class="form-control"/>
+            </div>
+            <div class="form-group">
+                <label for="name">{{ _('Environment') }}</label>
+                <input type="text" name="environment" id="environment" ng-model="instanceInfo.environment" placeholder="{{ _('validation') }}" class="form-control"/>
+            </div>
+            <div class="form-group" ng-show="showPath">
+                <label for="path">{{ _('Path') }}</label>
+                <input type="text" name="path" id="path" ng-model="instanceInfo.path" placeholder="/shared/project" class="form-control"/>
+            </div>
+            <div class="form-group" ng-show="showGitReference">
+                <label for="gitReference">{{ _('Git reference') }}</label>
+                <select name="gitReference" id="gitReference" ui-select2 ng-model="instanceInfo.gitReference" class="form-control">
+                    <option value=""></option>
+                    <option ng-repeat="gitRef in gitReferences" value="[[ gitRef ]]">[[ gitRef ]]</option>
+                </select>
+                <button class="btn btn-default pull-right" ng-click="refreshGitReferences()"><span class="glyphicon glyphicon-refresh"></span></button>
+            </div>
+        </form>
     </div>
 </div>

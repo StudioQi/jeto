@@ -14,9 +14,13 @@
                     <th>{{ _('ID') }}</th>
                     <td>[[ instance.id ]]</td>
                 </tr>
-                <tr>
+                <tr ng-show="instance.path">
                     <th>{{ _('Path') }}</th>
                     <td>[[ instance.path ]]</td>
+                </tr>
+                <tr ng-show="instance.git_reference">
+                    <th>{{ _('Git reference') }}</th>
+                    <td>[[ instance.git_reference ]]</td>
                 </tr>
                 <tr>
                     <th>{{ _('Environment') }}</th>

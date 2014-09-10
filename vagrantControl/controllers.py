@@ -1,12 +1,16 @@
 from flask import render_template, send_file, Response, session, url_for
 from flask import redirect, g, flash, abort, current_app
+from flask import jsonify
 from flask.ext.login import login_user, logout_user
 from flask.ext.login import current_user, login_required
 from flask.ext.babel import gettext as _
 
 from flask.ext.principal import Identity, AnonymousIdentity
 from flask.ext.principal import identity_changed, identity_loaded
-from flask.ext.principal import UserNeed, RoleNeed, Permission
+from flask.ext.principal import UserNeed, RoleNeed
+# from flask.ext.principal import Permission
+
+from sh import git
 
 from requests import get
 import ansiconv
@@ -22,7 +26,9 @@ from vagrantControl.services import TeamApi
 from vagrantControl.services import UserApi
 from vagrantControl.models.user import User
 from vagrantControl.models.project import Project
-from vagrantControl.models.permission import DestroyInstancePermission, ViewInstancePermission, StartInstancePermission, ProvisionInstancePermission
+from vagrantControl.models.permission import DestroyInstancePermission, \
+    ViewInstancePermission, StartInstancePermission, \
+    ProvisionInstancePermission
 from vagrantControl.models.permission import ViewHostPermission
 
 
@@ -109,31 +115,47 @@ def on_identity_loaded(sender, identity):
     if hasattr(current_user, 'id'):
         identity.provides.add(UserNeed(current_user.id))
         identity.provides.add(RoleNeed(current_user.role))
-        _set_permissions(current_user.permissions_grids)
+        _set_permissions(current_user.permissions_grids, identity)
         if current_user.teams:
             for team in current_user.teams:
-                _set_permissions(team.permissions_grids)
+                _set_permissions(team.permissions_grids, identity)
 
 
-def _set_permissions(permissions_grids):
+def _set_permissions(permissions_grids, identity):
     if permissions_grids is not None:
         for permission in permissions_grids:
             if permission.objectType == 'Host' and permission.action == 'view':
-                identity.provides.add(ViewHostPermission(permission.objectId))
+                _set_permissions_host(identity, permission)
             if permission.objectType == 'Project':
                 project = Project.query.get(permission.objectId)
                 for instance in project.instances:
                     if ViewHostPermission(instance.host.id).can():
-                        if permission.action == 'start':
-                            identity.provides.add(StartInstancePermission(instance.id))
-                        if permission.action == 'stop':
-                            identity.provides.add(StartInstancePermission(instance.id))
-                        if permission.action == 'provision':
-                            identity.provides.add(ProvisionInstancePermission(instance.id))
-                        if permission.action == 'destroy':
-                            identity.provides.add(DestroyInstancePermission(instance.id))
-                        if permission.action == 'view':
-                            identity.provides.add(ViewInstancePermission(instance.id))
+                        _set_permissions_instance(
+                            identity,
+                            instance,
+                            permission
+                        )
+
+
+def _set_permissions_host(identity, permission, host=None):
+    objectId = permission.objectId
+    if host:
+        objectId = host.id
+    if permission.action == 'view':
+        identity.provides.add(ViewHostPermission(objectId))
+
+
+def _set_permissions_instance(identity, instance, permission):
+    if permission.action == 'start':
+        identity.provides.add(StartInstancePermission(instance.id))
+    if permission.action == 'stop':
+        identity.provides.add(StartInstancePermission(instance.id))
+    if permission.action == 'provision':
+        identity.provides.add(ProvisionInstancePermission(instance.id))
+    if permission.action == 'destroy':
+        identity.provides.add(DestroyInstancePermission(instance.id))
+    if permission.action == 'view':
+        identity.provides.add(ViewInstancePermission(instance.id))
 
 
 @app.route('/login')
@@ -266,43 +288,30 @@ def get_brand_image():
     return None
 
 
-api.add_resource(
-    InstanceApi,
-    '/api/instances/<int:id>',
-    endpoint='instance'
-)
+@app.route('/api/projects/<int:projectId>/git-references')
+def get_git_references(projectId):
+    project = Project.query.get(projectId)
+    fullRefs = git('ls-remote', project.git_address)
+    fullRefs = fullRefs.splitlines()
+    ref = [refs.split('\t')[1].replace('refs/', '') for refs in fullRefs]
+    return jsonify({'gitReferences': ref})
 
-api.add_resource(
-    InstancesApi,
-    '/api/instances',
-    endpoint='instances'
-)
 
-api.add_resource(
-    InstanceApi,
-    '/api/instances/<int:id>/<machineName>/ip',
-    endpoint='machines'
-)
+api.add_resource(InstanceApi, '/api/instances/<int:id>', endpoint='instance')
 
-api.add_resource(
-    DomainsApi,
-    '/api/domains',
-    endpoint='domains'
-)
+api.add_resource(InstancesApi, '/api/instances', endpoint='instances')
+
+api.add_resource(InstanceApi, '/api/instances/<int:id>/<machineName>/ip',
+                 endpoint='machines')
+
+api.add_resource(DomainsApi, '/api/domains', endpoint='domains')
 
 api.add_resource(DomainsApi, '/api/domains/<slug>')
 
-api.add_resource(
-    HtpasswordApi,
-    '/api/htpassword',
-    endpoint='htpassword'
-)
+api.add_resource(HtpasswordApi, '/api/htpassword', endpoint='htpassword')
 
-api.add_resource(
-    HtpasswordListApi,
-    '/api/htpassword/<slug>',
-    endpoint='htpasswordlist'
-)
+api.add_resource(HtpasswordListApi, '/api/htpassword/<slug>',
+                 endpoint='htpasswordlist')
 
 api.add_resource(ProjectApi, '/api/projects', endpoint='projects')
 api.add_resource(ProjectApi, '/api/projects/<int:id>')
