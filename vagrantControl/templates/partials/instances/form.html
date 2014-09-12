@@ -29,7 +29,7 @@
             </div>
             <div class="form-group" ng-show="showGitReference">
                 <label for="gitReference">{{ _('Git reference') }}</label>
-                <button class="btn btn-default pull-right" ng-click="refreshGitReferences()"><span class="glyphicon glyphicon-refresh"></span></button>
+                <button class="btn btn-default pull-right" ng-click="refreshGitReferences(1)"><span class="glyphicon glyphicon-refresh"></span></button>
                 <select name="gitReference" id="gitReference" ui-select2 ng-model="instanceInfo.gitReference" class="form-control">
                     <option value=""></option>
                     <option ng-repeat="gitRef in gitReferences" value="[[ gitRef ]]">[[ gitRef ]]</option>

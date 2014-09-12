@@ -46,13 +46,16 @@ function InstancesController($scope, Instances, Projects, Hosts, $http, createDi
         $scope.refreshGitReferences();
     }
 
-    $scope.refreshGitReferences = function(){
-        console.log('starting');
+    $scope.refreshGitReferences = function(force=0){
         refreshIcon = angular.element('.glyphicon-refresh');
         refreshIcon.addClass('icon-refresh-animate');
-        $http.get('/api/projects/' + $scope.instanceInfo.project + '/git-references')
+
+        $http({
+            url: '/api/projects/' + $scope.instanceInfo.project + '/git-references',
+            method: 'GET',
+            params: {force: force}
+        })
         .success(function(result) {
-            console.log('done');
             $scope.gitReferences = result.gitReferences;
             refreshIcon.removeClass('icon-refresh-animate');
         });
