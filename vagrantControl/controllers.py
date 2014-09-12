@@ -215,7 +215,7 @@ def pubsub(instanceId=None):
                 output = ansiconv.to_html(output)
                 if '#END#' in console:
                     session['jobs'].remove(job)
-                app.logger.debug(console)
+                # app.logger.debug(console)
 
     return Response('data: {}\n\n'.format(output),
                     mimetype='text/event-stream')
@@ -291,9 +291,15 @@ def get_brand_image():
 @app.route('/api/projects/<int:projectId>/git-references')
 def get_git_references(projectId):
     project = Project.query.get(projectId)
-    fullRefs = git('ls-remote', project.git_address)
+    fullRefs = redis_conn.get('project:{}:refs'.format(projectId))
+    fullRefs = None
+    if fullRefs is None:
+        fullRefs = git('ls-remote', project.git_address)
+        redis_conn.set('project:{}:refs'.format(projectId), fullRefs)
+
     fullRefs = fullRefs.splitlines()
-    ref = [refs.split('\t')[1].replace('refs/', '') for refs in fullRefs]
+    ref = [refs.split('\t')[1].replace('refs/', '').replace('heads/', '') for refs in fullRefs]
+    ref = [refs for refs in ref if refs != 'HEAD']
     return jsonify({'gitReferences': ref})
 
 

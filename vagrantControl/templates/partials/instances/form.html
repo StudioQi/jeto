@@ -23,17 +23,17 @@
                 <label for="name">{{ _('Environment') }}</label>
                 <input type="text" name="environment" id="environment" ng-model="instanceInfo.environment" placeholder="{{ _('validation') }}" class="form-control"/>
             </div>
-            <div class="form-group" ng-show="showPath">
+            <div class="form-group" ng-show="showBasePath">
                 <label for="path">{{ _('Path') }}</label>
-                <input type="text" name="path" id="path" ng-model="instanceInfo.path" placeholder="/shared/project" class="form-control"/>
+                <input type="text" name="path" id="path" ng-model="instanceInfo.path" placeholder="[[ instanceInfo.base_path ]]" class="form-control"/>
             </div>
             <div class="form-group" ng-show="showGitReference">
                 <label for="gitReference">{{ _('Git reference') }}</label>
+                <button class="btn btn-default pull-right" ng-click="refreshGitReferences()"><span class="glyphicon glyphicon-refresh"></span></button>
                 <select name="gitReference" id="gitReference" ui-select2 ng-model="instanceInfo.gitReference" class="form-control">
                     <option value=""></option>
                     <option ng-repeat="gitRef in gitReferences" value="[[ gitRef ]]">[[ gitRef ]]</option>
                 </select>
-                <button class="btn btn-default pull-right" ng-click="refreshGitReferences()"><span class="glyphicon glyphicon-refresh"></span></button>
             </div>
         </form>
     </div>

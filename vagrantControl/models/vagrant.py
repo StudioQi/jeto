@@ -7,6 +7,7 @@ from vagrantControl.models.project import Project
 from vagrantControl.models.host import Host
 
 import time
+import slugify
 from flask import request, session
 from flask.ext.sqlalchemy import orm
 from flask.ext.login import current_user
@@ -65,6 +66,9 @@ class VagrantBackend(BackendProvider):
         db.session.add(instance)
         db.session.commit()
 
+        if instance.git_reference:
+            instance.clone()
+
         return instance
 
     def delete(self, instanceId):
@@ -108,7 +112,7 @@ class VagrantInstance(db.Model):
         # self.init_on_load()
 
     def __unicode__(self):
-        return self.path
+        return self._generatePath()
 
     def __str__(self):
         return self.__unicode__()
@@ -125,7 +129,9 @@ class VagrantInstance(db.Model):
         pass
 
     def _status(self):
-        results = self._submit_job('status', path=self.path)
+        path = self._generatePath()
+
+        results = self._submit_job('status', path=path)
         machines = self._parse_status(results)
         machinesFormatted = []
         for machine, value in machines.iteritems():
@@ -144,6 +150,7 @@ class VagrantInstance(db.Model):
         results = results[1:-3]
         formatted = []
         item = []
+        app.logger.debug(results)
         for result in results:
             result = result.replace('\\', ' ')
             if ',' in result and len(item) > 0:
@@ -178,25 +185,34 @@ class VagrantInstance(db.Model):
     def _ip(self, machineName):
         results = self._submit_job(
             'ip',
-            path=self.path,
+            path=self._generatePath(),
             machineName=machineName
         )
         return results
+
+    def _generatePath(self):
+        path = self.path
+        if self.git_reference is not None:
+            return '/tmp/' + slugify.slugify(self.name)\
+                + '/' + self.git_reference
+
+        return path
 
     def start(self, machineName='default'):
         results = self._submit_job(
             'run',
             machineName=machineName,
-            path=self.path,
+            path=self._generatePath(),
             environment=self.environment,
             host=self.host
         )
+
         return results
 
     def provision(self, machineName):
         results = self._submit_job(
             'provision',
-            path=self.path,
+            path=self._generatePath(),
             environment=self.environment,
             machineName=machineName,
         )
@@ -205,7 +221,7 @@ class VagrantInstance(db.Model):
     def stop(self, machineName):
         results = self._submit_job(
             'stop',
-            path=self.path,
+            path=self._generatePath(),
             machineName=machineName
         )
         return results
@@ -213,13 +229,26 @@ class VagrantInstance(db.Model):
     def delete(self):
         db.session.delete(self)
         db.session.commit()
-        self._submit_job('destroy', path=self.path)
+        self._submit_job('destroy', path=self._generatePath())
+
+    def clone(self):
+        results = self._submit_job(
+            'clone',
+            path=self._generatePath(),
+            git_address=self.project.git_address,
+            git_reference=self.git_reference,
+        )
+        return results
 
     def _submit_job(self, action, **kwargs):
         with Connection():
             queue = Queue('high', connection=redis_conn)
             action = 'worker.{}'.format(action)
+            app.logger.debug('-'*20)
+            app.logger.debug(action)
+            app.logger.debug(kwargs)
             job = queue.enqueue_call(func=action, timeout=600, kwargs=kwargs)
+            app.logger.debug(job)
 
             # job = queue.enqueue(action, **kwargs)
 

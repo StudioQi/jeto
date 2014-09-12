@@ -83,6 +83,7 @@ team_permissions_grids_fields = {
     'objectType': fields.String,
     'action': fields.String,
 }
+
 team_fields = {
     'id': fields.String,
     'name': fields.String,
@@ -159,7 +160,7 @@ class InstanceApi(Resource):
         if machineName is None:
             instance.status = instance._status()
         else:
-            app.logger.debug(instance._ip(machineName))
+            # app.logger.debug(instance._ip(machineName))
             return {'ip': instance._ip(machineName)}
 
         return marshal(instance, instance_fields)
@@ -384,11 +385,12 @@ class ProjectApi(RestrictedResource):
     def post(self, id=None):
         if 'state' in request.json and request.json['state'] == 'create':
             project = Project(None, request.json['name'])
-            if 'git_address' in request.json:
+            if 'git_address' in request.json and request.json['git_address'] != '':
                 project.git_address = request.json['git_address']
             elif 'base_path' in request.json:
                 project.base_path = request.json['base_path']
 
+            app.logger.debug(request.json)
             db.session.add(project)
             db.session.commit()
         else:

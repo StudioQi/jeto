@@ -41,15 +41,18 @@ function InstancesController($scope, Instances, Projects, Hosts, $http, createDi
         }
         if(project.base_path){
             $scope.showBasePath = true;
+            $scope.instanceInfo.base_path = project.base_path;
         }
         $scope.refreshGitReferences();
     }
 
     $scope.refreshGitReferences = function(){
+        console.log('starting');
         refreshIcon = angular.element('.glyphicon-refresh');
         refreshIcon.addClass('icon-refresh-animate');
         $http.get('/api/projects/' + $scope.instanceInfo.project + '/git-references')
         .success(function(result) {
+            console.log('done');
             $scope.gitReferences = result.gitReferences;
             refreshIcon.removeClass('icon-refresh-animate');
         });
