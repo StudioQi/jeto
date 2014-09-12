@@ -1,5 +1,5 @@
 from flask import render_template, send_file, Response, session, url_for
-from flask import redirect, g, flash, abort, current_app
+from flask import redirect, g, flash, abort, current_app, request
 from flask import jsonify
 from flask.ext.login import login_user, logout_user
 from flask.ext.login import current_user, login_required
@@ -290,9 +290,18 @@ def get_brand_image():
 
 @app.route('/api/projects/<int:projectId>/git-references')
 def get_git_references(projectId):
+    forceRefresh = bool(int(request.args.get('force')))
     project = Project.query.get(projectId)
-    fullRefs = redis_conn.get('project:{}:refs'.format(projectId))
+
+    fullRefs = None
+    app.logger.debug(request.args.get('force'))
+    app.logger.debug(forceRefresh)
+    if forceRefresh is False:
+        app.logger.debug('trying to get the key')
+        fullRefs = redis_conn.get('project:{}:refs'.format(projectId))
+
     if fullRefs is None:
+        app.logger.debug('fetching infos')
         fullRefs = git('ls-remote', project.git_address)
         redis_conn.set('project:{}:refs'.format(projectId), fullRefs)
 
