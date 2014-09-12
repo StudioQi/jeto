@@ -8,6 +8,8 @@ It also let you use different provider at will. So you can use this to deploy yo
 a VMWare cluster (via the free vagrant plugin vagrant-vsphere) or even right into Amazon AWS (via the free plugin
 vagrant-aws).
 
+![Vagrant-Control](v0.1.0-list-instances.png)
+
 ACL is being done right now, but in the near future it will be able to restrict access to project (a group of vagrant
 instances). You will also be able to give permissions on the host level.
 Exemple : your team ABC can access project ZXY. Your team also has access to host DEV. Your team don't have access to host
