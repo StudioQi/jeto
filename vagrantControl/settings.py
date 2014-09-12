@@ -1,5 +1,4 @@
 # -=- encoding: utf-8 -=-
-from flask import url_for
 
 DEBUG = True
 ETH = 'eth0'
@@ -21,6 +20,7 @@ GOOGLE_CLIENT_SECRET = ''
 GOOGLE_LIMIT_DOMAIN = ''
 BRAND_IMAGE_EXTERNAL = None
 BRAND_IMAGE_ASSET_FILENAME = None
+DEFAULT_LANGUAGE = 'en'
 
 try:
     from .settings_dev import *

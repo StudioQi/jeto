@@ -272,7 +272,7 @@ def page_not_found(e):
 
 @babel.localeselector
 def get_locale():
-    return 'fr'
+    return app.config['DEFAULT_LANGUAGE']
 
 
 def get_brand_image():
