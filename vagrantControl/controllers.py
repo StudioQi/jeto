@@ -292,7 +292,6 @@ def get_brand_image():
 def get_git_references(projectId):
     project = Project.query.get(projectId)
     fullRefs = redis_conn.get('project:{}:refs'.format(projectId))
-    fullRefs = None
     if fullRefs is None:
         fullRefs = git('ls-remote', project.git_address)
         redis_conn.set('project:{}:refs'.format(projectId), fullRefs)

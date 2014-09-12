@@ -1,3 +1,22 @@
+September 12 2014
+----
+Biggest release yet, with a lot of unfinished (but without regression) features.
+
+- Adding administrative interface.
+    - Teams: Can group people together and grant permission at the team level. Permission are related to hosts and projects.
+    - Projects: Group instances together and set basic parameters that should be the same across all instances in the group.
+    - Hosts: Could also be named providers. You can set arbitrary values that will be set in the ENV before provisionning/stopping/starting a vagrant project. Very useful to deploy a vagrant project on many differents AWS/vSphere accounts.
+    - Roles: for now only "default" and "admin" are available. Admin role can only be given via the command line for now (python manage.py add_admin, it will list all the user and you will have to choose which one).
+
+- Permissions are half-in: you can assign permissions on the teams. Permissions are related to either a Host or a Project. For now, they can't be given at the instance or user level. Administrators have automatically access to all instances whatever the team(s) they are in. The basic, big work is done, but the actual restriction are not yet done. Planned for next release.
+
+- Better support for multi-machines: You can now start, stop and provision a single machine in a vagrant project. Very usefull if you have a machine to create a build that will be used by all the other machines.
+
+- More filters : With the addition to hosts and projects, you can now list the interface by project and hosts.
+
+- Git support! : The new most important feature, yet the most simple, git support for projects. All projects can be given a git_address that will be used to fetch the project before adding the instance. When adding the instance you will be given the option to choose a git_reference, which can be either a tag or a branch. Results of the branches and tags are cached in the redis server. The refresh arrow will be able to force a refresh on the cache (in the next release).
+
+
 July 23 2014
 ----
 - Default sorting order (A-Z) for every module. Complete control on the sorting to come in future releases.
