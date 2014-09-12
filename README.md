@@ -1,25 +1,27 @@
 # VagrantControl
 
-This is currently a work in progress. 
+*This is currently a work in progress* 
 
-VagrantControl is the web interface to a few other API (nginx-api, vagrant-worker and htpasswd-api). 
-It lets you add vagrant project and start/stop/provision them on the fly without connecting via SSH.
-It also let you use different provider at will. So you can use this to deploy your vagrant project into 
-a VMWare cluster (via the free vagrant plugin vagrant-vsphere) or even right into Amazon AWS (via the free plugin
-vagrant-aws).
+VagrantControl is the web interface to several APIs (nginx-api, vagrant-worker and htpasswd-api).
+
+With VagrantControl you add and manage (start/stop/provision) vagrant projects on the fly without connecting via SSH.
+
+###Providers
+Providers like **vagrant-vsphere**, allowing you to deploy your vagrant project into a VMWare cluster;  **pluginvagrant-aws** which deploys your project right onto Amazon AWS or any other can all be used
 
 ![Vagrant-Control](v0.1.0-list-instances.png)
 
-ACL is being done right now, but in the near future it will be able to restrict access to project (a group of vagrant
-instances). You will also be able to give permissions on the host level.
-Exemple : your team ABC can access project ZXY. Your team also has access to host DEV. Your team don't have access to host
-PROD.
-So your team ABC can deploy/start/stop/provision the instances in project ZXY on the host DEV but don't have any
-rights for the instances linked to the PROD host.
+###ACL
 
+Basic Access Control Management has been implemented, but in the near future you will be able to restrict access to project (a group of vagrant instances). You will also be able to give permissions on the host level.
 
+As and example : You will be able to give a group of Developers access to a project. But only the lead developer has PROD access.  
+
+So all developers can deploy/start/stop/provision the DEV environment but only the lead has access to deploy to the PROD environment
+
+###GIT
 Git and multi-machines are now supported. You can launch a vagrant instance from a project that is linked 
-into a git repository. At creation time you can choose which branch/tag you want to use.
+from a git repository. At creation time you can choose which branch/tag you want to use.
 
 Feel free to contact us if you want a little demo around the project.
 
