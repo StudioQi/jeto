@@ -294,19 +294,18 @@ def get_git_references(projectId):
     project = Project.query.get(projectId)
 
     fullRefs = None
-    app.logger.debug(request.args.get('force'))
-    app.logger.debug(forceRefresh)
     if forceRefresh is False:
-        app.logger.debug('trying to get the key')
         fullRefs = redis_conn.get('project:{}:refs'.format(projectId))
 
     if fullRefs is None:
-        app.logger.debug('fetching infos')
         fullRefs = git('ls-remote', project.git_address)
+        app.logger.debug('Getting git ref : git ls-remote {}'
+                         .format(project.git_address))
         redis_conn.set('project:{}:refs'.format(projectId), fullRefs)
 
     fullRefs = fullRefs.splitlines()
-    ref = [refs.split('\t')[1].replace('refs/', '').replace('heads/', '') for refs in fullRefs]
+    ref = [refs.split('\t')[1].replace('refs/', '').replace('heads/', '')
+           for refs in fullRefs]
     ref = [refs for refs in ref if refs != 'HEAD']
     return jsonify({'gitReferences': ref})
 
