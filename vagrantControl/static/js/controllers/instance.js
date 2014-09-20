@@ -4,13 +4,13 @@ function InstanceController($scope, $routeParams, Instances, MachineIP, $http, c
         Instances.get({id: $routeParams.id}, function(instance) {
             $scope.instance = instance;
             angular.forEach($scope.instance.status, function(value, key) {
-                $scope.instance.status[key]['stopDisabled'] = false;
-                if(value['status'] != 'running'){
-                    $scope.instance.status[key]['stopDisabled'] = true;
+                $scope.instance.status[key].stopDisabled = false;
+                if(value.status.indexOf('running') === -1){
+                    $scope.instance.status[key].stopDisabled = true;
                 } 
             });
 
-            if($scope.source == undefined){
+            if($scope.source === undefined){
                 $scope.source = new EventSource('/pubsub/' + $scope.instance.id);
                 $scope.source.addEventListener('message', pubsubCallback, false);
             }
@@ -29,8 +29,8 @@ function InstanceController($scope, $routeParams, Instances, MachineIP, $http, c
             function(info){
                 refreshIcon.removeClass('icon-refresh-animate');
                 angular.forEach($scope.instance.status, function(value, key){
-                    if(value['name'] == machineName){
-                        $scope.instance.status[key]['ip'] = info['ip'];
+                    if(value.name == machineName){
+                        $scope.instance.status[key].ip = info.ip;
                     }
                 });
             }

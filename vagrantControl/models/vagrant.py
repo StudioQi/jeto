@@ -131,7 +131,12 @@ class VagrantInstance(db.Model):
     def _status(self):
         path = self._generatePath()
 
-        results = self._submit_job('status', path=path)
+        results = self._submit_job(
+            'status',
+            path=path,
+            host=self.host,
+        )
+
         machines = self._parse_status(results)
         machinesFormatted = []
         for machine, value in machines.iteritems():
@@ -186,7 +191,8 @@ class VagrantInstance(db.Model):
         results = self._submit_job(
             'ip',
             path=self._generatePath(),
-            machineName=machineName
+            machineName=machineName,
+            host=self.host,
         )
         return results
 
@@ -204,7 +210,7 @@ class VagrantInstance(db.Model):
             machineName=machineName,
             path=self._generatePath(),
             environment=self.environment,
-            host=self.host
+            host=self.host,
         )
 
         return results
@@ -215,6 +221,7 @@ class VagrantInstance(db.Model):
             path=self._generatePath(),
             environment=self.environment,
             machineName=machineName,
+            host=self.host,
         )
         return results
 
@@ -222,14 +229,19 @@ class VagrantInstance(db.Model):
         results = self._submit_job(
             'stop',
             path=self._generatePath(),
-            machineName=machineName
+            machineName=machineName,
+            host=self.host,
         )
         return results
 
     def delete(self):
         db.session.delete(self)
         db.session.commit()
-        self._submit_job('destroy', path=self._generatePath())
+        self._submit_job(
+            'destroy',
+            path=self._generatePath(),
+            host=self.host,
+        )
 
     def clone(self):
         results = self._submit_job(
@@ -237,6 +249,7 @@ class VagrantInstance(db.Model):
             path=self._generatePath(),
             git_address=self.project.git_address,
             git_reference=self.git_reference,
+            host=self.host,
         )
         return results
 
@@ -244,11 +257,7 @@ class VagrantInstance(db.Model):
         with Connection():
             queue = Queue('high', connection=redis_conn)
             action = 'worker.{}'.format(action)
-            app.logger.debug('-'*20)
-            app.logger.debug(action)
-            app.logger.debug(kwargs)
             job = queue.enqueue_call(func=action, timeout=600, kwargs=kwargs)
-            app.logger.debug(job)
 
             # job = queue.enqueue(action, **kwargs)
 
