@@ -235,13 +235,13 @@ class VagrantInstance(db.Model):
         return results
 
     def delete(self):
-        db.session.delete(self)
-        db.session.commit()
         self._submit_job(
             'destroy',
             path=self._generatePath(),
             host=self.host,
         )
+        db.session.delete(self)
+        db.session.commit()
 
     def clone(self):
         results = self._submit_job(

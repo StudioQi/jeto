@@ -81,7 +81,7 @@ function HtpasswordController($scope, $routeParams, Htpassword, $http, $location
                     list.name = slug;
                     list.slug = slug;
                     list.$delete();
-                    $scope.update();
+                    setTimeout($scope.update, 100);
                     $scope.deleteSlug = undefined;
                 }
             },
