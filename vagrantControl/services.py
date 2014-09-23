@@ -6,6 +6,8 @@ from flask.ext.restful import Resource, fields, marshal
 # from flask.ext.restful import marshal_with
 from flask.ext.login import current_user
 
+from flask.ext.sqlalchemy import get_debug_queries
+
 from vagrantControl import db
 from vagrantControl import app
 from vagrantControl.models.vagrant import VagrantBackend
@@ -92,6 +94,18 @@ team_fields = {
     'permissions_grids': fields.Nested(team_permissions_grids_fields),
 }
 
+team_fields_wo_users = {
+    'id': fields.String,
+    'name': fields.String,
+    'permissions_grids': fields.Nested(team_permissions_grids_fields),
+}
+
+user_fields_with_teams = dict(
+    user_fields,
+    **{
+        'teams': fields.Nested(team_fields_wo_users)
+    }
+)
 
 class InstancesApi(Resource):
     backend = None
@@ -544,11 +558,11 @@ class UserApi(RestrictedResource):
         if id is None:
             users = User.query.order_by('name')
             return {
-                'users': map(lambda t: marshal(t, user_fields), users),
+                'users': map(lambda t: marshal(t, user_fields_with_teams), users),
             }
         else:
             user = User.query.get(id)
-            return {'user': marshal(user, user_fields)}
+            return {'user': marshal(user, user_fields_with_teams)}
 
     @adminAuthenticate
     def post(self, id=None):
@@ -574,5 +588,8 @@ class UserApi(RestrictedResource):
     @adminAuthenticate
     def delete(self, id):
         user = User.query.get(id)
-        db.session.delete(user)
-        db.session.commit()
+        try:
+            db.session.delete(user)
+            db.session.commit()
+        except:
+            app.logger.debug(get_debug_queries())

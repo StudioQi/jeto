@@ -11,7 +11,7 @@ teams_users = db.Table(
     ),
     db.Column(
         'user_id',
-        db.String(128),
+        db.String(64),
         db.ForeignKey('user.id')
     )
 )
@@ -23,7 +23,7 @@ class Team(db.Model):
     users = db.relationship(
         'User',
         secondary=teams_users,
-        backref=db.backref('users', lazy='dynamic'),
+        backref=db.backref('teams', lazy='select'),
     )
     permissions_grids = db.relationship(
         'TeamPermissionsGrids',
