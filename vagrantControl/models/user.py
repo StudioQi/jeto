@@ -1,15 +1,18 @@
 # -=- encoding: utf-8 -=-
 
-from flask.ext.principal import UserNeed, RoleNeed, Permission
+from flask.ext.principal import RoleNeed, Permission
 
 from vagrantControl import db
+from vagrantControl import app
 from vagrantControl.models.team import teams_users
+from vagrantControl.models.permission import ViewInstancePermission
 
 ROLE_DEV = 'dev'
 ROLE_ADMIN = 'admin'
 
 
 class User(db.Model):
+    __mapper_args__ = {'confirm_deleted_rows': False}
     id = db.Column(db.String(64), primary_key=True)
     name = db.Column(db.String(64))
     email = db.Column(db.String(128), unique=True)
@@ -18,11 +21,6 @@ class User(db.Model):
     picture = db.Column(db.String(256))
     role = db.Column(db.String(32), default=ROLE_DEV)
     last_login = db.Column(db.DateTime)
-    teams = db.relationship(
-        'Team',
-        secondary=teams_users,
-        backref=db.backref('teams', lazy='dynamic')
-    )
     permissions_grids = db.relationship(
         'UserPermissionsGrids',
         backref='user',
@@ -67,7 +65,13 @@ class User(db.Model):
             return True
         return False
 
+    def get_permissions_grids(self):
+        return sorted(self.permissions_grids, key=lambda item: item.objectType)
+
     def has_permission(self, permissionType, objectId):
-        permission = permissionType(objectId)
+        permission = permissionType(unicode(objectId))
         admin = Permission(RoleNeed(ROLE_ADMIN))
-        return permission.can() or admin.can()
+        if permission.can() or admin.can():
+            return True
+
+        return False

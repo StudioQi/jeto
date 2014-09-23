@@ -4,7 +4,7 @@
 
 {% block contentAdmin %}
 <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-6">
         <div class="panel panel-default">
             <div class="panel-heading">
                 [[ user.name ]]
@@ -28,6 +28,28 @@
                 </tr>
             </table>
         </div>
+    </div>
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {{ _('The user is part of the teams :') }}
+            </div>
+            <table class="table table-bordered table-hover">
+                <tr>
+                    <th>{{ _('Team name') }}</th>
+                    <th></th>
+                </tr>
+                <tr ng-repeat="team in user.teams">
+                    <td>[[ team.name ]]</td>
+                    <td><a href="/admin/teams/[[ team.id ]]">{{ _('View') }}</a></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <button type="button" class="btn btn-danger pull-right glyphicon glyphicon-trash" ng-bind-html="[[user.id]]" ng-click="delete()"><span class="sr-only">{{ _('Delete') }}</span></button>
     </div>
 </div>
 {% endblock %}

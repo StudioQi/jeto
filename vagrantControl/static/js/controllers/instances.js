@@ -50,7 +50,6 @@ function InstancesController($scope, Instances, Projects, Hosts, $http, createDi
         if(force === undefined){
             force = 0;
         }
-        console.log('trying to add the class to it');
         refreshIcon = angular.element('.glyphicon-refresh');
         refreshIcon.addClass('icon-refresh-animate');
 
@@ -60,7 +59,6 @@ function InstancesController($scope, Instances, Projects, Hosts, $http, createDi
             params: {force: force}
         })
         .success(function(result) {
-            console.log('im back already');
             $scope.gitReferences = result.gitReferences;
             refreshIcon.removeClass('icon-refresh-animate');
         });
