@@ -21,8 +21,9 @@ def add_admin():
     "Grant the admin role to a user"
     users = User.query.all()
     print(
-        ''.join(
-            '{} ) {}'.format(idx, user.name) for idx, user in enumerate(users)
+        '\n'.join(
+            '{} ) {} {}'.format(idx, user.name, user.email)
+            for idx, user in enumerate(users)
         )
     )
     choosenUser = int(raw_input('To which user ? '))

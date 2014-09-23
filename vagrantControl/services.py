@@ -13,7 +13,8 @@ from vagrantControl.models.project import Project
 from vagrantControl.models.host import Host
 from vagrantControl.models.team import Team
 from vagrantControl.models.user import User
-from vagrantControl.models.permission import ViewHostPermission
+from vagrantControl.models.permission import ViewHostPermission,\
+    TeamPermissionsGrids, ProvisionInstancePermission, StopInstancePermission, StartInstancePermission
 
 from settings import DOMAINS_API_URL, DOMAINS_API_PORT
 from settings import HTPASSWORD_API_URL, HTPASSWORD_API_PORT
@@ -181,11 +182,20 @@ class InstanceApi(Resource):
             machineName = request.json['machine']
 
         if 'state' in request.json and request.json['state'] == 'stop':
-            self.stop(id, machineName)
+            if current_user.has_permission(StopInstancePermission, id):
+                self.stop(id, machineName)
+            else:
+                abort(403)
         if 'state' in request.json and 'start' in request.json['state']:
-            self.start(id, machineName)
+            if current_user.has_permission(StartInstancePermission, id):
+                self.start(id, machineName)
+            else:
+                abort(403)
         if 'state' in request.json and 'provision' in request.json['state']:
-            self.provision(id, machineName)
+            if current_user.has_permission(ProvisionInstancePermission, id):
+                self.provision(id, machineName)
+            else:
+                abort(403)
 
     def provision(self, id, machineName):
         self.backend.provision(id, machineName)
@@ -357,10 +367,19 @@ class HtpasswordListApi(Resource, HtpasswordService):
                 'Content-Type': 'application/json'}
 
 
-def authenticate(func):
+def adminAuthenticate(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         if current_user.is_admin():
+            return func(*args, **kwargs)
+
+        abort(403)
+    return wrapper
+
+def authenticate(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        if current_user.is_authenticated():
             return func(*args, **kwargs)
 
         abort(403)
@@ -382,10 +401,13 @@ class ProjectApi(RestrictedResource):
             project = Project.query.get(id)
             return {'project': marshal(project, project_fields)}
 
+
+    @adminAuthenticate
     def post(self, id=None):
         if 'state' in request.json and request.json['state'] == 'create':
             project = Project(None, request.json['name'])
-            if 'git_address' in request.json and request.json['git_address'] != '':
+            if 'git_address' in request.json\
+                    and request.json['git_address'] != '':
                 project.git_address = request.json['git_address']
             elif 'base_path' in request.json:
                 project.base_path = request.json['base_path']
@@ -400,9 +422,11 @@ class ProjectApi(RestrictedResource):
             'project': marshal(project, project_fields),
         }
 
+    @adminAuthenticate
     def put(self, id):
         pass
 
+    @adminAuthenticate
     def delete(self, id):
         project = Project.query.get(id)
         db.session.delete(project)
@@ -427,6 +451,7 @@ class HostApi(RestrictedResource):
             host = Host.query.get(id)
             return {'host': marshal(host, host_fields)}
 
+    @adminAuthenticate
     def post(self, id=None):
         if 'state' in request.json and request.json['state'] == 'create':
             host = Host(
@@ -445,9 +470,11 @@ class HostApi(RestrictedResource):
             'host': marshal(host, host_fields),
         }
 
+    @adminAuthenticate
     def put(self, id):
         pass
 
+    @adminAuthenticate
     def delete(self, id):
         host = Host.query.get(id)
         db.session.delete(host)
@@ -465,6 +492,7 @@ class TeamApi(RestrictedResource):
             team = Team.query.get(id)
             return {'team': marshal(team, team_fields)}
 
+    @adminAuthenticate
     def post(self, id=None):
         if 'state' in request.json and request.json['state'] == 'create':
             team = Team(
@@ -481,6 +509,7 @@ class TeamApi(RestrictedResource):
             'team': marshal(team, team_fields),
         }
 
+    @adminAuthenticate
     def put(self, id):
         team = Team.query.get(id)
         usersId = request.json['users']
@@ -489,9 +518,21 @@ class TeamApi(RestrictedResource):
             users.append(User.query.get(userId))
 
         team.users = users
+
+        permissions = []
+        for permission in request.json['permissionsGrid']:
+            teamPermission = TeamPermissionsGrids()
+            teamPermission.objectId = permission['objectId']
+            teamPermission.action = permission['action']
+            teamPermission.objectType = permission['objectType']
+            permissions.append(teamPermission)
+
+        team.permissions_grids = permissions
+
         db.session.add(team)
         db.session.commit()
 
+    @adminAuthenticate
     def delete(self, id):
         team = Team.query.get(id)
         db.session.delete(team)
@@ -509,6 +550,7 @@ class UserApi(RestrictedResource):
             user = User.query.get(id)
             return {'user': marshal(user, user_fields)}
 
+    @adminAuthenticate
     def post(self, id=None):
         if 'state' in request.json and request.json['state'] == 'create':
             user = User(
@@ -525,9 +567,11 @@ class UserApi(RestrictedResource):
             'user': marshal(user, user_fields),
         }
 
+    @adminAuthenticate
     def put(self, id):
         pass
 
+    @adminAuthenticate
     def delete(self, id):
         user = User.query.get(id)
         db.session.delete(user)

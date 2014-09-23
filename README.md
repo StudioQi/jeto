@@ -13,9 +13,9 @@ Providers like **vagrant-vsphere**, allowing you to deploy your vagrant project 
 
 ###ACL
 
-Basic Access Control Management has been implemented, but in the near future you will be able to restrict access to project (a group of vagrant instances). You will also be able to give permissions on the host level.
+Access Control Management has been implemented. You can restrict access to project (a group of vagrant instances). You can also give access on the host level.
 
-As and example : You will be able to give a group of Developers access to a project. But only the lead developer has PROD access.  
+As an example : You will be able to give a group of Developers access to a project. But only the lead developer has PROD access.  
 
 So all developers can deploy/start/stop/provision the DEV environment but only the lead has access to deploy to the PROD environment
 

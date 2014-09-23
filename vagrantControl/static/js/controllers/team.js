@@ -74,7 +74,6 @@ function TeamController($scope, $routeParams, Teams, Users, Hosts, Projects, $ht
         Teams.get({id: $routeParams.id}, function(infos) {
             $scope.team = infos.team;
             $scope.resource = infos;
-            console.log($scope.team);
             $scope.update();
         });
 
@@ -162,8 +161,14 @@ function TeamController($scope, $routeParams, Teams, Users, Hosts, Projects, $ht
         angular.forEach($scope.team.users, function(value) {
             lstUsers.push(value.id);
         }, lstUsers);
+        lstPermissions = Array();
+        angular.forEach($scope.team.permissions_grids, function(value) {
+            lstPermissions.push(value);
+        });
+
         $http.put('/api/teams/' + $scope.team.id, {
-            users: lstUsers
+            users: lstUsers,
+            permissionsGrid: lstPermissions
         })
         .success(function(){
             $location.path('/admin/teams');

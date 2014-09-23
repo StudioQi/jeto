@@ -1,3 +1,14 @@
+0.1.2 - September 23 2014
+---
+- ACL is now working. Many features are missing (ACL on the domains and htpassword for example), but the main ones are there (host, project/team).
+
+0.1.1 
+---
+- fixed many issues with the provisioning params. Now accepting values like : param1="value1" (note the double-quotes, also works with single-quote)
+- environment was not properly set in vagrant-worker for some commands. Now fixed.
+- Able to force the refresh on git references.
+
+
 September 12 2014
 ----
 Biggest release yet, with a lot of unfinished (but without regression) features.

@@ -58,9 +58,9 @@
             </table>
             <div class="panel-footer">
                 <div class="btn-group">        
-                    <button class="btn btn-warning" ng-click="control('stop', machine.name)" ng-disabled="machine.stopDisabled">{{ _('Stop') }}</button>
-                    <button class="btn btn-primary" ng-click="control('provision', machine.name)" ng-disabled="!machine.stopDisabled" ng-show="machine.provisionEnabled">{{ _('Provision') }}</button>
-                    <button class="btn btn-primary" ng-click="control('start', machine.name)" ng-disabled="!machine.stopDisabled">{{ _('Start') }}</button>
+                    <button class="btn btn-warning" ng-click="control('stop', machine.name)" ng-disabled="machine.stopDisabled == true">{{ _('Stop') }}</button>
+                    <button class="btn btn-primary" ng-click="control('provision', machine.name)" ng-disabled="machine.stopDisabled == true">{{ _('Provision') }}</button>
+                    <button class="btn btn-primary" ng-click="control('start', machine.name)" ng-disabled="machine.stopDisabled == false">{{ _('Start') }}</button>
                 </div>
             </div>
         </div>

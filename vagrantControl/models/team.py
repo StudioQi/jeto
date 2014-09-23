@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # vim:fenc=utf-8
-from vagrantControl import db
+from vagrantControl import db, app
 
 teams_users = db.Table(
     'teams_users',
@@ -29,7 +29,11 @@ class Team(db.Model):
         'TeamPermissionsGrids',
         backref='team',
     )
+
     def __init__(self, id, name, users=[]):
         self.id = id
         self.name = name
         self.users = users
+
+    def get_permissions_grids(self):
+        return sorted(self.permissions_grids, key=lambda item: item.objectType)

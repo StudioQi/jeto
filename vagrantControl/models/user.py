@@ -1,9 +1,11 @@
 # -=- encoding: utf-8 -=-
 
-from flask.ext.principal import UserNeed, RoleNeed, Permission
+from flask.ext.principal import RoleNeed, Permission
 
 from vagrantControl import db
+from vagrantControl import app
 from vagrantControl.models.team import teams_users
+from vagrantControl.models.permission import ViewInstancePermission
 
 ROLE_DEV = 'dev'
 ROLE_ADMIN = 'admin'
@@ -67,7 +69,13 @@ class User(db.Model):
             return True
         return False
 
+    def get_permissions_grids(self):
+        return sorted(self.permissions_grids, key=lambda item: item.objectType)
+
     def has_permission(self, permissionType, objectId):
-        permission = permissionType(objectId)
+        permission = permissionType(unicode(objectId))
         admin = Permission(RoleNeed(ROLE_ADMIN))
-        return permission.can() or admin.can()
+        if permission.can() or admin.can():
+            return True
+
+        return False

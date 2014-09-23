@@ -5,6 +5,7 @@ from vagrantControl import app
 from vagrantControl.core import redis_conn, is_async
 from vagrantControl.models.project import Project
 from vagrantControl.models.host import Host
+from vagrantControl.models.permission import ViewInstancePermission
 
 import time
 import slugify
@@ -46,7 +47,11 @@ class VagrantBackend(BackendProvider):
         return None
 
     def get_all_instances(self):
-        return self.instances
+        instances = filter(
+            lambda instance: current_user.has_permission(ViewInstancePermission, instance.id),
+            self.instances
+        )
+        return instances
 
     def create(self, request):
         if 'environment' in request:

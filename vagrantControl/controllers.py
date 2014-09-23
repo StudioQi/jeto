@@ -26,10 +26,10 @@ from vagrantControl.services import TeamApi
 from vagrantControl.services import UserApi
 from vagrantControl.models.user import User
 from vagrantControl.models.project import Project
-from vagrantControl.models.permission import DestroyInstancePermission, \
-    ViewInstancePermission, StartInstancePermission, \
-    ProvisionInstancePermission
-from vagrantControl.models.permission import ViewHostPermission
+from vagrantControl.models.permission import ViewHostPermission, ViewHostNeed
+from vagrantControl.models.permission import ProvisionInstanceNeed, DestroyInstanceNeed,\
+    ViewInstanceNeed, StartInstanceNeed
+# StopInstanceNeed
 
 
 @app.route('/')
@@ -78,8 +78,8 @@ def authorized(resp):
 
     if 'GOOGLE_LIMIT_DOMAIN' in app.config and \
             app.config['GOOGLE_LIMIT_DOMAIN'] and \
-            'hd' not in data or\
-            data['hd'] != app.config['GOOGLE_LIMIT_DOMAIN']:
+            ('hd' not in data or
+             data['hd'] != app.config['GOOGLE_LIMIT_DOMAIN']):
 
         flash(_('Domain not allowed, please use an email associated with\
               the domain : {}').format(app.config['GOOGLE_LIMIT_DOMAIN']))
@@ -113,27 +113,39 @@ def authorized(resp):
 def on_identity_loaded(sender, identity):
     identity.user = current_user
     if hasattr(current_user, 'id'):
-        identity.provides.add(UserNeed(current_user.id))
-        identity.provides.add(RoleNeed(current_user.role))
-        _set_permissions(current_user.permissions_grids, identity)
+        identity.provides.add(UserNeed(unicode(current_user.id)))
+        identity.provides.add(RoleNeed(unicode(current_user.role)))
+        _set_permissions(current_user.get_permissions_grids(), identity)
         if current_user.teams:
             for team in current_user.teams:
-                _set_permissions(team.permissions_grids, identity)
+                _set_permissions(team.get_permissions_grids(), identity)
 
 
 def _set_permissions(permissions_grids, identity):
     if permissions_grids is not None:
         for permission in permissions_grids:
-            if permission.objectType == 'Host' and permission.action == 'view':
+            if permission.objectType == 'host' and permission.action == 'view':
                 _set_permissions_host(identity, permission)
-            if permission.objectType == 'Project':
+            if permission.objectType == 'project':
                 project = Project.query.get(permission.objectId)
                 for instance in project.instances:
-                    if ViewHostPermission(instance.host.id).can():
+                    viewPermission = ViewHostPermission(unicode(instance.host.id))
+                    if viewPermission.can():
                         _set_permissions_instance(
                             identity,
                             instance,
                             permission
+                        )
+                    else:
+                        app.logger.debug(
+                            'Not adding permission for instance {} in project {}, user {} has no\
+                            access to host {}'
+                            .format(
+                                instance.name,
+                                project.name,
+                                current_user.email,
+                                instance.host.id
+                            )
                         )
 
 
@@ -142,20 +154,20 @@ def _set_permissions_host(identity, permission, host=None):
     if host:
         objectId = host.id
     if permission.action == 'view':
-        identity.provides.add(ViewHostPermission(objectId))
+        identity.provides.add(ViewHostNeed(unicode(objectId)))
 
 
 def _set_permissions_instance(identity, instance, permission):
     if permission.action == 'start':
-        identity.provides.add(StartInstancePermission(instance.id))
+        identity.provides.add(StartInstanceNeed(unicode(instance.id)))
     if permission.action == 'stop':
-        identity.provides.add(StartInstancePermission(instance.id))
+        identity.provides.add(StartInstanceNeed(unicode(instance.id)))
     if permission.action == 'provision':
-        identity.provides.add(ProvisionInstancePermission(instance.id))
+        identity.provides.add(ProvisionInstanceNeed(unicode(instance.id)))
     if permission.action == 'destroy':
-        identity.provides.add(DestroyInstancePermission(instance.id))
+        identity.provides.add(DestroyInstanceNeed(unicode(instance.id)))
     if permission.action == 'view':
-        identity.provides.add(ViewInstancePermission(instance.id))
+        identity.provides.add(ViewInstanceNeed(unicode(instance.id)))
 
 
 @app.route('/login')
