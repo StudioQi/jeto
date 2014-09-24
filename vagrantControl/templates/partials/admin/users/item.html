@@ -60,7 +60,7 @@
         <button type="button" class="btn btn-danger pull-right glyphicon glyphicon-trash" ng-bind-html="[[user.id]]" ng-click="delete()"><span class="sr-only">{{ _('Delete') }}</span></button>
     </div>
     <div class="col-md-6" ng-show="user.id == {{ current_user.id }}">
-        <button type="button" class="btn pull-right " ng-bind-html="[[user.id]]" disabled="disabled"><span class="glyphicon glyphicon-trash"></span>{{ _("You can't delete yourself.") }}</button>
+        <button type="button" class="btn pull-right " disabled="disabled"><span class="glyphicon glyphicon-trash"></span> <span>{{ _("You can't delete yourself.") }}</span></button>
     </div>
 </div>
 {% endblock %}

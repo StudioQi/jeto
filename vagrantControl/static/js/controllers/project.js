@@ -78,8 +78,9 @@ function ProjectsListController($scope, $routeParams, Projects, $http, $location
 
 function ProjectController($scope, $routeParams, Projects, $http, $location, $log) {
     watchFunction = function(newValue, oldValue) {
-        $log.debug(newValue);
-        $log.debug(oldValue);
+        if(newValue !== undefined && newValue !== oldValue){
+            $scope.resource.$save({id: $scope.project.id});
+        }
     };
     $scope.update = function() {
         Projects.get({id: $routeParams.id}, function(infos) {
