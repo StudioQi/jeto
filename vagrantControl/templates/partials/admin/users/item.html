@@ -32,7 +32,7 @@
     <div class="col-md-6">
         <div class="panel panel-default">
             <div class="panel-heading">
-                {{ _('The user is part of the teams :') }}
+                {{ _('The user is in the following teams :') }}
             </div>
             <table class="table table-bordered table-hover">
                 <tr>
@@ -43,13 +43,24 @@
                     <td>[[ team.name ]]</td>
                     <td><a href="/admin/teams/[[ team.id ]]">{{ _('View') }}</a></td>
                 </tr>
+                <tr ng-show="!project.instances.length">
+                    <td>
+                        {{ _('This user is not assigned to any team yet') }}
+                    </td>
+                    <td>
+                        <a href="/admin/teams">{{ _('View all teams') }}</a>
+                    </td>
+                </tr>
             </table>
         </div>
     </div>
 </div>
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-6" ng-show="user.id != {{ current_user.id }}">
         <button type="button" class="btn btn-danger pull-right glyphicon glyphicon-trash" ng-bind-html="[[user.id]]" ng-click="delete()"><span class="sr-only">{{ _('Delete') }}</span></button>
+    </div>
+    <div class="col-md-6" ng-show="user.id == {{ current_user.id }}">
+        <button type="button" class="btn pull-right " ng-bind-html="[[user.id]]" disabled="disabled"><span class="glyphicon glyphicon-trash"></span>{{ _("You can't delete yourself.") }}</button>
     </div>
 </div>
 {% endblock %}

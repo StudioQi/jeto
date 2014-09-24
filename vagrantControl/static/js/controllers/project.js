@@ -5,7 +5,7 @@ function ProjectsListController($scope, $routeParams, Projects, $http, $location
             $scope.projects.sort(function(a, b){ return a.name > b.name; });
             $scope.resource = infos;
             $('.loading').hide();
-        })
+        });
     };
 
     $scope.update();
@@ -22,7 +22,7 @@ function ProjectsListController($scope, $routeParams, Projects, $http, $location
     $scope.resetTabInfos = function() {
         $scope.projectInfo.base_path = '';
         $scope.projectInfo.git_address = '';
-    }
+    };
 
     $scope.create = function() {
         createDialog('/partials/admin/projects/form.html',{ 
@@ -76,13 +76,19 @@ function ProjectsListController($scope, $routeParams, Projects, $http, $location
     };
 }
 
-function ProjectController($scope, $routeParams, Projects, $http, $location) {
+function ProjectController($scope, $routeParams, Projects, $http, $location, $log) {
+    watchFunction = function(newValue, oldValue) {
+        $log.debug(newValue);
+        $log.debug(oldValue);
+    };
     $scope.update = function() {
         Projects.get({id: $routeParams.id}, function(infos) {
             $scope.project = infos.project;
+            $scope.$watch('project', watchFunction, true);
             $scope.resource = infos;
-        })
+        });
     };
+
     $scope.update();
     $scope.resetInfos = function(){
        setTimeout($scope.update, 100);

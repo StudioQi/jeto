@@ -7,7 +7,7 @@
     <div class="col-md-3">
         <div class="panel panel-default">
             <div class="panel-heading">
-                [[ team.name ]]
+                <span contenteditable ng-model="team.name"></span>
             </div>
             <table class="table table-bordered">
                 <tr>
@@ -31,7 +31,7 @@
                         <div class="col-md-9">
                             <select ui-select2 ng-model="newUser" data-placeholder="{{ _('Select user') }}" class="form-control">
                                 <option></option>
-                                <option ng-repeat="user in users" value="[[ user.id ]]">[[ user.name ]]</option>
+                                <option ng-repeat="user in users" value="[[ user.id ]]">[[ user.name ]] ([[ user.email ]])</option>
                             </select>
                         </div>
                         <div class="col-md-3">
@@ -44,6 +44,7 @@
                 <tr>
                     <th>{{ _('Name') }}</th>
                     <th>{{ _('E-mail') }}</th>
+                    <th></th>
                     <th></th>
                 </tr>
                 <tr ng-repeat="user in team.users">

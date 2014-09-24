@@ -243,3 +243,14 @@ input[type="checkbox"]:checked + span:before {
 label {
     font-weight: normal;
 }
+
+[contenteditable]:active,
+[contenteditable]:focus {
+    border: 1px solid #428bca;
+    box-shadow: 0px 0px 10px #38a4ff;
+}
+
+.appversion {
+    color: #807F7F;
+    font-size:0.75em;
+}

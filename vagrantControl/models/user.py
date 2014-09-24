@@ -12,7 +12,6 @@ ROLE_ADMIN = 'admin'
 
 
 class User(db.Model):
-    __mapper_args__ = {'confirm_deleted_rows': False}
     id = db.Column(db.String(64), primary_key=True)
     name = db.Column(db.String(64))
     email = db.Column(db.String(128), unique=True)

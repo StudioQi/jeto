@@ -13,11 +13,13 @@
     <script src="/static/lib/bootstrap/bootstrap.min.js"></script>
     <script src="/static/lib/angular/angular.js"></script>
     <script src="/static/lib/angular/angular-resource.js"></script>
+    <script src="/static/lib/angular/angular-route.js"></script>
     <script src="/static/lib/select2/select2.min.js"></script>
     <script src="/static/lib/select2/angular.select2.js"></script>
     <script src="/static/lib/angular/createDialog.js"></script>
 
     <script src="/static/js/app.js"></script>
+
     <script src="/static/js/controllers/index.js"></script>
     <script src="/static/js/controllers/admin.js"></script>
     <script src="/static/js/controllers/domains.js"></script>
@@ -29,7 +31,9 @@
     <script src="/static/js/controllers/host.js"></script>
     <script src="/static/js/controllers/team.js"></script>
     <script src="/static/js/controllers/user.js"></script>
+
     <script src="/static/js/services.js"></script>
+    <script src="/static/js/directives.js"></script>
     <script src="/static/js/filters.js"></script>
 
 </head>
@@ -96,6 +100,7 @@
                         <a href="/admin">{{ _('Administration') }}</a>
                       {% endif %}
                     </div>
+                      <div class="pull-right appversion" appversion/>
                 </footer>
             </div>
         </div>
