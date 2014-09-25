@@ -2,6 +2,7 @@
 
 from vagrantControl import db
 from vagrantControl import app
+from vagrantControl.settings import PROJECT_BASEPATH
 from vagrantControl.core import redis_conn, is_async
 from vagrantControl.models.project import Project
 from vagrantControl.models.host import Host
@@ -48,7 +49,10 @@ class VagrantBackend(BackendProvider):
 
     def get_all_instances(self):
         instances = filter(
-            lambda instance: current_user.has_permission(ViewInstancePermission, instance.id),
+            lambda instance: current_user.has_permission(
+                ViewInstancePermission,
+                instance.id
+            ),
             self.instances
         )
         return instances
@@ -204,8 +208,12 @@ class VagrantInstance(db.Model):
     def _generatePath(self):
         path = self.path
         if self.git_reference is not None:
-            return '/tmp/' + slugify.slugify(self.name)\
-                + '/' + self.git_reference
+            return PROJECT_BASEPATH + \
+                slugify.slugify(self.project.name) +\
+                '/' + \
+                slugify.slugify(self.name) + \
+                '/' + \
+                self.git_reference
 
         return path
 

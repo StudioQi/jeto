@@ -13,6 +13,7 @@ LANGUAGES = {
     'en': 'English',
     'fr': 'Français',
 }
+PROJECT_BASEPATH = '~/projects/'
 # oauth
 REDIRECT_URI = '/oauth2callback'
 GOOGLE_CLIENT_ID = ''
