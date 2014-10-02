@@ -11,6 +11,9 @@ from flask.ext.principal import UserNeed, RoleNeed
 # from flask.ext.principal import Permission
 
 from sh import git
+from rq import Queue, Connection
+import time
+import json
 
 from requests import get
 import ansiconv
@@ -310,16 +313,22 @@ def get_git_references(projectId):
         fullRefs = redis_conn.get('project:{}:refs'.format(projectId))
 
     if fullRefs is None:
-        fullRefs = git('ls-remote', project.git_address)
-        app.logger.debug('Getting git ref : git ls-remote {}'
-                         .format(project.git_address))
-        redis_conn.set('project:{}:refs'.format(projectId), fullRefs)
+        with Connection():
+            queue = Queue('low', connection=redis_conn)
+            action = 'worker.get_git_references'
 
-    fullRefs = fullRefs.splitlines()
-    ref = [refs.split('\t')[1].replace('refs/', '').replace('heads/', '')
-           for refs in fullRefs]
-    ref = [refs for refs in ref if refs != 'HEAD']
-    return jsonify({'gitReferences': ref})
+            job = queue.enqueue_call(
+                func=action,
+                timeout=900,
+                args=(project.git_address, project.id)
+            )
+            while job.result is None:
+                time.sleep(0.5)
+
+            fullRefs = str(job.result)
+            redis_conn.set('project:{}:refs'.format(projectId), fullRefs)
+
+    return jsonify({'gitReferences': json.loads(fullRefs)})
 
 
 api.add_resource(InstanceApi, '/api/instances/<int:id>', endpoint='instance')
