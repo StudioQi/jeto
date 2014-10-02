@@ -22,7 +22,6 @@ angular.module('angularFlaskDirectives', [])
 
       element.bind("blur", function() {
         scope.$apply(read);
-console.log('awdadw');
       });
     }
   };

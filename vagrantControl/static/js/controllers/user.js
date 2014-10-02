@@ -5,7 +5,7 @@ function UsersListController($scope, $routeParams, createDialog, Users) {
             $scope.users.sort(function(a, b){ return a.name > b.name; });
             $scope.resource = infos;
             $('.loading').hide();
-        })
+        });
     };
     $scope.update();
     $scope.delete = function(user) {
@@ -39,7 +39,15 @@ function UserController($scope, $routeParams, Users) {
             $scope.user = infos.user;
             console.log($scope.user);
             $scope.resource = infos;
-        })
+        });
+    };
+    $scope.giveAdminRights = function() {
+        $scope.user.role = 'admin';
+        $scope.resource.$save({id: $scope.user.id});
+    };
+    $scope.removeAdminRights = function() {
+        $scope.user.role = 'dev';
+        $scope.resource.$save({id: $scope.user.id});
     };
     $scope.update();
 }

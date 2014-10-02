@@ -24,7 +24,11 @@
                 </tr>
                 <tr>
                     <th>{{ _('Role') }}</th>
-                    <td>[[ user.role ]]</td>
+                    <td>[[ user.role ]]
+                        <button ng-click="giveAdminRights()" ng-show="user.role == 'dev'" class="btn btn-default pull-right">{{ _('Give administrative rights') }}</button>
+                        <button ng-click="removeAdminRights()" ng-show="user.role == 'admin' && user.id != {{ current_user.id }}" class="btn btn-default pull-right">{{ _('Remove administrative rights') }}</button>
+                        <button ng-show="user.role == 'admin' && user.id == {{ current_user.id }}" class="btn btn-disabled pull-right">{{ _("You can't remove your own rights") }}</button>
+                    </td>
                 </tr>
             </table>
         </div>

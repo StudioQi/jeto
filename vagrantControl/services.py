@@ -10,13 +10,15 @@ from flask.ext.sqlalchemy import get_debug_queries
 
 from vagrantControl import db
 from vagrantControl import app
+from vagrantControl.core import clean
 from vagrantControl.models.vagrant import VagrantBackend
 from vagrantControl.models.project import Project
 from vagrantControl.models.host import Host
 from vagrantControl.models.team import Team
-from vagrantControl.models.user import User
+from vagrantControl.models.user import User, ROLE_DEV, ROLE_ADMIN
 from vagrantControl.models.permission import ViewHostPermission,\
-    TeamPermissionsGrids, ProvisionInstancePermission, StopInstancePermission, StartInstancePermission
+    TeamPermissionsGrids, ProvisionInstancePermission,\
+    StopInstancePermission, StartInstancePermission
 
 from settings import DOMAINS_API_URL, DOMAINS_API_PORT
 from settings import HTPASSWORD_API_URL, HTPASSWORD_API_PORT
@@ -106,6 +108,7 @@ user_fields_with_teams = dict(
         'teams': fields.Nested(team_fields_wo_users)
     }
 )
+
 
 class InstancesApi(Resource):
     backend = None
@@ -390,6 +393,7 @@ def adminAuthenticate(func):
         abort(403)
     return wrapper
 
+
 def authenticate(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -413,28 +417,28 @@ class ProjectApi(RestrictedResource):
             }
         else:
             project = Project.query.get(id)
-            return {'project': marshal(project, project_fields)}
-
+            return marshal(project, project_fields)
 
     @adminAuthenticate
     def post(self, id=None):
         if 'state' in request.json and request.json['state'] == 'create':
             project = Project(None, request.json['name'])
-            if 'git_address' in request.json\
-                    and request.json['git_address'] != '':
-                project.git_address = request.json['git_address']
-            elif 'base_path' in request.json:
-                project.base_path = request.json['base_path']
-
-            app.logger.debug(request.json)
-            db.session.add(project)
-            db.session.commit()
         else:
             project = Project.query.get(id)
 
-        return {
-            'project': marshal(project, project_fields),
-        }
+        if 'name' in request.json\
+                and request.json['name'] != '':
+            project.name = request.json['name']
+        if 'git_address' in request.json\
+                and request.json['git_address'] != '':
+            project.git_address = request.json['git_address']
+        elif 'base_path' in request.json:
+            project.base_path = request.json['base_path']
+
+        db.session.add(project)
+        db.session.commit()
+
+        return marshal(project, project_fields)
 
     @adminAuthenticate
     def put(self, id):
@@ -463,26 +467,41 @@ class HostApi(RestrictedResource):
             }
         else:
             host = Host.query.get(id)
-            return {'host': marshal(host, host_fields)}
+            host.params = host.params.replace('\r\n', '<br>')
+
+            return marshal(host, host_fields)
 
     @adminAuthenticate
     def post(self, id=None):
         if 'state' in request.json and request.json['state'] == 'create':
             host = Host(
                 None,
-                request.json['name'],
-                request.json['params'],
-                request.json['provider']
+                clean(request.json['name']),
+                request.json['params'].replace("<br>", "\r\n"),
+                clean(request.json['provider'])
             )
+            app.logger.debug(host.params)
             db.session.add(host)
             db.session.commit()
+            return {
+                'host': marshal(host, host_fields),
+            }
         else:
             host = Host.query.get(id)
-            # @TODO add update support
+            name = clean(request.json['name'].rstrip())
+            params = request.json['params'].replace("<br>", "\r\n")
+            provider = clean(request.json['provider'].rstrip())
 
-        return {
-            'host': marshal(host, host_fields),
-        }
+            if name != '':
+                host.name = name
+            if provider != '':
+                host.provider = provider
+
+            host.params = params
+
+            db.session.add(host)
+            db.session.commit()
+            return self.get(id)
 
     @adminAuthenticate
     def put(self, id):
@@ -558,7 +577,8 @@ class UserApi(RestrictedResource):
         if id is None:
             users = User.query.order_by('name')
             return {
-                'users': map(lambda t: marshal(t, user_fields_with_teams), users),
+                'users': map(lambda t: marshal(t, user_fields_with_teams),
+                             users),
             }
         else:
             user = User.query.get(id)
@@ -575,7 +595,15 @@ class UserApi(RestrictedResource):
             db.session.commit()
         else:
             user = User.query.get(id)
-            # @TODO add update support
+            if 'user' in request.json and 'role' in request.json['user']:
+                role = request.json['user']['role']
+                if role == ROLE_ADMIN:
+                    user.role = ROLE_ADMIN
+                elif role == ROLE_DEV:
+                    user.role = ROLE_DEV
+
+            db.session.add(user)
+            db.session.commit()
 
         return {
             'user': marshal(user, user_fields),

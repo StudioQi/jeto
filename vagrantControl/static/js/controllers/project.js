@@ -79,12 +79,12 @@ function ProjectsListController($scope, $routeParams, Projects, $http, $location
 function ProjectController($scope, $routeParams, Projects, $http, $location, $log) {
     watchFunction = function(newValue, oldValue) {
         if(newValue !== undefined && newValue !== oldValue){
-            $scope.resource.$save({id: $scope.project.id});
+            $scope.project.$save();
         }
     };
     $scope.update = function() {
         Projects.get({id: $routeParams.id}, function(infos) {
-            $scope.project = infos.project;
+            $scope.project = infos;
             $scope.$watch('project', watchFunction, true);
             $scope.resource = infos;
         });

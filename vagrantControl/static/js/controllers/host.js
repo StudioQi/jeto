@@ -70,12 +70,18 @@ function HostsListController($scope, $routeParams, Hosts, $http, createDialog) {
     };
 }
 
-function HostController($scope, $routeParams, Hosts) {
+function HostController($scope, $routeParams, $log, Hosts) {
+    watchFunction = function(newValue, oldValue) {
+        if(newValue !== undefined && newValue !== oldValue){
+            $scope.host.$save();
+        }
+    };
     $scope.update = function() {
         Hosts.get({id: $routeParams.id}, function(infos) {
-            $scope.host = infos.host;
+            $scope.host = infos;
+            $scope.$watch('host', watchFunction, true);
             $scope.resource = infos;
-        })
+        });
     };
     $scope.update();
     $scope.resetInfos = function(){
