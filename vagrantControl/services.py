@@ -523,7 +523,7 @@ class TeamApi(RestrictedResource):
             }
         else:
             team = Team.query.get(id)
-            return {'team': marshal(team, team_fields)}
+            return marshal(team, team_fields)
 
     @adminAuthenticate
     def post(self, id=None):
@@ -534,13 +534,18 @@ class TeamApi(RestrictedResource):
             )
             db.session.add(team)
             db.session.commit()
+            return {
+                'team': marshal(team, team_fields),
+            }
         else:
             team = Team.query.get(id)
-            # @TODO add update support
+            name = clean(request.json['name'])
+            if name != '':
+                team.name = name
 
-        return {
-            'team': marshal(team, team_fields),
-        }
+            db.session.add(team)
+            db.session.commit()
+            return self.get(id)
 
     @adminAuthenticate
     def put(self, id):

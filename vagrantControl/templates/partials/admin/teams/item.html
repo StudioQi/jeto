@@ -1,5 +1,5 @@
 {% set breadcrumbs = [(_('Administration'),'/admin'),(_('Teams'), '/admin/teams'), ('[[ team.name ]]',),] %}
-{% set titleSuffix = 'Teams - [[ team.name ]]' %}
+{% set titleSuffix = 'Teams - <b contenteditable ng-model="team.name"></b>' %}
 {% extends 'partials/admin/partialBase.html' %}
 
 {% block contentAdmin %}

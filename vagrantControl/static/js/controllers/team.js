@@ -69,10 +69,16 @@ function TeamsListController($scope, $routeParams, Teams, $http, $location, crea
 }
 
 function TeamController($scope, $routeParams, Teams, Users, Hosts, Projects, $http, $location) {
+    watchFunction = function(newValue, oldValue) {
+        if(newValue !== undefined && newValue !== oldValue){
+            $scope.team.$save();
+        }
+    };
     // Will fetch the team and all the infos with it
     $scope.init = function() {
         Teams.get({id: $routeParams.id}, function(infos) {
-            $scope.team = infos.team;
+            $scope.team = infos;
+            $scope.$watch('team', watchFunction, true);
             $scope.resource = infos;
             $scope.update();
         });
@@ -113,7 +119,7 @@ function TeamController($scope, $routeParams, Teams, Users, Hosts, Projects, $ht
             'DestroyInstances': false,
         };
 
-    }
+    };
     // Will fetch all users and remove those already in team.users
     // Used in the "Add user" box, also called to filter out values
     // when a new user is added into the team
@@ -129,7 +135,7 @@ function TeamController($scope, $routeParams, Teams, Users, Hosts, Projects, $ht
                 return keepItem;
             });
         });
-    }
+    };
 
 
     $scope.init();
@@ -232,7 +238,7 @@ function TeamController($scope, $routeParams, Teams, Users, Hosts, Projects, $ht
             }, found);
         }
 
-        if(found != undefined){
+        if(found !== undefined){
             return found.name;
         }
         return undefined;
