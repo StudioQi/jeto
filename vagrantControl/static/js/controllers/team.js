@@ -5,7 +5,7 @@ function TeamsListController($scope, $routeParams, Teams, $http, $location, crea
             $scope.teams.sort(function(a, b){ return a.name > b.name; });
             $scope.resource = infos;
             $('.loading').hide();
-        })
+        });
     };
     $scope.update();
     $scope.resetInfos = function(){
@@ -48,10 +48,7 @@ function TeamsListController($scope, $routeParams, Teams, $http, $location, crea
             title: 'Delete team',
             backdrop: true, 
             scope: $scope,
-            btntype: 'danger',
-            template: 'Are you sure you want to delete <b>' + item.name +'</b> ?',
-            success: {
-                label: 'Delete',
+            btntype: 'danger', template: 'Are you sure you want to delete <b>' + item.name +'</b> ?', success: { label: 'Delete',
                 fn: function(){
                     $('.loading').show();
                     id = $scope.deleteItemId;
@@ -69,11 +66,6 @@ function TeamsListController($scope, $routeParams, Teams, $http, $location, crea
 }
 
 function TeamController($scope, $routeParams, Teams, Users, Hosts, Projects, $http, $location) {
-    watchFunction = function(newValue, oldValue) {
-        if(newValue !== undefined && newValue !== oldValue){
-            $scope.team.$save();
-        }
-    };
     // Will fetch the team and all the infos with it
     $scope.init = function() {
         Teams.get({id: $routeParams.id}, function(infos) {
@@ -128,7 +120,7 @@ function TeamController($scope, $routeParams, Teams, Users, Hosts, Projects, $ht
             $scope.users = infos.users.filter(function(value) {
                 keepItem = true;
                 angular.forEach($scope.team.users, function(teamUser){
-                    if(keepItem == true && value.id == teamUser.id){
+                    if(keepItem === true && value.id == teamUser.id){
                         keepItem = false;
                     }
                 });
@@ -145,23 +137,23 @@ function TeamController($scope, $routeParams, Teams, Users, Hosts, Projects, $ht
                 user = infos.user;
                 found = false;
                 angular.forEach($scope.team.users, function(value) {
-                    if(found == false && value.id == user.id){
+                    if(found === false && value.id == user.id){
                         found = true;
                     }
                 }, this);
-                if(found == false){
+                if(found === false){
                     $scope.team.users.push(infos.user);
                 }
                 $scope.update();
             });
         }
-    }
+    };
     $scope.removeUser = function(user) {
         $scope.team.users = $scope.team.users.filter(function(value) {
             return user.id != value.id;
         });
         $scope.update();
-    }
+    };
     $scope.save = function() {
         lstUsers = Array();
         angular.forEach($scope.team.users, function(value) {
@@ -191,36 +183,36 @@ function TeamController($scope, $routeParams, Teams, Users, Hosts, Projects, $ht
         newPermission = {
             'objectId': $scope.newPermission.objectId,
             'objectType': $scope.newPermission.objectType,
-        }
+        };
 
         if($scope.newPermission.ViewHost || $scope.newPermission.ViewInstances){
             permission = angular.copy(newPermission);
-            permission['action'] = 'view';
+            permission.action = 'view';
             $scope.team.permissions_grids.push(permission);
         }
         if($scope.newPermission.StartInstances){
             permission = angular.copy(newPermission);
-            permission['action'] = 'start';
+            permission.action = 'start';
             $scope.team.permissions_grids.push(permission);
         }
         if($scope.newPermission.StopInstances){
             permission = angular.copy(newPermission);
-            permission['action'] = 'stop';
+            permission.action = 'stop';
             $scope.team.permissions_grids.push(permission);
         }
         if($scope.newPermission.DestroyInstances){
             permission = angular.copy(newPermission);
-            permission['action'] = 'destroy';
+            permission.action = 'destroy';
             $scope.team.permissions_grids.push(permission);
         }
         if($scope.newPermission.ProvisionInstances){
             permission = angular.copy(newPermission);
-            permission['action'] = 'provision';
+            permission.action = 'provision';
             $scope.team.permissions_grids.push(permission);
         }
 
         $scope.clearInfos();
-    }
+    };
 
     $scope.getObjectName = function(objectId, objectType) {
         var found;

@@ -447,6 +447,12 @@ class ProjectApi(RestrictedResource):
     @adminAuthenticate
     def delete(self, id):
         project = Project.query.get(id)
+        teams = Team.query.all()
+        for team in teams:
+            for permission in\
+                    team.get_permissions_grids('project', project.id):
+                db.session.delete(permission)
+
         db.session.delete(project)
         db.session.commit()
 
@@ -538,10 +544,13 @@ class TeamApi(RestrictedResource):
                 'team': marshal(team, team_fields),
             }
         else:
+            # Not used right now, put() is called instead.
             team = Team.query.get(id)
             name = clean(request.json['name'])
             if name != '':
                 team.name = name
+
+            # team = self._updatePermissions(team)
 
             db.session.add(team)
             db.session.commit()
@@ -550,25 +559,31 @@ class TeamApi(RestrictedResource):
     @adminAuthenticate
     def put(self, id):
         team = Team.query.get(id)
-        usersId = request.json['users']
+        team = self._updatePermissions(team)
+        db.session.add(team)
+        db.session.commit()
+
+    def _updatePermissions(self, team):
         users = []
-        for userId in usersId:
-            users.append(User.query.get(userId))
+        if 'users' in request.json:
+            usersId = request.json['users']
+            for userId in usersId:
+                users.append(User.query.get(userId))
 
         team.users = users
 
         permissions = []
-        for permission in request.json['permissionsGrid']:
-            teamPermission = TeamPermissionsGrids()
-            teamPermission.objectId = permission['objectId']
-            teamPermission.action = permission['action']
-            teamPermission.objectType = permission['objectType']
-            permissions.append(teamPermission)
+        if 'permissionsGrid' in request.json:
+            for permission in request.json['permissionsGrid']:
+                teamPermission = TeamPermissionsGrids()
+                teamPermission.objectId = permission['objectId']
+                teamPermission.action = permission['action']
+                teamPermission.objectType = permission['objectType']
+                permissions.append(teamPermission)
 
         team.permissions_grids = permissions
 
-        db.session.add(team)
-        db.session.commit()
+        return team
 
     @adminAuthenticate
     def delete(self, id):
