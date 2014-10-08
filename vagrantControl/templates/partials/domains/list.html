@@ -6,7 +6,8 @@
 <div class="row">
     <div class="col-md-12">
         <form class="form-inline">
-            <button type="button" class="btn btn-default" ng-click="create()">{{ _('Create a new domain') }}</button>
+            <input ng-model="query.name" class="form-control" placeholder="Search" style="width:500px"/>
+            <button type="button" class="btn btn-default pull-right" ng-click="create()">{{ _('Create a new domain') }}</button>
         </form>
         <hr />
     </div>
@@ -23,7 +24,7 @@
                         <th></th>
                 </thead>
                 <tbody>
-                        <tr ng-repeat="domain in domains">
+                        <tr ng-repeat="domain in domains | filter:query.name">
                                 <td>
                                     <a href="#" ng-click="edit(domain)" class="pull-left">[[ domain.domain ]]</a><a href="http://[[ domain.domain ]]" target="_blank" class="pull-right"><span class="glyphicon glyphicon-link"></span></a>
                                 </td>
@@ -44,6 +45,11 @@
                                         <button href="#" ng-click="delete(domain)" class="btn btn-danger"><span class="glyphicon glyphicon-trash" /></button>
                                     </div>
                                 </td>
+                        </tr>
+                        <tr ng-show="!(domains | filter:query.name).length">
+                            <td colspan="5">
+                                {{ _('No domain yet. Press the button at the top to add one.') }}
+                            </td>
                         </tr>
                 </tbody>
         </table>
