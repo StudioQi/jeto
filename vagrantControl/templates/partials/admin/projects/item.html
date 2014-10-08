@@ -48,7 +48,7 @@
                     <td><a href="/instances/[[ instance.id ]]">{{ _('View') }}</a></td>
                 </tr>
                 <tr ng-show="!project.instances.length">
-                    <td colspan="4">
+                    <td colspan="5">
                         {{ _('No machine are assigned to this project yet.') }}
                     </td>
                 </tr>
@@ -56,4 +56,25 @@
         </div>
     </div>
 </div>
+
+<div class="row">
+    <div class="col-md-6 pull-right">
+       <div class="panel panel-default">
+            <div class="panel-heading">
+                {{ _('Teams with access to this project') }}
+            </div>
+            <table class="table">
+                <tr>
+                    <th>{{ _('Name') }}</th>
+                    <th></th>
+                </tr>
+                <tr ng-repeat="team in project.teams">
+                    <td>[[ team.name ]]</td>
+                    <td><a href="/admin/teams/[[ team.id ]]">View</a></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
 {% endblock %}

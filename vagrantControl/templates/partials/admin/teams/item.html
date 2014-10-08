@@ -136,13 +136,13 @@
                 </tr>
                 <tr ng-repeat="permission in team.permissions_grids">
                     <td>[[ permission.objectType ]]</td>
-                    <td>[[ getObjectName(permission.objectId, permission.objectType) ]]</td>
+                    <td><a href="/admin/[[ permission.objectType ]]s/[[ permission.objectId ]]">[[ getObjectName(permission.objectId, permission.objectType) ]]</a></td>
                     <td>
-                        <span ng-show="permission.action == 'view'">View instances on [[ permission.objectType ]]</span>
-                        <span ng-show="permission.action == 'start'">Start instances</span>
-                        <span ng-show="permission.action == 'stop'">Stop instances</span>
-                        <span ng-show="permission.action == 'provision'">Provision instances</span>
-                        <span ng-show="permission.action == 'destroy'">Destroy instances</span>
+                        <span ng-show="permission.action == 'view'">{{ _('View instances on') }} [[ permission.objectType ]]</span>
+                        <span ng-show="permission.action == 'start'">{{ _('Start instances') }}</span>
+                        <span ng-show="permission.action == 'stop'">{{ _('Stop instances') }}</span>
+                        <span ng-show="permission.action == 'provision'">{{ _('Provision instances') }}</span>
+                        <span ng-show="permission.action == 'destroy'">{{ _('Destroy instances') }}</span>
                     </td>
                     <td>
                         <button ng-click="removePermission(permission)" class="btn btn-danger"><span class="glyphicon glyphicon-trash" /><span class="sr-only">{{ _('Delete') }}</span></button>

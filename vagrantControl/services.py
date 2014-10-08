@@ -55,13 +55,6 @@ instance_fields = {
     'host': fields.Nested(host_fields),
 }
 
-project_fields = dict(
-    project_wo_instance_fields,
-    **{
-        'instances': fields.Nested(instance_fields)
-    }
-)
-
 domain_fields = {
     'slug': fields.String,
     'domain': fields.String,
@@ -101,6 +94,14 @@ team_fields_wo_users = {
     'name': fields.String,
     'permissions_grids': fields.Nested(team_permissions_grids_fields),
 }
+
+project_fields = dict(
+    project_wo_instance_fields,
+    **{
+        'instances': fields.Nested(instance_fields),
+        'teams': fields.Nested(team_fields)
+    }
+)
 
 user_fields_with_teams = dict(
     user_fields,
@@ -417,6 +418,13 @@ class ProjectApi(RestrictedResource):
             }
         else:
             project = Project.query.get(id)
+            project.teams = []
+            teams = Team.query.all()
+            for team in teams:
+                if team.get_permissions_grids('project', project.id) is not\
+                        None:
+                    project.teams.append(team)
+
             return marshal(project, project_fields)
 
     @adminAuthenticate

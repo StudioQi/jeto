@@ -70,7 +70,6 @@ function TeamController($scope, $routeParams, Teams, Users, Hosts, Projects, $ht
     $scope.init = function() {
         Teams.get({id: $routeParams.id}, function(infos) {
             $scope.team = infos;
-            $scope.$watch('team', watchFunction, true);
             $scope.resource = infos;
             $scope.update();
         });
