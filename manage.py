@@ -6,8 +6,12 @@ import os
 from vagrantControl import app, db
 from vagrantControl.models.user import User, ROLE_ADMIN, ROLE_DEV
 from flask.ext.script import Manager
+from flask.ext.migrate import Migrate, MigrateCommand
 
 manager = Manager(app)
+migrate = Migrate(app, db)
+
+manager.add_command('db', MigrateCommand)
 
 
 @manager.command

@@ -7,7 +7,7 @@ function DomainsController($scope, $routeParams, Domains, $http, createDialog, H
         });
 
         Htpassword.get({}, function(infos){
-            $scope.htpasswdLst = infos.lists.map(function(current){ return current.slug });
+            $scope.htpasswdLst = infos.lists.map(function(current){ return current.slug; });
         });
     };
     $scope.update();
@@ -25,7 +25,7 @@ function DomainsController($scope, $routeParams, Domains, $http, createDialog, H
             'slug': '',
             'sslkey': '',
         };
-       setTimeout($scope.update, 100);
+       setTimeout($scope.update, 200);
     };
 
     $scope.create = function() {
@@ -41,7 +41,7 @@ function DomainsController($scope, $routeParams, Domains, $http, createDialog, H
                    domain.domain = $scope.domainInfo.domain;
                    domain.ip = $scope.domainInfo.ip;
                    domain.htpasswd = $scope.domainInfo.htpasswd;
-                   if($scope.domainInfo.sslkey != undefined){
+                   if($scope.domainInfo.sslkey !== undefined){
                         domain.sslkey = $scope.domainInfo.sslkey.value;
                    }
                    domain.$save();
@@ -65,7 +65,7 @@ function DomainsController($scope, $routeParams, Domains, $http, createDialog, H
             'htpasswd': domainInfo.htpasswd,
         };
         angular.forEach($scope.sslkeys, function(sslkey) {
-            if(sslkey != undefined && sslkey.value == domainInfo.sslkey){
+            if(sslkey !== undefined && sslkey.value == domainInfo.sslkey){
                 $scope.domainInfo.sslkey = sslkey;
             }
         });
@@ -82,7 +82,7 @@ function DomainsController($scope, $routeParams, Domains, $http, createDialog, H
                    domain.ip = $scope.domainInfo.ip;
                    domain.slug = $scope.domainInfo.slug;
                    domain.htpasswd = $scope.domainInfo.htpasswd;
-                   if($scope.domainInfo.sslkey != undefined){
+                   if($scope.domainInfo.sslkey !== undefined){
                      domain.sslkey = $scope.domainInfo.sslkey.value;
                    }
                    domain.$save();

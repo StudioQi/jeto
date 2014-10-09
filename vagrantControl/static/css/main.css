@@ -257,3 +257,6 @@ label {
     color: #807F7F;
     font-size:0.75em;
 }
+.dropdown-menu {
+    width:100%;
+}

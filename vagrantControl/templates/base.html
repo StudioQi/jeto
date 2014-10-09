@@ -57,7 +57,7 @@
         {% if brand_image %}
         <a class="navbar-brand" href="/" style="background-image: url('{{ brand_image }}')">VagrantControl</a>
         {% endif %}
-        <div class="navbar-collapse collapse pull-right">
+        <div class="navbar-collapse collapse">
           {% if g.user.is_authenticated() == True %}
             <ul class="nav navbar-nav">
                 <li><a href="/">{{ _('Home') }}</a></li>

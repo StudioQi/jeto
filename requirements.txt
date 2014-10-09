@@ -3,6 +3,7 @@ Flask==0.10.1
 Flask-Babel==0.9
 Flask-RESTful==0.2.5
 Flask-SQLAlchemy==1.0
+Flask-Migrate==1.2.0
 Flask-OAuth
 Flask-Login
 Flask-Script==2.0.5
