@@ -15,6 +15,7 @@ from vagrantControl.models.vagrant import VagrantBackend
 from vagrantControl.models.project import Project
 from vagrantControl.models.host import Host
 from vagrantControl.models.team import Team
+from vagrantControl.models.domain import Domain, Upstream
 from vagrantControl.models.user import User, ROLE_DEV, ROLE_ADMIN
 from vagrantControl.models.permission import ViewHostPermission,\
     TeamPermissionsGrids, ProvisionInstancePermission,\
@@ -55,12 +56,20 @@ instance_fields = {
     'host': fields.Nested(host_fields),
 }
 
-domain_fields = {
-    'slug': fields.String,
-    'domain': fields.String,
+upstream_fields = {
+    'id': fields.Integer,
     'ip': fields.String,
+    'port': fields.Integer,
+    'port_ssl': fields.Integer,
+}
+
+domain_fields = {
+    'id': fields.Integer,
+    'slug': fields.String,
+    'uri': fields.String,
     'htpasswd': fields.String,
-    'sslkey': fields.String,
+    'ssl_key': fields.String,
+    'upstreams': fields.Nested(upstream_fields),
 }
 
 htpassword_list_fields = {
@@ -204,11 +213,13 @@ class InstanceApi(Resource):
                 self.stop(id, machineName)
             else:
                 abort(403)
+
         if 'state' in request.json and 'start' in request.json['state']:
             if current_user.has_permission(StartInstancePermission, id):
                 self.start(id, machineName)
             else:
                 abort(403)
+
         if 'state' in request.json and 'provision' in request.json['state']:
             if current_user.has_permission(ProvisionInstancePermission, id):
                 self.provision(id, machineName)
@@ -236,63 +247,77 @@ class InstanceApi(Resource):
 
 
 class DomainsApi(Resource):
-    def get(self):
-        r = req.get(self._get_url(), headers=self._get_headers())
-        domains = r.json()['domains']
-
-        return {
-            'domains': map(lambda t: marshal(t, domain_fields), domains),
-        }
-
-    def post(self, slug=None):
-
-        if 'slug' in request.json:
-            # Should mean we are editing a domain
-            slug = request.json['slug']
-            content = self.put(slug)
+    def get(self, id=None):
+        if id is None:
+            domains = Domain.query.all()
         else:
-            domain = request.json['domain']
-            ip = request.json['ip']
-            htpasswd = None
-            sslkey = None
-            if 'htpasswd' in request.json:
-                htpasswd = request.json['htpasswd']
-            if 'sslkey' in request.json:
-                sslkey = request.json['sslkey']
+            domains = Domain.query.get(id)
 
-            data = json.dumps({'site': domain, 'ip': ip, 'htpasswd': htpasswd,
-                               'sslkey': sslkey})
+        return marshal(domains, domain_fields)
+
+    def post(self, id=None):
+        if id is None:
+            domain = self._editDomain()
             # Should mean we are adding a new domain
-            r = req.post(self._get_url(),
-                         headers=self._get_headers(),
-                         data=data)
-            content = r.content
+            req.post(
+                self._get_url(),
+                headers=self._get_headers(),
+                data=json.dumps(marshal(domain, domain_fields))
+            )
+            return self.get(domain.id)
+        else:
+            return self.put(id)
 
-        return content
-
-    def delete(self, slug):
-        url = self._get_url() + '/{}'.format(slug)
-        r = req.delete(url=url, headers=self._get_headers())
-        return r.content
-
-    def put(self, slug=None):
-        domain = request.json['domain']
-        ip = request.json['ip'].strip()
+    def _editDomain(self, id=None):
         htpasswd = None
-        sslkey = None
+        ssl_key = None
 
-        if 'htpasswd' in request.json and request.json['htpasswd'] is not None:
-            htpasswd = request.json['htpasswd'].strip()
-        if 'sslkey' in request.json and request.json['sslkey'] is not None:
-            sslkey = request.json['sslkey'].strip()
+        if id is None:
+            domain = Domain()
+        else:
+            domain = Domain.query.get(id)
 
-        data = json.dumps({'site': domain, 'ip': ip, 'htpasswd': htpasswd,
-                           'sslkey': sslkey})
-        r = req.put(self._get_url() + '/{}'.format(slug),
-                    headers=self._get_headers(),
-                    data=data)
+        uri = request.json['uri']
 
-        return r.content
+        if 'htpasswd' in request.json:
+            htpasswd = request.json['htpasswd']
+        if 'ssl_key' in request.json:
+            ssl_key = request.json['ssl_key']
+
+        if 'upstreams' in request.json:
+            domain.upstreams = []
+            for upstreamInfo in request.json['upstreams']:
+                upstream = Upstream()
+                upstream.ip = upstreamInfo['ip']
+                upstream.port = upstreamInfo['port']
+                upstream.port_ssl = upstreamInfo['port_ssl']
+                domain.upstreams.append(upstream)
+
+        domain.uri = uri
+        domain.htpasswd = htpasswd
+        domain.ssl_key = ssl_key
+
+        db.session.add(domain)
+        db.session.commit()
+        return domain
+
+    def delete(self, id):
+        db.session.delete(Domain.query.get(id))
+        db.session.commit()
+        url = self._get_url() + '/{}'.format(id)
+        req.delete(url=url, headers=self._get_headers())
+        return self.get()
+
+    def put(self, id=None):
+        domain = self._editDomain(id)
+        # Should mean we are adding a new domain
+        req.put(
+            '{}/{}'.format(self._get_url(), id),
+            headers=self._get_headers(),
+            data=json.dumps(marshal(domain, domain_fields))
+        )
+
+        return self.get(domain.id)
 
     def _get_url(self):
         return 'http://' + DOMAINS_API_URL + ':' + DOMAINS_API_PORT

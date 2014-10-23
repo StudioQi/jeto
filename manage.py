@@ -16,7 +16,7 @@ manager.add_command('db', MigrateCommand)
 
 @manager.command
 def runserver():
-    port = int(os.environ.get('PORT', 6000))
+    port = int(os.environ.get('PORT', 8080))
     app.run(host='0.0.0.0', port=port, threaded=True)
 
 
@@ -50,15 +50,6 @@ def remove_admin():
     user = users[choosenUser]
     user.role = ROLE_DEV
     db.session.add(user)
-    db.session.commit()
-
-
-@manager.command
-def reset_db():
-    "Drop all the tables and re-create them"
-    db.drop_all()
-    db.session.commit()
-    db.create_all()
     db.session.commit()
 
 if __name__ == "__main__":

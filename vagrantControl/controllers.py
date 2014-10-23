@@ -10,7 +10,6 @@ from flask.ext.principal import identity_changed, identity_loaded
 from flask.ext.principal import UserNeed, RoleNeed
 # from flask.ext.principal import Permission
 
-from sh import git
 from rq import Queue, Connection
 import time
 import json
@@ -340,7 +339,7 @@ api.add_resource(InstanceApi, '/api/instances/<int:id>/<machineName>/ip',
 
 api.add_resource(DomainsApi, '/api/domains', endpoint='domains')
 
-api.add_resource(DomainsApi, '/api/domains/<slug>')
+api.add_resource(DomainsApi, '/api/domains/<int:id>')
 
 api.add_resource(HtpasswordApi, '/api/htpassword', endpoint='htpassword')
 

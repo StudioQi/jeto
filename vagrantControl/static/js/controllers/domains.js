@@ -1,9 +1,10 @@
 function DomainsController($scope, $routeParams, Domains, $http, createDialog, Htpassword) {
     $scope.update = function() {
-        Domains.get({}, function(infos) {
-            $scope.domains = infos.domains;
+        Domains.query({}, function(infos) {
+            $scope.domains = infos;
             $scope.domains.sort(function(a, b){ return a.domain > b.domain; });
             $scope.resource = infos;
+            $scope.resetInfosUpstream();
         });
 
         Htpassword.get({}, function(infos){
@@ -11,22 +12,48 @@ function DomainsController($scope, $routeParams, Domains, $http, createDialog, H
         });
     };
     $scope.update();
-    $scope.sslkeys = [
+    $scope.ssl_keys = [
         { name:'Development', value:'dev'},
         { name:'QA', value:'qa'},
         { name:'Validation', value:'val'},
     ];
 
+    $scope.resetInfosUpstream = function(){
+        $scope.upstreamInfo = {
+            'ip': '',
+            'port': '',
+            'port_ssl': '',
+        };
+    }
     $scope.resetInfos = function(){
         $scope.domainInfo = {
-            'domain': '',
-            'ip': '',
+            'id': '',
+            'uri': '',
             'htpasswd': '',
-            'slug': '',
-            'sslkey': '',
+            'ssl_key': '',
+            'upstreams': [],
         };
-       setTimeout($scope.update, 200);
+        $scope.resetInfosUpstream();
+        setTimeout($scope.update, 200);
     };
+
+    $scope.addUpstream = function() {
+        upstream = angular.copy($scope.upstreamInfo)
+        if(upstream.port == ''){
+            upstream.port = 80;
+        }
+
+        $scope.domainInfo.upstreams.push(upstream);
+        $scope.resetInfosUpstream();
+    }
+    $scope.deleteUpstream = function(upstream) {
+        $scope.domainInfo.upstreams = $scope.domainInfo.upstreams.filter(function(value){
+            if(value.ip == upstream.ip && value.port == upstream.port && value.port_ssl == upstream.port_ssl){
+                return false;
+            }
+            return true;
+        });
+    }
 
     $scope.create = function() {
         createDialog('/partials/domains/form.html',{ 
@@ -38,11 +65,12 @@ function DomainsController($scope, $routeParams, Domains, $http, createDialog, H
                label: 'Create',
                fn: function(){
                    var domain = new Domains();
-                   domain.domain = $scope.domainInfo.domain;
-                   domain.ip = $scope.domainInfo.ip;
+                   domain.uri = $scope.domainInfo.uri;
                    domain.htpasswd = $scope.domainInfo.htpasswd;
-                   if($scope.domainInfo.sslkey !== undefined){
-                        domain.sslkey = $scope.domainInfo.sslkey.value;
+                   domain.upstreams = $scope.domainInfo.upstreams;
+
+                   if($scope.domainInfo.ssl_key !== undefined){
+                        domain.ssl_key = $scope.domainInfo.ssl_key.value;
                    }
                    domain.$save();
 
@@ -59,14 +87,14 @@ function DomainsController($scope, $routeParams, Domains, $http, createDialog, H
 
     $scope.edit = function(domainInfo) {
         $scope.domainInfo = {
-            'domain': domainInfo.domain,
-            'ip': domainInfo.ip,
-            'slug': domainInfo.slug,
+            'id': domainInfo.id,
+            'uri': domainInfo.uri,
             'htpasswd': domainInfo.htpasswd,
+            'upstreams': domainInfo.upstreams,
         };
-        angular.forEach($scope.sslkeys, function(sslkey) {
-            if(sslkey !== undefined && sslkey.value == domainInfo.sslkey){
-                $scope.domainInfo.sslkey = sslkey;
+        angular.forEach($scope.ssl_keys, function(ssl_key) {
+            if(ssl_key !== undefined && ssl_key.value == domainInfo.ssl_key){
+                $scope.domainInfo.ssl_key = ssl_key;
             }
         });
         createDialog('/partials/domains/form.html',{ 
@@ -75,15 +103,16 @@ function DomainsController($scope, $routeParams, Domains, $http, createDialog, H
            backdrop: true, 
            scope: $scope,
            success: {
-               label: 'Edit',
+               label: 'Save',
                fn: function(){
                    var domain = new Domains();
-                   domain.domain = $scope.domainInfo.domain;
-                   domain.ip = $scope.domainInfo.ip;
-                   domain.slug = $scope.domainInfo.slug;
+                   domain.id = $scope.domainInfo.id;
+                   domain.uri = $scope.domainInfo.uri;
                    domain.htpasswd = $scope.domainInfo.htpasswd;
-                   if($scope.domainInfo.sslkey !== undefined){
-                     domain.sslkey = $scope.domainInfo.sslkey.value;
+                   domain.upstreams = $scope.domainInfo.upstreams;
+
+                   if($scope.domainInfo.ssl_key !== undefined && $scope.domainInfo.ssl_key !== null){
+                     domain.ssl_key = $scope.domainInfo.ssl_key.value;
                    }
                    domain.$save();
 
@@ -104,12 +133,11 @@ function DomainsController($scope, $routeParams, Domains, $http, createDialog, H
             backdrop: true, 
             scope: $scope,
             btntype: 'danger',
-            template: 'Are you sure you want to delete <b>' + domain.slug +'</b> ?',
+            template: 'Are you sure you want to delete <b>' + domain.uri +'</b> ?',
             success: {
                 label: 'Delete',
                 fn: function(){
-                    slug = $scope.deleteDomain;
-                    $http.delete('/api/domains/' + slug)
+                    $http.delete('/api/domains/' + domain.id)
                     .success(function() {
                         setTimeout($scope.update, 100);
                     });

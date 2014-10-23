@@ -17,25 +17,25 @@
     <div class="col-md-12 table-responsive">
         <table class="table table-hover table-bordered">
                 <thead>
-                        <th>{{ _('Domaine') }}</th>
-                        <th>{{ _('IP') }}</th>
+                        <th>{{ _('URI') }}</th>
                         <th>{{ _('htpasswd') }}</th>
                         <th>{{ _('ssl') }}</th>
+                        <th>{{ _('Number of servers') }}</th>
                         <th></th>
                 </thead>
                 <tbody>
                         <tr ng-repeat="domain in domains | filter:query.name">
                                 <td>
-                                    <a href="#" ng-click="edit(domain)" class="pull-left">[[ domain.domain ]]</a><a href="http://[[ domain.domain ]]" target="_blank" class="pull-right"><span class="glyphicon glyphicon-link"></span></a>
-                                </td>
-                                <td>
-                                        [[ domain.ip ]]
+                                    <a href="#" ng-click="edit(domain)" class="pull-left">[[ domain.uri ]]</a><a href="http://[[ domain.uri ]]" target="_blank" class="pull-right"><span class="glyphicon glyphicon-link"></span></a>
                                 </td>
                                 <td>
                                         [[ domain.htpasswd ]]
                                 </td>
                                 <td>
-                                        [[ domain.sslkey ]]
+                                        [[ domain.ssl_key ]]
+                                </td>
+                                <td>
+                                        [[ domain.upstreams.length ]]
                                 </td>
                                 <td>
                                     <div class="btn-group">

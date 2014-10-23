@@ -1,26 +1,41 @@
 <div class="row-fluid">
     <div>
-            <form class="form">
-                <div class="form-group">
-                    <label for="name">{{ _('Domain') }}</label>
-                    <input type="text" name="name" id="domain" ng-model="domainInfo.domain" placeholder="{{ _('myproject.val.pheromone.ca') }}" class="form-control"/>
+        <form class="form">
+            <div class="form-group">
+                <label for="name">{{ _('Domain') }}</label>
+                <input type="text" name="name" id="domain" ng-model="domainInfo.uri" placeholder="{{ _('test.example.com') }}" class="form-control"/>
+            </div>
+            <div class="form-group">
+                <label for="name">{{ _('Security list') }}</label>
+                <select name="htpasswd" id="htpasswd" ng-model="domainInfo.htpasswd" class="form-control" ng-options="list for list in htpasswdLst">
+                    <option value="">--- {{ _('None') }} ---</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="name">{{ _('SSL key') }}</label>
+                <select name="ssl_key" id="ssl_key" ng-model="domainInfo.ssl_key" class="form-control" ng-options="key.name for key in ssl_keys">
+                    <option value="">--- {{ _('None') }} ---</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="name">{{ _('Servers') }}</label>
+                <div class="list-group field-servers">
+                    <div class="list-group-item" ng-repeat="upstream in domainInfo.upstreams">
+                        <span>[[ upstream.ip ]]</span>
+                        <span ng-show="upstream.port_ssl" class="badge">[[ upstream.port_ssl ]]</span>
+                        <span class="badge">[[ upstream.port ]]</span>
+                        <button type="button" class="btn btn-danger glyphicon glyphicon-trash" ng-click="deleteUpstream(upstream)"><span class="sr-only">{{ _('Delete') }}</span></button>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="name">{{ _('IP') }}</label>
-                    <input type="text" name="ip" id="ip" ng-model="domainInfo.ip" placeholder="192.168.10.x" class="form-control"/>
+                <div class="input-group">
+                    <input type="text" class="form-control field-ip" placeholder="IP" ng-model="upstreamInfo.ip">
+                    <input type="text" class="form-control field-port" placeholder="port" ng-model="upstreamInfo.port">
+                    <input type="text" class="form-control field-port-ssl" placeholder="port SSL" ng-model="upstreamInfo.port_ssl">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="button" ng-click="addUpstream()">{{ _('Add') }}</button>
+                    </span>
                 </div>
-                <div class="form-group">
-                    <label for="name">{{ _('htpasswd') }}</label>
-                    <select name="htpasswd" id="htpasswd" ng-model="domainInfo.htpasswd" class="form-control" ng-options="list for list in htpasswdLst">
-                        <option value="">--- {{ _('None') }} ---</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="name">{{ _('SSL key') }}</label>
-                    <select name="sslkey" id="sslkey" ng-model="domainInfo.sslkey" class="form-control" ng-options="key.name for key in sslkeys">
-                        <option value="">--- {{ _('None') }} ---</option>
-                    </select>
-                </div>
-            </form>
+            </div>
+        </form>
     </div>
 </div>

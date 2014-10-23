@@ -260,3 +260,17 @@ label {
 .dropdown-menu {
     width:100%;
 }
+
+.field-servers {
+    margin-bottom: 0;
+}
+
+.input-group .form-control.field-ip { 
+    width:310px;
+}
+.input-group .form-control.field-port {
+    width:50px;
+}
+.input-group .form-control.field-port-ssl {
+    width:80px;
+}
