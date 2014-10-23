@@ -1,3 +1,9 @@
+0.1.5 - October 23th 2014
+---
+- The domain interface has been revamped. We can now specify multiple IPs for an upstream and nginx will load balance the charge.
+- Port for both HTTP and HTTPS is now configurable. Don't forget to update your nginx-api project!
+- Now using alembic for smoother upgrades between versions.
+
 0.1.4 - October 2nd 2014
 ---
 - We can now edit Host/Projects fields on the detail page
