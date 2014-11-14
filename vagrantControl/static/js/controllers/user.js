@@ -37,7 +37,6 @@ function UserController($scope, $routeParams, Users) {
     $scope.update = function() {
         Users.get({id: $routeParams.id}, function(infos) {
             $scope.user = infos.user;
-            console.log($scope.user);
             $scope.resource = infos;
         });
     };

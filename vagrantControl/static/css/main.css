@@ -274,3 +274,6 @@ label {
 .input-group .form-control.field-port-ssl {
     width:80px;
 }
+.nav-tabs li a {
+    outline: 0;
+}

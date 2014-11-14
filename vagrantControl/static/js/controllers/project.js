@@ -25,10 +25,10 @@ function ProjectsListController($scope, $routeParams, Projects, $http, $location
     };
 
     $scope.create = function() {
-        createDialog('/partials/admin/projects/form.html',{ 
-           id : 'createDialog', 
+        createDialog('/partials/admin/projects/form.html',{
+           id : 'createDialog',
            title: 'Create a new project',
-           backdrop: true, 
+           backdrop: true,
            scope: $scope,
            success: {
                label: 'Create',
@@ -52,9 +52,9 @@ function ProjectsListController($scope, $routeParams, Projects, $http, $location
     $scope.delete = function(project) {
         $scope.deleteProjectId = project.id;
         createDialog({
-            id : 'deleteDialog', 
+            id : 'deleteDialog',
             title: 'Delete project',
-            backdrop: true, 
+            backdrop: true,
             scope: $scope,
             btntype: 'danger',
             template: 'Are you sure you want to delete <b>' + project.name +'</b> ?',

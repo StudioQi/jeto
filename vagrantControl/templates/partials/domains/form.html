@@ -31,6 +31,11 @@
                     <input type="text" class="form-control field-ip" placeholder="IP" ng-model="upstreamInfo.ip">
                     <input type="text" class="form-control field-port" placeholder="port" ng-model="upstreamInfo.port">
                     <input type="text" class="form-control field-port-ssl" placeholder="port SSL" ng-model="upstreamInfo.port_ssl">
+                    <span class="btn-group">
+                        <button class="btn btn-default" type="button" ng-click="status('open')">{{ _('Open') }}</button>
+                        <button class="btn btn-default" type="button" ng-click="status('down')">{{ _('Down') }}</button>
+                        <button class="btn btn-default" type="button" ng-click="status('backup')">{{ _('Backup') }}</button>
+                    </span>
                     <span class="input-group-btn">
                         <button class="btn btn-default" type="button" ng-click="addUpstream()">{{ _('Add') }}</button>
                     </span>
