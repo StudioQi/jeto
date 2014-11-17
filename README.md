@@ -1,10 +1,13 @@
-# VagrantControl
+# ĵeto
+
+Why ĵeto ? Because https://translate.google.com/?ie=UTF-8&hl=en&client=tw-ob#eo/en/%C4%B5eto
+
 
 *This is currently a work in progress* 
 
-VagrantControl is the web interface to several APIs (nginx-api, vagrant-worker and htpasswd-api).
+ĵeto is the web interface to several APIs (nginx-api, vagrant-worker and htpasswd-api).
 
-With VagrantControl you add and manage (start/stop/provision) vagrant projects on the fly without connecting via SSH.
+With ĵeto you add and manage (start/stop/provision) vagrant projects on the fly without connecting via SSH.
 
 ###Providers
 Providers like **vagrant-vsphere**, allowing you to deploy your vagrant project into a VMWare cluster;  **pluginvagrant-aws** which deploys your project right onto Amazon AWS or any other can all be used
