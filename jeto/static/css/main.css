@@ -179,7 +179,6 @@ a {
     border-color: #fff;
 }
 #console {
-    /*max-height:150px;*/
     overflow:auto;
 }
 
