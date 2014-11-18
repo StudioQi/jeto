@@ -81,7 +81,7 @@ def authorized(resp):
     if 'GOOGLE_LIMIT_DOMAIN' in app.config and \
             app.config['GOOGLE_LIMIT_DOMAIN'] and \
             ('hd' not in data or
-             data['hd'] != app.config['GOOGLE_LIMIT_DOMAIN']):
+             data['hd'] not in app.config['GOOGLE_LIMIT_DOMAIN']):
 
         flash(_('Domain not allowed, please use an email associated with\
               the domain : {}').format(app.config['GOOGLE_LIMIT_DOMAIN']))
