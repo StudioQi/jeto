@@ -2,7 +2,7 @@
 <html lang="en" {% block ngapp %}ng-app="AngularFlask"{% endblock ngapp %}>
 <head>
     <meta charset="utf-8">
-    <title>VagrantControl</title>
+    <title>Ĵeto</title>
 
     <link rel="stylesheet" href="/static/css/bootstrap.css">
     <link rel="stylesheet" href="/static/css/main.css">
@@ -55,7 +55,7 @@
           <span class="icon-bar"></span>
         </button>
         {% if brand_image %}
-        <a class="navbar-brand" href="/" style="background-image: url('{{ brand_image }}')">VagrantControl</a>
+        <a class="navbar-brand" href="/" style="background-image: url('{{ brand_image }}')">Ĵeto</a>
         {% endif %}
         <div class="navbar-collapse collapse">
           {% if g.user.is_authenticated() == True %}

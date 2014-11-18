@@ -1,5 +1,5 @@
 import os
-from vagrantControl import app
+from jeto import app
 
 
 def runserver():

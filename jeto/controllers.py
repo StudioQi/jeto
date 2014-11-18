@@ -17,19 +17,19 @@ import json
 from requests import get
 import ansiconv
 
-from vagrantControl import app, babel, google, lm, db
-from vagrantControl.core import api, redis_conn
-from vagrantControl.services import InstanceApi, InstancesApi
-from vagrantControl.services import DomainsApi
-from vagrantControl.services import HtpasswordApi, HtpasswordListApi
-from vagrantControl.services import ProjectApi
-from vagrantControl.services import HostApi
-from vagrantControl.services import TeamApi
-from vagrantControl.services import UserApi
-from vagrantControl.models.user import User
-from vagrantControl.models.project import Project
-from vagrantControl.models.permission import ViewHostPermission, ViewHostNeed
-from vagrantControl.models.permission import ProvisionInstanceNeed, DestroyInstanceNeed,\
+from jeto import app, babel, google, lm, db
+from jeto.core import api, redis_conn
+from jeto.services import InstanceApi, InstancesApi
+from jeto.services import DomainsApi
+from jeto.services import HtpasswordApi, HtpasswordListApi
+from jeto.services import ProjectApi
+from jeto.services import HostApi
+from jeto.services import TeamApi
+from jeto.services import UserApi
+from jeto.models.user import User
+from jeto.models.project import Project
+from jeto.models.permission import ViewHostPermission, ViewHostNeed
+from jeto.models.permission import ProvisionInstanceNeed, DestroyInstanceNeed,\
     ViewInstanceNeed, StartInstanceNeed
 # StopInstanceNeed
 

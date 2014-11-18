@@ -8,16 +8,16 @@ from flask.ext.login import current_user
 
 from flask.ext.sqlalchemy import get_debug_queries
 
-from vagrantControl import db
-from vagrantControl import app
-from vagrantControl.core import clean
-from vagrantControl.models.vagrant import VagrantBackend
-from vagrantControl.models.project import Project
-from vagrantControl.models.host import Host
-from vagrantControl.models.team import Team
-from vagrantControl.models.domain import Domain, Upstream
-from vagrantControl.models.user import User, ROLE_DEV, ROLE_ADMIN
-from vagrantControl.models.permission import ViewHostPermission,\
+from jeto import db
+from jeto import app
+from jeto.core import clean
+from jeto.models.vagrant import VagrantBackend
+from jeto.models.project import Project
+from jeto.models.host import Host
+from jeto.models.team import Team
+from jeto.models.domain import Domain, Upstream
+from jeto.models.user import User, ROLE_DEV, ROLE_ADMIN
+from jeto.models.permission import ViewHostPermission,\
     TeamPermissionsGrids, ProvisionInstancePermission,\
     StopInstancePermission, StartInstancePermission
 

@@ -1,1 +1,1 @@
-web: gunicorn vagrantControl:app
+web: gunicorn jeto:app

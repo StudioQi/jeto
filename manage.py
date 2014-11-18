@@ -3,8 +3,8 @@
 # vim:fenc=utf-8
 
 import os
-from vagrantControl import app, db
-from vagrantControl.models.user import User, ROLE_ADMIN, ROLE_DEV
+from jeto import app, db
+from jeto.models.user import User, ROLE_ADMIN, ROLE_DEV
 from flask.ext.script import Manager
 from flask.ext.migrate import Migrate, MigrateCommand
 

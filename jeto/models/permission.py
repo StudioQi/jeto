@@ -6,7 +6,7 @@ from collections import namedtuple
 from functools import partial
 from flask.ext.principal import Permission
 
-from vagrantControl import db
+from jeto import db
 
 InstanceNeed = namedtuple('instance', ['method', 'value'])
 StartInstanceNeed = partial(InstanceNeed, 'start')

@@ -2,10 +2,7 @@
 
 from flask.ext.principal import RoleNeed, Permission
 
-from vagrantControl import db
-from vagrantControl import app
-from vagrantControl.models.team import teams_users
-from vagrantControl.models.permission import ViewInstancePermission
+from jeto import db
 
 ROLE_DEV = 'dev'
 ROLE_ADMIN = 'admin'

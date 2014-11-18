@@ -8,12 +8,12 @@ from flask_oauth import OAuth
 from flask.ext.login import LoginManager
 from flask.ext.principal import Principal
 
-handler = FileHandler('/var/log/vagrant-control/debug.log')
+handler = FileHandler('/var/log/jeto/debug.log')
 formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 handler.setFormatter(formatter)
 
 app = Flask(__name__)
-app.config.from_object('vagrantControl.settings')
+app.config.from_object('jeto.settings')
 app.url_map.strict_slashes = False
 app.logger.addHandler(handler)
 
@@ -36,10 +36,10 @@ google = oauth.remote_app('google',
 
 lm = LoginManager(app)
 
-import vagrantControl.core
-import vagrantControl.models.permission
-import vagrantControl.models.vagrant
-import vagrantControl.models.team
-import vagrantControl.models.host
-import vagrantControl.models.project
-import vagrantControl.controllers
+import jeto.core
+import jeto.models.permission
+import jeto.models.vagrant
+import jeto.models.team
+import jeto.models.host
+import jeto.models.project
+import jeto.controllers

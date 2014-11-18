@@ -1,4 +1,4 @@
-from vagrantControl import app
+from jeto import app
 from flask import request
 from flask.ext.restful import Api
 from redis import Redis

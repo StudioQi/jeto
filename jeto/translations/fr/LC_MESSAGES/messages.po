@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-02-24 12:33-0500\n"
+"POT-Creation-Date: 2014-11-18 15:05+0000\n"
 "PO-Revision-Date: 2013-11-08 10:10-0500\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: fr <LL@li.org>\n"
@@ -17,168 +17,614 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.3\n"
 
-#: vagrantControl/templates/base.html:42 vagrantControl/templates/base.html:60
+#: jeto/controllers.py:86
+msgid ""
+"Domain not allowed, please use an email associated with              the "
+"domain : {}"
+msgstr ""
+
+#: jeto/controllers.py:194
+msgid "I'll miss you..."
+msgstr ""
+
+#: jeto/controllers.py:210
+msgid "Please login to use this page"
+msgstr ""
+
+#: jeto/templates/403.html:6 jeto/templates/partials/403.html:4
+msgid "You shall not pass!"
+msgstr ""
+
+#: jeto/templates/base.html:63 jeto/templates/base.html:96
 msgid "Home"
 msgstr "Accueil"
 
-#: vagrantControl/templates/base.html:43 vagrantControl/templates/base.html:61
+#: jeto/templates/base.html:64 jeto/templates/base.html:97
+#: jeto/templates/partials/instances/instance.html:1
+#: jeto/templates/partials/instances/list.html:1
+#: jeto/templates/partials/instances/list.html:5
 msgid "Instances"
 msgstr ""
 
-#: vagrantControl/templates/base.html:44 vagrantControl/templates/base.html:62
+#: jeto/templates/base.html:65 jeto/templates/base.html:98
+#: jeto/templates/partials/domains/list.html:5
 msgid "Domains"
 msgstr "Domaines"
 
-#: vagrantControl/templates/base.html:45 vagrantControl/templates/base.html:63
+#: jeto/templates/base.html:66 jeto/templates/base.html:99
+#: jeto/templates/partials/htpassword/list.html:1
+#: jeto/templates/partials/htpassword/view.html:1
 msgid "Security"
 msgstr "Sécurité"
 
-#: vagrantControl/templates/partials/domains/form.html:5
-msgid "Domain"
-msgstr "Domaines"
-
-#: vagrantControl/templates/partials/domains/form.html:6
-msgid "myproject.val.pheromone.ca"
-msgstr "monproject.val.pheromone.ca"
-
-#: vagrantControl/templates/partials/domains/form.html:9
-#: vagrantControl/templates/partials/domains/list.html:16
-msgid "IP"
+#: jeto/templates/base.html:67 jeto/templates/base.html:100
+#: jeto/templates/partials/admin/index.html:1
+#: jeto/templates/partials/admin/partialBase.html:13
+#: jeto/templates/partials/admin/hosts/item.html:1
+#: jeto/templates/partials/admin/hosts/list.html:1
+#: jeto/templates/partials/admin/projects/item.html:1
+#: jeto/templates/partials/admin/projects/list.html:1
+#: jeto/templates/partials/admin/teams/item.html:1
+#: jeto/templates/partials/admin/teams/list.html:1
+#: jeto/templates/partials/admin/users/item.html:1
+#: jeto/templates/partials/admin/users/list.html:1
+msgid "Administration"
 msgstr ""
 
-#: vagrantControl/templates/partials/domains/form.html:13
-#: vagrantControl/templates/partials/domains/list.html:17
-msgid "htpasswd"
+#: jeto/templates/base.html:72
+msgid "Login"
 msgstr ""
 
-#: vagrantControl/templates/partials/domains/form.html:15
-msgid "None"
-msgstr "Aucun"
+#: jeto/templates/base.html:77
+msgid "Logout"
+msgstr ""
 
-#: vagrantControl/templates/partials/domains/list.html:4
-msgid "Create a new domain"
-msgstr "Ajouter un nouveau domaine"
+#: jeto/templates/partials/landing.html:4
+msgid "Bienvenue sur Ĵeto"
+msgstr ""
 
-#: vagrantControl/templates/partials/domains/list.html:14
-msgid "Slug"
-msgstr "Accronyme"
-
-#: vagrantControl/templates/partials/domains/list.html:15
+#: jeto/templates/partials/admin/index.html:8
 #, fuzzy
-msgid "Domaine"
-msgstr "Domaines"
+msgid "Latests Projects"
+msgstr "Super projet"
 
-#: vagrantControl/templates/partials/domains/list.html:36
-msgid "Edit"
-msgstr "Modifier"
+#: jeto/templates/partials/admin/index.html:10
+#: jeto/templates/partials/admin/index.html:37
+#: jeto/templates/partials/admin/index.html:91
+msgid "View all"
+msgstr ""
 
-#: vagrantControl/templates/partials/domains/list.html:37
-#: vagrantControl/templates/partials/htpassword/list.html:29
-#: vagrantControl/templates/partials/htpassword/view.html:23
-#: vagrantControl/templates/partials/instances/instance.html:46
-msgid "Delete"
-msgstr "Effacer"
-
-#: vagrantControl/templates/partials/htpassword/form.html:5
-#: vagrantControl/templates/partials/htpassword/list.html:14
-#: vagrantControl/templates/partials/htpassword/view.html:38
-#: vagrantControl/templates/partials/htpassword/view.html:39
-#: vagrantControl/templates/partials/instances/form.html:5
-#: vagrantControl/templates/partials/instances/list.html:27
+#: jeto/templates/partials/admin/index.html:16
+#: jeto/templates/partials/admin/index.html:43
+#: jeto/templates/partials/admin/index.html:71
+#: jeto/templates/partials/admin/index.html:97
+#: jeto/templates/partials/admin/hosts/form.html:5
+#: jeto/templates/partials/admin/hosts/list.html:17
+#: jeto/templates/partials/admin/projects/form.html:5
+#: jeto/templates/partials/admin/projects/item.html:38
+#: jeto/templates/partials/admin/projects/item.html:68
+#: jeto/templates/partials/admin/projects/list.html:18
+#: jeto/templates/partials/admin/teams/form.html:5
+#: jeto/templates/partials/admin/teams/item.html:45
+#: jeto/templates/partials/admin/teams/list.html:17
+#: jeto/templates/partials/admin/users/form.html:5
+#: jeto/templates/partials/admin/users/item.html:18
+#: jeto/templates/partials/admin/users/list.html:10
+#: jeto/templates/partials/htpassword/form.html:5
+#: jeto/templates/partials/htpassword/list.html:18
+#: jeto/templates/partials/htpassword/view.html:42
+#: jeto/templates/partials/htpassword/view.html:43
+#: jeto/templates/partials/instances/form.html:19
+#: jeto/templates/partials/instances/list.html:31
 msgid "Name"
 msgstr "Nom"
 
-#: vagrantControl/templates/partials/htpassword/form.html:6
+#: jeto/templates/partials/admin/index.html:17
+#, fuzzy
+msgid "Number of machines"
+msgstr "Nombre d'utilisateur"
+
+#: jeto/templates/partials/admin/index.html:25
+#: jeto/templates/partials/admin/index.html:52
+#: jeto/templates/partials/admin/index.html:80
+#: jeto/templates/partials/admin/index.html:104
+#: jeto/templates/partials/admin/hosts/list.html:31
+#: jeto/templates/partials/admin/projects/item.html:48
+#: jeto/templates/partials/admin/projects/list.html:32
+#: jeto/templates/partials/admin/teams/item.html:53
+#: jeto/templates/partials/admin/teams/list.html:27
+#: jeto/templates/partials/admin/users/item.html:48
+#: jeto/templates/partials/admin/users/list.html:20
+#: jeto/templates/partials/domains/list.html:42
+#: jeto/templates/partials/htpassword/list.html:32
+#: jeto/templates/partials/instances/list.html:61
+msgid "View"
+msgstr "Voir"
+
+#: jeto/templates/partials/admin/index.html:35
+msgid "Latests Teams"
+msgstr ""
+
+#: jeto/templates/partials/admin/index.html:44
+#: jeto/templates/partials/htpassword/list.html:19
+msgid "Number of users"
+msgstr "Nombre d'utilisateur"
+
+#: jeto/templates/partials/admin/index.html:63
+msgid "Latests Hosts"
+msgstr ""
+
+#: jeto/templates/partials/admin/index.html:72
+#: jeto/templates/partials/admin/hosts/item.html:18
+#: jeto/templates/partials/admin/hosts/list.html:18
+msgid "Provider"
+msgstr ""
+
+#: jeto/templates/partials/admin/index.html:89
+msgid "Latests Users"
+msgstr ""
+
+#: jeto/templates/partials/admin/partialBase.html:6
+#: jeto/templates/partials/admin/projects/item.html:1
+#: jeto/templates/partials/admin/projects/list.html:1
+#, fuzzy
+msgid "Projects"
+msgstr "Super projet"
+
+#: jeto/templates/partials/admin/partialBase.html:7
+#: jeto/templates/partials/admin/teams/item.html:1
+#: jeto/templates/partials/admin/teams/list.html:1
+msgid "Teams"
+msgstr ""
+
+#: jeto/templates/partials/admin/partialBase.html:8
+#: jeto/templates/partials/admin/hosts/list.html:1
+#: jeto/templates/partials/instances/list.html:33
+msgid "Hosts"
+msgstr ""
+
+#: jeto/templates/partials/admin/partialBase.html:9
+#: jeto/templates/partials/admin/teams/item.html:26
+#: jeto/templates/partials/admin/users/item.html:1
+#: jeto/templates/partials/admin/users/list.html:1
+#, fuzzy
+msgid "Users"
+msgstr "Ajouter un utilisateur"
+
+#: jeto/templates/partials/admin/hosts/form.html:6
+msgid "Name of the host"
+msgstr ""
+
+#: jeto/templates/partials/admin/hosts/form.html:9
+msgid "Name of the provider"
+msgstr ""
+
+#: jeto/templates/partials/admin/hosts/form.html:10
+msgid "Provider (lxc, vmware, etc.)"
+msgstr ""
+
+#: jeto/templates/partials/admin/hosts/form.html:13
+#: jeto/templates/partials/admin/hosts/item.html:27
+msgid "Parameters"
+msgstr ""
+
+#: jeto/templates/partials/admin/hosts/form.html:14
+msgid "Any parameters to be sent to vagrant for this host"
+msgstr ""
+
+#: jeto/templates/partials/admin/hosts/item.html:1
+#: jeto/templates/partials/admin/teams/item.html:73
+#: jeto/templates/partials/instances/form.html:12
+#: jeto/templates/partials/instances/instance.html:34
+msgid "Host"
+msgstr ""
+
+#: jeto/templates/partials/admin/hosts/item.html:14
+#: jeto/templates/partials/admin/projects/item.html:15
+#: jeto/templates/partials/admin/projects/item.html:37
+#: jeto/templates/partials/admin/teams/item.html:14
+#: jeto/templates/partials/admin/users/item.html:14
+#: jeto/templates/partials/instances/instance.html:14
+msgid "ID"
+msgstr ""
+
+#: jeto/templates/partials/admin/hosts/list.html:8
+#, fuzzy
+msgid "Create a new host"
+msgstr "Ajouter un nouveau domaine"
+
+#: jeto/templates/partials/admin/hosts/list.html:40
+msgid "No host are defined. Use the button at the top of the page"
+msgstr ""
+
+#: jeto/templates/partials/admin/projects/form.html:6
+#: jeto/templates/partials/instances/form.html:20
+msgid "Super project"
+msgstr "Super projet"
+
+#: jeto/templates/partials/admin/projects/form.html:19
+msgid ""
+"When adding a new instance to a project connected to git, the branches "
+"and tags of the project will be fetched. The interface will give them the"
+" choice of which branch/tag to deploy."
+msgstr ""
+
+#: jeto/templates/partials/admin/projects/form.html:21
+msgid "Address"
+msgstr ""
+
+#: jeto/templates/partials/admin/projects/form.html:26
+msgid ""
+"When adding a new instance, you will be asked a path on the machine where"
+" the project is. If you put a base path here, it will be pre-filled in "
+"the web interface."
+msgstr ""
+
+#: jeto/templates/partials/admin/projects/form.html:28
+#: jeto/templates/partials/admin/projects/item.html:19
+msgid "Base path"
+msgstr ""
+
+#: jeto/templates/partials/admin/projects/item.html:6
+#, fuzzy
+msgid "Project :"
+msgstr "Super projet"
+
+#: jeto/templates/partials/admin/projects/item.html:23
+msgid "Git address"
+msgstr ""
+
+#: jeto/templates/partials/admin/projects/item.html:33
+msgid "Machines assigned to project"
+msgstr ""
+
+#: jeto/templates/partials/admin/projects/item.html:39
+#: jeto/templates/partials/instances/form.html:27
+#: jeto/templates/partials/instances/instance.html:18
+#: jeto/templates/partials/instances/list.html:34
+msgid "Path"
+msgstr "Chemin"
+
+#: jeto/templates/partials/admin/projects/item.html:40
+#: jeto/templates/partials/instances/form.html:31
+#: jeto/templates/partials/instances/instance.html:22
+#: jeto/templates/partials/instances/list.html:35
+msgid "Git reference"
+msgstr ""
+
+#: jeto/templates/partials/admin/projects/item.html:52
+msgid "No machine are assigned to this project yet."
+msgstr ""
+
+#: jeto/templates/partials/admin/projects/item.html:64
+msgid "Teams with access to this project"
+msgstr ""
+
+#: jeto/templates/partials/admin/projects/list.html:9
+#, fuzzy
+msgid "Create a new project"
+msgstr "Ajouter un nouveau domaine"
+
+#: jeto/templates/partials/admin/projects/list.html:19
+#, fuzzy
+msgid "Number of instances"
+msgstr "Nombre d'utilisateur"
+
+#: jeto/templates/partials/admin/projects/list.html:41
+msgid "No project are defined. Use the button at the top of the page"
+msgstr ""
+
+#: jeto/templates/partials/admin/teams/form.html:6
+msgid "Name of the team"
+msgstr ""
+
+#: jeto/templates/partials/admin/teams/item.html:20
+#: jeto/templates/partials/admin/teams/item.html:54
+#: jeto/templates/partials/admin/teams/item.html:148
+#: jeto/templates/partials/admin/users/item.html:64
+#: jeto/templates/partials/domains/form.html:27
+#: jeto/templates/partials/htpassword/view.html:27
+#: jeto/templates/partials/instances/instance.html:40
+msgid "Delete"
+msgstr "Effacer"
+
+#: jeto/templates/partials/admin/teams/item.html:32
+msgid "Select user"
+msgstr ""
+
+#: jeto/templates/partials/admin/teams/item.html:38
+msgid "Add to the team"
+msgstr ""
+
+#: jeto/templates/partials/admin/teams/item.html:46
+msgid "E-mail"
+msgstr ""
+
+#: jeto/templates/partials/admin/teams/item.html:58
+msgid "This team is empty! Add new user in the team at the top of the page."
+msgstr ""
+
+#: jeto/templates/partials/admin/teams/item.html:65
+#: jeto/templates/partials/admin/teams/item.html:134
+msgid "Permissions"
+msgstr ""
+
+#: jeto/templates/partials/admin/teams/item.html:71
+msgid "Select an object type"
+msgstr ""
+
+#: jeto/templates/partials/admin/teams/item.html:74
+#: jeto/templates/partials/instances/form.html:5
+#: jeto/templates/partials/instances/instance.html:30
+#: jeto/templates/partials/instances/list.html:32
+#, fuzzy
+msgid "Project"
+msgstr "Super projet"
+
+#: jeto/templates/partials/admin/teams/item.html:78
+msgid "Select an object"
+msgstr ""
+
+#: jeto/templates/partials/admin/teams/item.html:87
+msgid "View instances on this host"
+msgstr ""
+
+#: jeto/templates/partials/admin/teams/item.html:94
+msgid "View instances"
+msgstr ""
+
+#: jeto/templates/partials/admin/teams/item.html:99
+#: jeto/templates/partials/admin/teams/item.html:144
+msgid "Provision instances"
+msgstr ""
+
+#: jeto/templates/partials/admin/teams/item.html:106
+#: jeto/templates/partials/admin/teams/item.html:142
+msgid "Start instances"
+msgstr ""
+
+#: jeto/templates/partials/admin/teams/item.html:111
+#: jeto/templates/partials/admin/teams/item.html:143
+msgid "Stop instances"
+msgstr ""
+
+#: jeto/templates/partials/admin/teams/item.html:118
+#: jeto/templates/partials/admin/teams/item.html:145
+msgid "Destroy instances"
+msgstr ""
+
+#: jeto/templates/partials/admin/teams/item.html:125
+msgid "Add permission"
+msgstr ""
+
+#: jeto/templates/partials/admin/teams/item.html:132
+msgid "Object type"
+msgstr ""
+
+#: jeto/templates/partials/admin/teams/item.html:133
+msgid "Object Name"
+msgstr ""
+
+#: jeto/templates/partials/admin/teams/item.html:141
+msgid "View instances on"
+msgstr ""
+
+#: jeto/templates/partials/admin/teams/item.html:153
+msgid "This team has no permission for now."
+msgstr ""
+
+#: jeto/templates/partials/admin/teams/item.html:163
+#: jeto/templates/partials/htpassword/view.html:64
+msgid "Save"
+msgstr "Enregistrer"
+
+#: jeto/templates/partials/admin/teams/item.html:166
+#: jeto/templates/partials/htpassword/view.html:26
+#: jeto/templates/partials/htpassword/view.html:67
+msgid "Cancel"
+msgstr "Annuler"
+
+#: jeto/templates/partials/admin/teams/list.html:8
+#, fuzzy
+msgid "Create a new team"
+msgstr "Ajouter un nouveau domaine"
+
+#: jeto/templates/partials/admin/teams/list.html:36
+msgid "No team are defined. Use the button at the top of the page"
+msgstr ""
+
+#: jeto/templates/partials/admin/users/form.html:6
+#, fuzzy
+msgid "Name of the user"
+msgstr "Nombre d'utilisateur"
+
+#: jeto/templates/partials/admin/users/item.html:22
+msgid "Email"
+msgstr ""
+
+#: jeto/templates/partials/admin/users/item.html:26
+msgid "Role"
+msgstr ""
+
+#: jeto/templates/partials/admin/users/item.html:28
+msgid "Give administrative rights"
+msgstr ""
+
+#: jeto/templates/partials/admin/users/item.html:29
+msgid "Remove administrative rights"
+msgstr ""
+
+#: jeto/templates/partials/admin/users/item.html:30
+msgid "You can't remove your own rights"
+msgstr ""
+
+#: jeto/templates/partials/admin/users/item.html:39
+msgid "The user is in the following teams :"
+msgstr ""
+
+#: jeto/templates/partials/admin/users/item.html:43
+msgid "Team name"
+msgstr ""
+
+#: jeto/templates/partials/admin/users/item.html:52
+msgid "This user is not assigned to any team yet"
+msgstr ""
+
+#: jeto/templates/partials/admin/users/item.html:55
+msgid "View all teams"
+msgstr ""
+
+#: jeto/templates/partials/admin/users/item.html:67
+msgid "You can't delete yourself."
+msgstr ""
+
+#: jeto/templates/partials/domains/form.html:5
+#: jeto/templates/partials/domains/list.html:1
+msgid "Domain"
+msgstr "Domaines"
+
+#: jeto/templates/partials/domains/form.html:6
+msgid "test.example.com"
+msgstr ""
+
+#: jeto/templates/partials/domains/form.html:9
+#, fuzzy
+msgid "Security list"
+msgstr "Sécurité"
+
+#: jeto/templates/partials/domains/form.html:11
+#: jeto/templates/partials/domains/form.html:17
+msgid "None"
+msgstr "Aucun"
+
+#: jeto/templates/partials/domains/form.html:15
+msgid "SSL key"
+msgstr ""
+
+#: jeto/templates/partials/domains/form.html:21
+msgid "Servers"
+msgstr ""
+
+#: jeto/templates/partials/domains/form.html:35
+msgid "Open"
+msgstr ""
+
+#: jeto/templates/partials/domains/form.html:36
+msgid "Down"
+msgstr ""
+
+#: jeto/templates/partials/domains/form.html:37
+msgid "Backup"
+msgstr ""
+
+#: jeto/templates/partials/domains/form.html:40
+msgid "Add"
+msgstr ""
+
+#: jeto/templates/partials/domains/list.html:10
+msgid "Create a new domain"
+msgstr "Ajouter un nouveau domaine"
+
+#: jeto/templates/partials/domains/list.html:20
+msgid "URI"
+msgstr ""
+
+#: jeto/templates/partials/domains/list.html:21
+msgid "htpasswd"
+msgstr ""
+
+#: jeto/templates/partials/domains/list.html:22
+msgid "ssl"
+msgstr ""
+
+#: jeto/templates/partials/domains/list.html:23
+#, fuzzy
+msgid "Number of servers"
+msgstr "Nombre d'utilisateur"
+
+#: jeto/templates/partials/domains/list.html:51
+msgid "No domain yet. Press the button at the top to add one."
+msgstr ""
+
+#: jeto/templates/partials/htpassword/form.html:6
 msgid "my list"
 msgstr ""
 
-#: vagrantControl/templates/partials/htpassword/list.html:4
+#: jeto/templates/partials/htpassword/list.html:4
+msgid "User lists"
+msgstr ""
+
+#: jeto/templates/partials/htpassword/list.html:8
 #, fuzzy
 msgid "Create a new list"
 msgstr "Ajouter un nouveau domaine"
 
-#: vagrantControl/templates/partials/htpassword/list.html:15
-msgid "Number of users"
-msgstr "Nombre d'utilisateur"
+#: jeto/templates/partials/htpassword/view.html:4
+msgid "User list :"
+msgstr ""
 
-#: vagrantControl/templates/partials/htpassword/list.html:28
-#: vagrantControl/templates/partials/instances/list.html:57
-msgid "View"
-msgstr "Voir"
-
-#: vagrantControl/templates/partials/htpassword/view.html:4
+#: jeto/templates/partials/htpassword/view.html:8
 msgid "Make sure to save your changes."
 msgstr "N'oubliez pas d'enregistrer"
 
-#: vagrantControl/templates/partials/htpassword/view.html:16
+#: jeto/templates/partials/htpassword/view.html:20
 msgid "Username"
 msgstr "Nom d'utilisateur"
 
-#: vagrantControl/templates/partials/htpassword/view.html:22
-#: vagrantControl/templates/partials/htpassword/view.html:60
-msgid "Cancel"
-msgstr "Annuler"
-
-#: vagrantControl/templates/partials/htpassword/view.html:33
+#: jeto/templates/partials/htpassword/view.html:37
 msgid "Add a user"
 msgstr "Ajouter un utilisateur"
 
-#: vagrantControl/templates/partials/htpassword/view.html:42
-#: vagrantControl/templates/partials/htpassword/view.html:43
+#: jeto/templates/partials/htpassword/view.html:46
+#: jeto/templates/partials/htpassword/view.html:47
 msgid "Password"
 msgstr "Mot de passe"
 
-#: vagrantControl/templates/partials/htpassword/view.html:45
+#: jeto/templates/partials/htpassword/view.html:49
 msgid "Add user"
 msgstr "Ajouter un utilisateur"
 
-#: vagrantControl/templates/partials/htpassword/view.html:55
-msgid "Delete list"
-msgstr "Effacer la liste"
-
-#: vagrantControl/templates/partials/htpassword/view.html:61
-msgid "Save"
-msgstr "Enregistrer"
-
-#: vagrantControl/templates/partials/instances/form.html:6
-msgid "Super project"
-msgstr "Super projet"
-
-#: vagrantControl/templates/partials/instances/form.html:9
-#: vagrantControl/templates/partials/instances/instance.html:17
-#: vagrantControl/templates/partials/instances/list.html:33
+#: jeto/templates/partials/instances/form.html:23
+#: jeto/templates/partials/instances/instance.html:26
+#: jeto/templates/partials/instances/list.html:36
 msgid "Environment"
 msgstr "Environnement"
 
-#: vagrantControl/templates/partials/instances/form.html:10
+#: jeto/templates/partials/instances/form.html:24
 msgid "validation"
 msgstr ""
 
-#: vagrantControl/templates/partials/instances/form.html:13
-#: vagrantControl/templates/partials/instances/instance.html:13
-#: vagrantControl/templates/partials/instances/list.html:28
-msgid "Path"
-msgstr "Chemin"
-
-#: vagrantControl/templates/partials/instances/instance.html:9
-msgid "ID"
+#: jeto/templates/partials/instances/instance.html:5
+msgid "Instance :"
 msgstr ""
 
-#: vagrantControl/templates/partials/instances/instance.html:51
-#: vagrantControl/templates/partials/instances/list.html:63
+#: jeto/templates/partials/instances/instance.html:61
 msgid "Stop"
 msgstr "Arrêter"
 
-#: vagrantControl/templates/partials/instances/instance.html:53
-#: vagrantControl/templates/partials/instances/list.html:65
+#: jeto/templates/partials/instances/instance.html:62
+msgid "Provision"
+msgstr ""
+
+#: jeto/templates/partials/instances/instance.html:63
 msgid "Start"
 msgstr "Démarrer"
 
-#: vagrantControl/templates/partials/instances/list.html:16
-msgid "All"
-msgstr "Tous"
+#: jeto/templates/partials/instances/list.html:11
+#, fuzzy
+msgid "All environments"
+msgstr "Environnement"
 
-#: vagrantControl/templates/partials/instances/list.html:18
+#: jeto/templates/partials/instances/list.html:15
+#, fuzzy
+msgid "All projects"
+msgstr "Super projet"
+
+#: jeto/templates/partials/instances/list.html:19
+msgid "All hosts"
+msgstr ""
+
+#: jeto/templates/partials/instances/list.html:22
 msgid "Create a new machine"
 msgstr "Ajouter une nouvelle machine"
 
@@ -208,4 +654,25 @@ msgstr "Ajouter une nouvelle machine"
 
 #~ msgid "Securité"
 #~ msgstr ""
+
+#~ msgid "myproject.val.pheromone.ca"
+#~ msgstr "monproject.val.pheromone.ca"
+
+#~ msgid "IP"
+#~ msgstr ""
+
+#~ msgid "Slug"
+#~ msgstr "Accronyme"
+
+#~ msgid "Domaine"
+#~ msgstr "Domaines"
+
+#~ msgid "Edit"
+#~ msgstr "Modifier"
+
+#~ msgid "Delete list"
+#~ msgstr "Effacer la liste"
+
+#~ msgid "All"
+#~ msgstr "Tous"
 

@@ -1,12 +1,12 @@
 # -=- encoding: utf-8 -=-
 
-from vagrantControl import db
-from vagrantControl import app
-from vagrantControl.settings import PROJECT_BASEPATH
-from vagrantControl.core import redis_conn, is_async
-from vagrantControl.models.project import Project
-from vagrantControl.models.host import Host
-from vagrantControl.models.permission import ViewInstancePermission
+from jeto import db
+from jeto import app
+from jeto.settings import PROJECT_BASEPATH
+from jeto.core import redis_conn, is_async
+from jeto.models.project import Project
+from jeto.models.host import Host
+from jeto.models.permission import ViewInstancePermission
 
 import time
 import slugify
