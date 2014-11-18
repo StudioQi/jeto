@@ -68,7 +68,16 @@
 </div>
 <hr />
 <div class="row">
-    <div class="cold-md-8 well" id="console">
+    <div class="pull-right">
+        <label>{{ _('Autoscroll') }}</label>
+        <div class="btn-group" data-toggle="buttons-radio">
+            <button class="btn btn-default btn-sm active" value="1" type="button" name="auto-scroll" id="auto-scroll-on" ng-click="unsetActive('auto-scroll-off')">{{ _('On') }}</button>
+            <button class="btn btn-default btn-sm" value="0" type="button" name="auto-scroll" id="auto-scroll-off" ng-click="unsetActive('auto-scroll-on')">{{ _('Off') }}</button>
+        </div>
     </div>
+</div>
+<div class="row">
+    <div class="col-m-12 well" id="console"></div>
+    <div id="auto-scroll-separator"></div>
 </div>
 {% endblock %}
