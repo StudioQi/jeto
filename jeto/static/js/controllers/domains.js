@@ -11,6 +11,9 @@ function DomainsController($scope, $routeParams, Domains, $http, createDialog, H
             $scope.htpasswdLst = infos.lists.map(function(current){ return current.slug; });
         });
     };
+    $scope.upstream_states = [
+        'up', 'down', 'backup'
+    ];
     $scope.update();
     $scope.ssl_keys = [
         { name:'Development', value:'dev'},
@@ -23,6 +26,7 @@ function DomainsController($scope, $routeParams, Domains, $http, createDialog, H
             'ip': '',
             'port': '',
             'port_ssl': '',
+            'state': 'up',
         };
     }
     $scope.resetInfos = function(){

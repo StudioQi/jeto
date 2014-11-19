@@ -61,6 +61,7 @@ upstream_fields = {
     'ip': fields.String,
     'port': fields.Integer,
     'port_ssl': fields.Integer,
+    'state': fields.String,
 }
 
 domain_fields = {
@@ -208,21 +209,15 @@ class InstanceApi(Resource):
         if 'machine' in request.json:
             machineName = request.json['machine']
 
-        if 'state' in request.json and request.json['state'] == 'stop':
-            if current_user.has_permission(StopInstancePermission, id):
-                self.stop(id, machineName)
-            else:
-                abort(403)
-
-        if 'state' in request.json and 'start' in request.json['state']:
-            if current_user.has_permission(StartInstancePermission, id):
-                self.start(id, machineName)
-            else:
-                abort(403)
-
-        if 'state' in request.json and 'provision' in request.json['state']:
-            if current_user.has_permission(ProvisionInstancePermission, id):
-                self.provision(id, machineName)
+        states = {
+            'stop': StopInstancePermission,
+            'start': StartInstancePermission,
+            'provision': ProvisionInstancePermission}
+        state = request.json.get('state')
+        permission = states.get(state)
+        if permission:
+            if current_user.has_permission(permission, id):
+                getattr(self, state)(id, machineName)
             else:
                 abort(403)
 
@@ -269,29 +264,26 @@ class DomainsApi(Resource):
             return self.put(id)
 
     def _editDomain(self, id=None):
-        htpasswd = None
-        ssl_key = None
+        query = request.get_json()
 
         if id is None:
             domain = Domain()
         else:
             domain = Domain.query.get(id)
 
-        uri = request.json['uri']
+        uri = query['uri']
+        htpasswd = query.get('htpasswd')
+        ssl_key = query.get('ssl_key')
+        state = query.get('state')
 
-        if 'htpasswd' in request.json:
-            htpasswd = request.json['htpasswd']
-        if 'ssl_key' in request.json:
-            ssl_key = request.json['ssl_key']
-
-        if 'upstreams' in request.json:
-            domain.upstreams = []
-            for upstreamInfo in request.json['upstreams']:
-                upstream = Upstream()
-                upstream.ip = upstreamInfo['ip']
-                upstream.port = upstreamInfo['port']
-                upstream.port_ssl = upstreamInfo['port_ssl']
-                domain.upstreams.append(upstream)
+        domain.upstreams = []
+        for upstreamInfo in query.get('upstreams', []):
+            upstream = Upstream()
+            upstream.ip = upstreamInfo['ip']
+            upstream.port = upstreamInfo['port']
+            upstream.port_ssl = upstreamInfo['port_ssl']
+            upstream.state = upstreamInfo['state']
+            domain.upstreams.append(upstream)
 
         domain.uri = uri
         domain.htpasswd = htpasswd
