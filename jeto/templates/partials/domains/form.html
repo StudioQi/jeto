@@ -31,9 +31,9 @@
                 <div class="input-group">
                     <input type="text" class="form-control field-ip" placeholder="IP" ng-model="upstreamInfo.ip">
                     <input type="text" class="form-control field-port" placeholder="port" ng-model="upstreamInfo.port">
+                    <input type="text" class="form-control field-port-ssl" placeholder="port SSL" ng-model="upstreamInfo.port_ssl">
                     <select name="state" ng-model="upstreamInfo.state" class="form-control" ng-options="state for state in upstream_states">
                     </select>
-                    <input type="text" class="form-control field-port-ssl" placeholder="port SSL" ng-model="upstreamInfo.port_ssl">
                     <span class="input-group-btn">
                         <button class="btn btn-default" type="button" ng-click="addUpstream()">{{ _('Add') }}</button>
                     </span>
