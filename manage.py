@@ -5,13 +5,11 @@
 import os
 from jeto import app, db
 from jeto.models.user import User, ROLE_ADMIN, ROLE_DEV
-from flask.ext.script import Manager
+from flask.ext.script import Manager, Shell
 from flask.ext.migrate import Migrate, MigrateCommand
 
 manager = Manager(app)
 migrate = Migrate(app, db)
-
-manager.add_command('db', MigrateCommand)
 
 
 @manager.command
@@ -51,6 +49,24 @@ def remove_admin():
     user.role = ROLE_DEV
     db.session.add(user)
     db.session.commit()
+
+
+def _make_context():
+    from jeto import app, db
+    from jeto.models.domainController import DomainController
+    from jeto.models.domain import Domain
+    from jeto.models.host import Host
+    from jeto.models.project import Project
+    from jeto.models.team import Team
+    from jeto.models.user import User
+    from jeto.models.vagrant import VagrantInstance, VagrantBackend
+    return dict(app=app, db=db, DomainController=DomainController,
+                Domain=Domain, Host=Host, Project=Project, Team=Team,
+                User=User, VagrantInstance=VagrantInstance,
+                VagrantBackend=VagrantBackend)
+
+manager.add_command('db', MigrateCommand)
+manager.add_command("shell", Shell(make_context=_make_context))
 
 if __name__ == "__main__":
     manager.run()
