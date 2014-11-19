@@ -1,8 +1,8 @@
 function DomainControllerListController($scope, $routeParams, DomainControllers, $http, $location, createDialog) {
     $scope.update = function() {
         DomainControllers.get({}, function(infos) {
-            $scope.domainControllers = infos.projects;
-            $scope.domainControllers.sort(function(a, b){ return a.name > b.name; });
+            $scope.domain_controllers = infos.domain_controllers;
+            $scope.domain_controllers.sort(function(a, b){ return a.name > b.name; });
             $scope.resource = infos;
             $('.loading').hide();
         });
@@ -11,7 +11,7 @@ function DomainControllerListController($scope, $routeParams, DomainControllers,
     $scope.update();
     $scope.resetInfos = function(){
        setTimeout($scope.update, 100);
-       $scope.domainControllerInfo = {
+       $scope.domain_controllerInfo = {
            'name': '',
            'address': '',
            'port': '',
@@ -31,10 +31,10 @@ function DomainControllerListController($scope, $routeParams, DomainControllers,
                label: 'Add',
                fn: function(){
                    $('.loading').show();
-                   var domainController = new DomainController();
-                   domainController.name = $scope.projectInfo.name;
-                   domainController.state = 'create';
-                   domainController.$save();
+                   var domain_controller = new DomainController();
+                   domain_controller.name = $scope.projectInfo.name;
+                   domain_controller.state = 'create';
+                   domain_controller.$save();
                    setTimeout($scope.resetInfos, 100);
                }
            },
@@ -74,7 +74,7 @@ function DomainControllerListController($scope, $routeParams, DomainControllers,
 function DomainControllerController($scope, $routeParams, DomainControllers, $http, $location, $log) {
     $scope.update = function() {
         DomainControllers.get({id: $routeParams.id}, function(infos) {
-            $scope.domainController = infos;
+            $scope.domain_controller = infos;
             $scope.resource = infos;
         });
     };

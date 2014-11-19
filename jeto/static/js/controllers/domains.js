@@ -1,4 +1,4 @@
-function DomainsController($scope, $routeParams, Domains, $http, createDialog, Htpassword) {
+function DomainsController($scope, $routeParams, Domains, $http, createDialog, Htpassword, DomainControllers) {
     $scope.update = function() {
         Domains.query({}, function(infos) {
             $scope.domains = infos;
@@ -9,6 +9,10 @@ function DomainsController($scope, $routeParams, Domains, $http, createDialog, H
 
         Htpassword.get({}, function(infos){
             $scope.htpasswdLst = infos.lists.map(function(current){ return current.slug; });
+        });
+
+        DomainControllers.get({}, function(infos){
+            $scope.domain_controllers = infos.domain_controllers;
         });
     };
     $scope.update();
@@ -32,6 +36,7 @@ function DomainsController($scope, $routeParams, Domains, $http, createDialog, H
             'htpasswd': '',
             'ssl_key': '',
             'upstreams': [],
+            'domain_controller': '',
         };
         $scope.resetInfosUpstream();
         setTimeout($scope.update, 200);
@@ -56,10 +61,10 @@ function DomainsController($scope, $routeParams, Domains, $http, createDialog, H
     }
 
     $scope.create = function() {
-        createDialog('/partials/domains/form.html',{ 
-           id : 'createDialog', 
+        createDialog('/partials/domains/form.html',{
+           id : 'createDialog',
            title: 'Create a new domain',
-           backdrop: true, 
+           backdrop: true,
            scope: $scope,
            success: {
                label: 'Create',
@@ -71,6 +76,9 @@ function DomainsController($scope, $routeParams, Domains, $http, createDialog, H
 
                    if($scope.domainInfo.ssl_key !== undefined){
                         domain.ssl_key = $scope.domainInfo.ssl_key.value;
+                   }
+                   if($scope.domainInfo.domain_controller !== undefined){
+                        domain.domain_controller = $scope.domainInfo.domain_controller;
                    }
                    domain.$save();
 
@@ -91,16 +99,17 @@ function DomainsController($scope, $routeParams, Domains, $http, createDialog, H
             'uri': domainInfo.uri,
             'htpasswd': domainInfo.htpasswd,
             'upstreams': domainInfo.upstreams,
+            'domain_controller': domainInfo.domain_controller,
         };
         angular.forEach($scope.ssl_keys, function(ssl_key) {
             if(ssl_key !== undefined && ssl_key.value == domainInfo.ssl_key){
                 $scope.domainInfo.ssl_key = ssl_key;
             }
         });
-        createDialog('/partials/domains/form.html',{ 
-           id : 'editDialog', 
+        createDialog('/partials/domains/form.html',{
+           id : 'editDialog',
            title: 'Edit a domain',
-           backdrop: true, 
+           backdrop: true,
            scope: $scope,
            success: {
                label: 'Save',
@@ -113,6 +122,9 @@ function DomainsController($scope, $routeParams, Domains, $http, createDialog, H
 
                    if($scope.domainInfo.ssl_key !== undefined && $scope.domainInfo.ssl_key !== null){
                      domain.ssl_key = $scope.domainInfo.ssl_key.value;
+                   }
+                   if($scope.domainInfo.domain_controller !== undefined){
+                        domain.domain_controller = $scope.domainInfo.domain_controller;
                    }
                    domain.$save();
 
@@ -128,9 +140,9 @@ function DomainsController($scope, $routeParams, Domains, $http, createDialog, H
     $scope.delete = function(domain) {
         $scope.deleteDomain = domain.slug;
         createDialog({
-            id : 'deleteDialog', 
+            id : 'deleteDialog',
             title: 'Delete domain',
-            backdrop: true, 
+            backdrop: true,
             scope: $scope,
             btntype: 'danger',
             template: 'Are you sure you want to delete <b>' + domain.uri +'</b> ?',

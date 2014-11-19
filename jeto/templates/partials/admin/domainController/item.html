@@ -1,27 +1,40 @@
-{% set breadcrumbs = [(_('Administration'),'/admin'),(_('Projects'), '/admin/projects'), ('[[ project.name ]]',),] %}
-{% set titleSuffix = 'Projects - <span contenteditable ng-model="project.name"></span>' %}
+{% set breadcrumbs = [(_('Administration'),'/admin'),(_('Domain Controllers'), '/admin/domainControllers'), ('[[ domain_controller.name ]]',),] %}
+{% set titleSuffix = 'Domain Controller - <span contenteditable ng-model="domain_controller.name"></span>' %}
 {% extends 'partials/admin/partialBase.html' %}
 
 {% block contentAdmin %}
-<h3>{{ _('Project :') }} <b contenteditable ng-model="project.name">[[ project.name ]]</b></h3>
+<h3>{{ _('Domain Controller :') }} <b contenteditable ng-model="domain_controller.name">[[ domain_controller.name ]]</b></h3>
 <div class="row">
     <div class="col-md-6">
        <div class="panel panel-default">
             <div class="panel-heading">
-                <span contenteditable ng-model="project.name">[[ project.name ]]</span>
+                <span contenteditable ng-model="domain_controller.name">[[ domain_controller.name ]]</span>
             </div>
             <table class="table table-bordered">
                 <tr>
                     <th>{{ _('ID') }}</th>
-                    <td>[[ project.id ]]</td>
+                    <td>[[ domain_controller.id ]]</td>
                 </tr>
-                <tr ng-show="project.base_path">
-                    <th>{{ _('Base path') }}</th>
-                    <td>[[ project.base_path ]]</td>
+                <tr ng-show="domain_controller.address">
+                    <th>{{ _('Address') }}</th>
+                    <td><span contenteditable ng-model="domain_controller.address"></span></td>
                 </tr>
-                <tr ng-show="project.git_address">
-                    <th>{{ _('Git address') }}</th>
-                    <td><span contenteditable ng-model="project.git_address"></span></td>
+                <tr ng-show="domain_controller.port">
+                    <th>{{ _('Port') }}</th>
+                    <td><span contenteditable ng-model="domain_controller.port"></span></td>
+                </tr>
+                <tr ng-show="domain_controller.accept_self_signed">
+                    <th>{{ _('Accept self-signed certificate?') }}</th>
+                    <td>
+                        <div class="btn-group" data-toggle="buttons">
+                            <label class="btn btn-default" ng-class="{active: domain_controller.accept_self_signed}">
+                            <input type="radio" name="accept_self_signed" id="accept_self_signed_true" autocomplete="off"> {{ _('Yes') }}
+                            </label>
+                            <label class="btn btn-default" ng-class="{active: !domain_controller.accept_self_signed}">
+                            <input type="radio" name="accept_self_signed" id="accept_self_signed_false" autocomplete="off" checked>  {{ _('No') }}
+                            </label>
+                        </div>
+                    </td>
                 </tr>
             </table>
         </div>
@@ -30,47 +43,23 @@
     <div class="col-md-6 pull-right">
         <div class="panel panel-default">
             <div class="panel-heading">
-                {{ _('Machines assigned to project') }}
+                {{ _('Domains assigned to domain controller') }}
             </div>
             <table class="table table-bordered">
                 <tr>
-                    <th>{{ _('ID') }}</th>
-                    <th>{{ _('Name') }}</th>
-                    <th>{{ _('Path') }}</th>
-                    <th>{{ _('Git reference') }}</th>
+                    <th>{{ _('URI') }}</th>
+                    <th>{{ _('Number of servers') }}</th>
                     <th></th>
                 </tr>
-                <tr ng-repeat="instance in project.instances">
-                    <td>[[ instance.id ]]</td>
-                    <td>[[ instance.name ]]</td>
-                    <td>[[ instance.path ]]</td>
-                    <td>[[ instance.git_reference ]]</td>
-                    <td><a href="/instances/[[ instance.id ]]">{{ _('View') }}</a></td>
+                <tr ng-repeat="domain in domain_controller.domains">
+                    <td>[[ domain.uri ]]</td>
+                    <td>[[ domain.upstreams.length ]]</td>
+                    <td><a href="/domains/[[ domain.id ]]">{{ _('View') }}</a></td>
                 </tr>
-                <tr ng-show="!project.instances.length">
-                    <td colspan="5">
-                        {{ _('No machine are assigned to this project yet.') }}
+                <tr ng-show="!domain_controller.domains.length">
+                    <td colspan="3">
+                        {{ _('No domain are assigned to this domain controller yet.') }}
                     </td>
-                </tr>
-            </table>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-md-6 pull-right">
-       <div class="panel panel-default">
-            <div class="panel-heading">
-                {{ _('Teams with access to this project') }}
-            </div>
-            <table class="table">
-                <tr>
-                    <th>{{ _('Name') }}</th>
-                    <th></th>
-                </tr>
-                <tr ng-repeat="team in project.teams">
-                    <td>[[ team.name ]]</td>
-                    <td><a href="/admin/teams/[[ team.id ]]">View</a></td>
                 </tr>
             </table>
         </div>

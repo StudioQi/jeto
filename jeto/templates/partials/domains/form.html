@@ -18,6 +18,12 @@
                 </select>
             </div>
             <div class="form-group">
+                <label for="name">{{ _('Domain Controller') }}</label>
+                <select name="domain_controller" id="domain_controller" ng-model="domainInfo.domain_controller" class="form-control" ng-options="domain_controller.name for domain_controller in domain_controllers track by domain_controller.id">
+                    <option value="">--- {{ _('None') }} ---</option>
+                </select>
+            </div>
+            <div class="form-group">
                 <label for="name">{{ _('Servers') }}</label>
                 <div class="list-group field-servers">
                     <div class="list-group-item" ng-repeat="upstream in domainInfo.upstreams">

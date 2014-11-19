@@ -64,6 +64,14 @@ upstream_fields = {
     'port_ssl': fields.Integer,
 }
 
+domain_controller_fields = {
+    'id': fields.String,
+    'name': fields.String,
+    'address': fields.String,
+    'port': fields.String,
+    'accept_self_signed': fields.Boolean,
+}
+
 domain_fields = {
     'id': fields.Integer,
     'slug': fields.String,
@@ -71,6 +79,7 @@ domain_fields = {
     'htpasswd': fields.String,
     'ssl_key': fields.String,
     'upstreams': fields.Nested(upstream_fields),
+    'domain_controller': fields.Nested(domain_controller_fields),
 }
 
 htpassword_list_fields = {
@@ -120,14 +129,12 @@ user_fields_with_teams = dict(
     }
 )
 
-domain_controller_fields = {
-    'id': fields.String,
-    'name': fields.String,
-    'address': fields.String,
-    'port': fields.String,
-    'accept_self_signed': fields.Boolean,
-    'domains': fields.Nested(domain_fields),
-}
+domain_controller_fields_with_domains = dict(
+    domain_controller_fields,
+    **{
+        'domains': fields.Nested(domain_fields),
+    }
+)
 
 
 class InstancesApi(Resource):
@@ -302,6 +309,14 @@ class DomainsApi(Resource):
                 upstream.port = upstreamInfo['port']
                 upstream.port_ssl = upstreamInfo['port_ssl']
                 domain.upstreams.append(upstream)
+
+        domain.domain_controller = None
+        if 'domain_controller' in request.json\
+                and request.json['domain_controller'] != None:
+            domain_controller = DomainController.query.get(
+                request.json['domain_controller']['id']
+            )
+            domain.domain_controller = domain_controller
 
         domain.uri = uri
         domain.htpasswd = htpasswd
@@ -638,13 +653,16 @@ class TeamApi(RestrictedResource):
 class DomainControllerApi(RestrictedResource):
     def get(self, id=None):
         if id is None:
-            domainControllers = DomainController.query.order_by('name')
+            domain_controllers = DomainController.query.order_by('name')
             return {
-                'domainControllers': map(lambda t: marshal(t, domain_controller_fields), domainControllers),
+                'domain_controllers': map(
+                    lambda t: marshal(t, domain_controller_fields_with_domains),
+                    domain_controllers
+                ),
             }
         else:
-            domainController = DomainController.query.get(id)
-            return marshal(domainController, domain_controller_fields)
+            domain_controller = DomainController.query.get(id)
+            return marshal(domain_controller, domain_controller_fields_with_domains)
 
     @adminAuthenticate
     def post(self, id=None):
