@@ -180,6 +180,7 @@ a {
 }
 #console {
     overflow:auto;
+    font-family: 'Ubuntu Mono';
 }
 
 /* ansiconv */

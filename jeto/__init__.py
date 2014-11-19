@@ -42,4 +42,5 @@ import jeto.models.vagrant
 import jeto.models.team
 import jeto.models.host
 import jeto.models.project
+import jeto.models.domainController
 import jeto.controllers

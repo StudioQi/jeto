@@ -16,6 +16,7 @@ from jeto.models.project import Project
 from jeto.models.host import Host
 from jeto.models.team import Team
 from jeto.models.domain import Domain, Upstream
+from jeto.models.domainController import DomainController
 from jeto.models.user import User, ROLE_DEV, ROLE_ADMIN
 from jeto.models.permission import ViewHostPermission,\
     TeamPermissionsGrids, ProvisionInstancePermission,\
@@ -118,6 +119,15 @@ user_fields_with_teams = dict(
         'teams': fields.Nested(team_fields_wo_users)
     }
 )
+
+domain_controller_fields = {
+    'id': fields.String,
+    'name': fields.String,
+    'address': fields.String,
+    'port': fields.String,
+    'accept_self_signed': fields.Boolean,
+    'domains': fields.Nested(domain_fields),
+}
 
 
 class InstancesApi(Resource):
@@ -563,6 +573,78 @@ class TeamApi(RestrictedResource):
         else:
             team = Team.query.get(id)
             return marshal(team, team_fields)
+
+    @adminAuthenticate
+    def post(self, id=None):
+        if 'state' in request.json and request.json['state'] == 'create':
+            team = Team(
+                None,
+                request.json['name'],
+            )
+            db.session.add(team)
+            db.session.commit()
+            return {
+                'team': marshal(team, team_fields),
+            }
+        else:
+            # Not used right now, put() is called instead.
+            team = Team.query.get(id)
+            name = clean(request.json['name'])
+            if name != '':
+                team.name = name
+
+            # team = self._updatePermissions(team)
+
+            db.session.add(team)
+            db.session.commit()
+            return self.get(id)
+
+    @adminAuthenticate
+    def put(self, id):
+        team = Team.query.get(id)
+        team = self._updatePermissions(team)
+        db.session.add(team)
+        db.session.commit()
+
+    def _updatePermissions(self, team):
+        users = []
+        if 'users' in request.json:
+            usersId = request.json['users']
+            for userId in usersId:
+                users.append(User.query.get(userId))
+
+        team.users = users
+
+        permissions = []
+        if 'permissionsGrid' in request.json:
+            for permission in request.json['permissionsGrid']:
+                teamPermission = TeamPermissionsGrids()
+                teamPermission.objectId = permission['objectId']
+                teamPermission.action = permission['action']
+                teamPermission.objectType = permission['objectType']
+                permissions.append(teamPermission)
+
+        team.permissions_grids = permissions
+
+        return team
+
+    @adminAuthenticate
+    def delete(self, id):
+        team = Team.query.get(id)
+        db.session.delete(team)
+        db.session.commit()
+
+
+class DomainControllerApi(RestrictedResource):
+    def get(self, id=None):
+        if id is None:
+            domainControllers = DomainController.query.order_by('name')
+            return {
+                'domainControllers': map(lambda t: marshal(t, domain_controller_fields), domainControllers),
+            }
+        else:
+            domainController = DomainController.query.get(id)
+            return marshal(domainController, domain_controller_fields)
 
     @adminAuthenticate
     def post(self, id=None):

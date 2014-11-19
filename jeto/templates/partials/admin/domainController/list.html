@@ -1,0 +1,49 @@
+{% set breadcrumbs = [(_('Administration'),'/admin'),(_('Domain Controller'),),] %}
+{% set titleSuffix = 'Domain Controller' %}
+{% extends 'partials/admin/partialBase.html' %}
+{% block contentAdmin %}
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <button type="button" class="btn btn-default" ng-click="create()">{{ _('Add a new domain controller') }}</button>
+        <hr />
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12 table-responsive">
+        <table class="table table-hover table-bordered">
+          <thead>
+            <th>{{ _("Name") }}</th>
+            <th>{{ _("Number of domains") }}</th>
+            <th></th>
+          </thead>
+          <tbody>
+            <tr ng-repeat="domainController in domainControllers">
+              <td>
+                  <a href="/admin/domainControllers/[[ domainController.id ]]">[[ domainController.name ]]</a>
+              </td>
+              <td>
+                [[ domainController.domains.length ]]
+              </td>
+              <td>
+                  <div class="btn-group pull-left">
+                    <a href="/admin/domainController/[[ domainController.id ]]">{{ _('View') }}</a>
+                  </div>
+                  <div class="btn-group pull-right">
+                    <button ng-click="delete(domainController)" class="btn btn-danger"><span class="glyphicon glyphicon-trash" /></button>
+                  </div>
+              </td>
+            </tr> 
+            <tr ng-show="!projects.length">
+                <td colspan="3">
+                    {{ _('No domain controller are defined. Use the button at the top of the page') }}
+                </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock %}

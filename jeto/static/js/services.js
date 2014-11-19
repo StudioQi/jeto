@@ -30,4 +30,7 @@ angular.module('angularFlaskServices', ['ngResource'])
     .factory('Users', function($resource) {
         return $resource('/api/users/:id', {id:'@id'});
     })
+    .factory('DomainControllers', function($resource) {
+        return $resource('/api/domainControllers/:id', {id:'@id'});
+    })
 ;

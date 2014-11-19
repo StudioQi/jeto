@@ -16,6 +16,11 @@ class Domain(db.Model):
         backref='domain',
     )
 
+    domain_controller_id = db.Column(
+        db.Integer,
+        db.ForeignKey('domain_controller.id')
+    )
+
     def has_upstream(self, upstreamInfo):
         for upstream in self.upstreams:
             if upstream == upstreamInfo:
