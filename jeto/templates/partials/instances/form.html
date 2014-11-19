@@ -27,13 +27,39 @@
                 <label for="path">{{ _('Path') }}</label>
                 <input type="text" name="path" id="path" ng-model="instanceInfo.path" placeholder="[[ instanceInfo.base_path ]]" class="form-control"/>
             </div>
-            <div class="form-group" ng-show="showGitReference">
-                <label for="gitReference">{{ _('Git reference') }}</label>
-                <button class="btn btn-default pull-right" ng-click="refreshGitReferences(1)"><span class="glyphicon glyphicon-refresh"></span></button>
-                <select name="gitReference" id="gitReference" ui-select2 ng-model="instanceInfo.gitReference" class="form-control">
-                    <option value=""></option>
-                    <option ng-repeat="gitRef in gitReferences" value="[[ gitRef ]]">[[ gitRef ]]</option>
-                </select>
+            <div class="alert" ng-show="!instanceInfo.project">
+              {{_('Please select a project in order to configure it...')}}
+            </div>
+            <div ng-show="instanceInfo.project">
+              <div id="tabs">
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" role="tablist">
+                  <li class="active"><a data-target="#git" role="tab" data-toggle="tab" ng-click="resetTabInfos();">Git</a></li>
+                  <li><a data-target="#direct_path" role="tab" data-toggle="tab" ng-click="resetTabInfos();">Direct path</a></li>
+                </ul>
+              </div>
+              <div class="tab-content well" >
+                <div class="tab-pane active" id="git">
+                  <div class="info" ng-show="!showGitReference">
+                    {{_('This project has no git configuration, please configure it or use the TGZ option')}}
+                  </div>
+                  <div class="form-group" ng-show="showGitReference">
+                    <label for="gitReference">{{ _('Git reference') }}</label>
+                    <button class="btn btn-default pull-right" ng-click="refreshGitReferences(1)"><span class="glyphicon glyphicon-refresh"></span></button>
+                    <select name="gitReference" id="gitReference" ui-select2 ng-model="instanceInfo.gitReference" class="form-control">
+                      <option value=""></option>
+                      <option ng-repeat="gitRef in gitReferences" value="[[ gitRef ]]">[[ gitRef ]]</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="tab-pane" id="direct_path">
+                  <p>{{ _('Enter the URL to download a tgz') }}</p>
+                  <div class="form-group">
+                    <label for="tgz_url">{{ _('URL') }}</label>
+                    <input type="text" class="form-control" id="tgz_url" ng-model="instanceInfo.tgz_url" />
+                  </div>
+                </div>
+              </div>
             </div>
         </form>
     </div>

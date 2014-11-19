@@ -63,6 +63,10 @@ function InstancesController($scope, Instances, Projects, Hosts, $http, createDi
             refreshIcon.removeClass('icon-refresh-animate');
         });
     }
+    $scope.resetTabInfos = function() {
+        $scope.instanceInfo.tgz_url = '';
+        $scope.instanceInfo.gitReference = '';
+    };
 
     $scope.instanceInfo = {
         'name': '',
