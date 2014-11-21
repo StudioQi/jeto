@@ -62,13 +62,14 @@ class VagrantBackend(BackendProvider):
             environment = request['environment']
         else:
             environment = ''
+        app.logger.debug(request)
 
         project = Project.query.get(request['project'])
         host = Host.query.get(request['host'])
         instance = VagrantInstance(None, request['path'], request['name'],
                                    environment)
-        if 'gitReference' in request:
-            instance.git_reference = request['gitReference']
+        instance.git_reference = request.get('gitReference')
+        instance.archive_url = request.get('archive_url')
 
         instance.project = project
         instance.host = host
@@ -77,6 +78,8 @@ class VagrantBackend(BackendProvider):
 
         if instance.git_reference:
             instance.clone()
+        elif instance.archive_url:
+            instance.extract()
 
         return instance
 
@@ -111,13 +114,16 @@ class VagrantInstance(db.Model):
         db.ForeignKey('host.id')
     )
     git_reference = db.Column(db.String(128))
+    archive_url = db.Column(db.String(256))
 
-    def __init__(self, id, path, name, environment, git_reference=None):
+    def __init__(self, id, path, name, environment,
+                 git_reference=None, archive_url=None):
         self.id = id
         self.path = path
         self.name = name
         self.environment = environment
         self.git_reference = git_reference
+        self.archive_url = archive_url
         # self.init_on_load()
 
     def __unicode__(self):
@@ -207,13 +213,20 @@ class VagrantInstance(db.Model):
 
     def _generatePath(self):
         path = self.path
-        if self.git_reference is not None:
+        if self.git_reference:
             return PROJECT_BASEPATH + \
                 slugify.slugify(self.project.name) +\
                 '/' + \
                 slugify.slugify(self.name) + \
                 '/' + \
                 self.git_reference
+        elif self.archive_url:
+            return PROJECT_BASEPATH + \
+                slugify.slugify(self.project.name) +\
+                '/' + \
+                slugify.slugify(self.name) + \
+                '/' + \
+                'tgz'
 
         return path
 
@@ -255,6 +268,15 @@ class VagrantInstance(db.Model):
         )
         db.session.delete(self)
         db.session.commit()
+
+    def extract(self):
+        results = self._submit_job(
+            'extract',
+            path=self._generatePath(),
+            archive_url=self.archive_url,
+            host=self.host,
+        )
+        return results
 
     def clone(self):
         results = self._submit_job(

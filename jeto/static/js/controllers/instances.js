@@ -64,7 +64,7 @@ function InstancesController($scope, Instances, Projects, Hosts, $http, createDi
         });
     }
     $scope.resetTabInfos = function() {
-        $scope.instanceInfo.tgz_url = '';
+        $scope.instanceInfo.archive_url = '';
         $scope.instanceInfo.gitReference = '';
     };
 
@@ -92,6 +92,7 @@ function InstancesController($scope, Instances, Projects, Hosts, $http, createDi
                    instance.project = $scope.instanceInfo.project;
                    instance.host = $scope.instanceInfo.host;
                    instance.gitReference = $scope.instanceInfo.gitReference;
+                   instance.archive_url = $scope.instanceInfo.archive_url;
                    instance.state = 'create';
                    instance.$save();
                    setTimeout($scope.updateInfos, 100);

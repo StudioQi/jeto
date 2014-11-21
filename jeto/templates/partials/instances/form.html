@@ -41,7 +41,7 @@
               <div class="tab-content well" >
                 <div class="tab-pane active" id="git">
                   <div class="info" ng-show="!showGitReference">
-                    {{_('This project has no git configuration, please configure it or use the TGZ option')}}
+                    {{_('This project has no git configuration, please configure it or use the archive option')}}
                   </div>
                   <div class="form-group" ng-show="showGitReference">
                     <label for="gitReference">{{ _('Git reference') }}</label>
@@ -53,10 +53,10 @@
                   </div>
                 </div>
                 <div class="tab-pane" id="direct_path">
-                  <p>{{ _('Enter the URL to download a tgz') }}</p>
+                  <p>{{ _('Enter the URL to download an archive (zip or tgz)') }}</p>
                   <div class="form-group">
-                    <label for="tgz_url">{{ _('URL') }}</label>
-                    <input type="text" class="form-control" id="tgz_url" ng-model="instanceInfo.tgz_url" />
+                    <label for="archive_url">{{ _('URL') }}</label>
+                    <input type="text" class="form-control" id="archive_url" ng-model="instanceInfo.archive_url" />
                   </div>
                 </div>
               </div>

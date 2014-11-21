@@ -1,4 +1,4 @@
-"""empty message
+"""upstream.domain_id
 
 Revision ID: 38e1ae266dbf
 Revises: 567ffa3f5475

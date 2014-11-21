@@ -24,6 +24,10 @@ from jeto.models.permission import ViewHostPermission,\
 from settings import DOMAINS_API_URL, DOMAINS_API_PORT
 from settings import HTPASSWORD_API_URL, HTPASSWORD_API_PORT
 # from time import sleep
+states = {
+    'stop': StopInstancePermission,
+    'start': StartInstancePermission,
+    'provision': ProvisionInstancePermission}
 
 project_wo_instance_fields = {
     'id': fields.String,
@@ -49,6 +53,7 @@ instance_fields = {
     'id': fields.String,
     'name': fields.String,
     'path': fields.String,
+    'archive_url': fields.String,
     'git_reference': fields.String,
     'status': fields.Nested(status_fields),
     'environment': fields.String,
@@ -61,6 +66,7 @@ upstream_fields = {
     'ip': fields.String,
     'port': fields.Integer,
     'port_ssl': fields.Integer,
+    'state': fields.String,
 }
 
 domain_fields = {
@@ -138,30 +144,27 @@ class InstancesApi(Resource):
         self.backend.delete(instanceId)
 
     def post(self):
-        if 'state' in request.json and 'start' in request.json['state']:
-            instanceId = int(request.json['id'])
+        query = request.get_json()
+        instanceId = query.get('id')
+        if instanceId:
+            instanceId = int(instanceId)
             instance = self.backend.get(instanceId)
-            provider = request.json['state'].replace('start-', '')
-            instance.start(id, provider)
-            return {
-                'instance': marshal(instance, instance_fields),
-            }
 
-        if 'state' in request.json and request.json['state'] == 'stop':
-            instanceId = int(request.json['id'])
-            instance = self.backend.get(instanceId)
-            instance.stop()
-            return {
-                'instance': marshal(instance, instance_fields),
-            }
+            if 'start' in query.get('state', ''):
+                provider = query['state'].replace('start-', '')
+                instance.start(provider)
 
-        if 'state' in request.json and request.json['state'] == 'create':
-            instance = self.backend.create(request.json)
-            return {
-                'instance': marshal(instance, instance_fields),
-            }
+            elif query.get('state') == 'stop':
+                instance.stop()
 
-        return self.get()
+        elif query.get('state') == 'create':
+            instance = self.backend.create(query)
+        else:
+            return self.get()
+
+        return {
+            'instance': marshal(instance, instance_fields),
+        }
 
     def _stop(self, id):
         self.backend.stop(id)
@@ -197,32 +200,23 @@ class InstanceApi(Resource):
         instance = self._getInstance(id)
 
         changed = False
-        if 'name' in request.json:
-            if request.json['name'] != instance.name:
-                instance.name = request.json['name']
+        query = request.get_json()
+        if 'name' in query:
+            if query['name'] != instance.name:
+                instance.name = query['name']
                 changed = True
 
         if changed:
             instance.save()
 
-        if 'machine' in request.json:
-            machineName = request.json['machine']
+        if 'machine' in query:
+            machineName = query['machine']
 
-        if 'state' in request.json and request.json['state'] == 'stop':
-            if current_user.has_permission(StopInstancePermission, id):
-                self.stop(id, machineName)
-            else:
-                abort(403)
-
-        if 'state' in request.json and 'start' in request.json['state']:
-            if current_user.has_permission(StartInstancePermission, id):
-                self.start(id, machineName)
-            else:
-                abort(403)
-
-        if 'state' in request.json and 'provision' in request.json['state']:
-            if current_user.has_permission(ProvisionInstancePermission, id):
-                self.provision(id, machineName)
+        state = query.get('state')
+        permission = states.get(state)
+        if permission:
+            if current_user.has_permission(permission, id):
+                getattr(self, state)(id, machineName)
             else:
                 abort(403)
 
@@ -269,29 +263,26 @@ class DomainsApi(Resource):
             return self.put(id)
 
     def _editDomain(self, id=None):
-        htpasswd = None
-        ssl_key = None
+        query = request.get_json()
 
         if id is None:
             domain = Domain()
         else:
             domain = Domain.query.get(id)
 
-        uri = request.json['uri']
+        uri = query['uri']
+        htpasswd = query.get('htpasswd')
+        ssl_key = query.get('ssl_key')
+        state = query.get('state')
 
-        if 'htpasswd' in request.json:
-            htpasswd = request.json['htpasswd']
-        if 'ssl_key' in request.json:
-            ssl_key = request.json['ssl_key']
-
-        if 'upstreams' in request.json:
-            domain.upstreams = []
-            for upstreamInfo in request.json['upstreams']:
-                upstream = Upstream()
-                upstream.ip = upstreamInfo['ip']
-                upstream.port = upstreamInfo['port']
-                upstream.port_ssl = upstreamInfo['port_ssl']
-                domain.upstreams.append(upstream)
+        domain.upstreams = []
+        for upstreamInfo in query.get('upstreams', []):
+            upstream = Upstream()
+            upstream.ip = upstreamInfo['ip']
+            upstream.port = upstreamInfo['port']
+            upstream.port_ssl = upstreamInfo['port_ssl']
+            upstream.state = upstreamInfo['state']
+            domain.upstreams.append(upstream)
 
         domain.uri = uri
         domain.htpasswd = htpasswd
