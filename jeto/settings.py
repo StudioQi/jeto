@@ -16,9 +16,9 @@ LANGUAGES = {
 PROJECT_BASEPATH = '/home/vagrant/projects/'
 # oauth
 REDIRECT_URI = '/oauth2callback'
-GOOGLE_CLIENT_ID = '626406576972-36h5bqjh7051v8arkm44n49ebd8je8c6.apps.googleusercontent.com'
-GOOGLE_CLIENT_SECRET = 'clEe90PMdFzaHzL6lTK-n7lB'
-# GOOGLE_LIMIT_DOMAIN = ''
+GOOGLE_CLIENT_ID = ''
+GOOGLE_CLIENT_SECRET = ''
+# GOOGLE_LIMIT_DOMAIN = ['test.com', 'example.com']
 BRAND_IMAGE_EXTERNAL = None
 BRAND_IMAGE_ASSET_FILENAME = None
 DEFAULT_LANGUAGE = 'en'

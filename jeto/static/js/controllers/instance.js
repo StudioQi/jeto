@@ -7,7 +7,7 @@ function InstanceController($scope, $routeParams, Instances, MachineIP, $http, c
                 $scope.instance.status[key].stopDisabled = false;
                 if(value.status.indexOf('running') === -1){
                     $scope.instance.status[key].stopDisabled = true;
-                } 
+                }
             });
 
             if($scope.source === undefined){
@@ -21,7 +21,7 @@ function InstanceController($scope, $routeParams, Instances, MachineIP, $http, c
     $scope.updateInfos();
 
     $scope.refreshIP = function(event, machineName) {
-        clickedElement = angular.element(event.currentTarget); 
+        clickedElement = angular.element(event.currentTarget);
         refreshIcon = angular.element(clickedElement.find('span')[0]);
         refreshIcon.addClass('icon-refresh-animate');
         MachineIP.get(
@@ -52,11 +52,15 @@ function InstanceController($scope, $routeParams, Instances, MachineIP, $http, c
         $scope.instance.$save();
     };
 
+    $scope.unsetActive = function(elementId) {
+        $('#' + elementId).removeClass('active');
+    }
+
     $scope.delete = function() {
         createDialog('', {
-            id : 'deleteDialog', 
+            id : 'deleteDialog',
             title: 'Delete instance',
-            backdrop: true, 
+            backdrop: true,
             scope: $scope,
             btntype: 'danger',
             template: 'Are you sure you want to delete the instance <b>[[instance.name]]</b>?',
@@ -83,9 +87,12 @@ function InstanceController($scope, $routeParams, Instances, MachineIP, $http, c
             if(consoleData.data !== ''){
                 $scope.console = consoleData.data;
                 $('#console').html($scope.console);
-                consoleDiv = $('#console').get(0);
-                if(consoleDiv !== undefined){
-                    consoleDiv.scrollTop = consoleDiv.scrollHeight;
+                autoScroll = $('[name="auto-scroll"].active').val();
+                if(autoScroll === '1'){
+                    autoScrollSep = $('#auto-scroll-separator').get(0);
+                    if(autoScrollSep !== undefined){
+                        autoScrollSep.scrollIntoView();
+                    }
                 }
             }
         });
