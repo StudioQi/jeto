@@ -28,6 +28,10 @@ class Domain(db.Model):
 
         return False
 
+    def __str__(self):
+        return 'Domain {}: {} with controller : {}'\
+            .format(self.id, self.uri, self.domain_controller.id)
+
 
 class Upstream(db.Model):
     id = db.Column(db.Integer, primary_key=True)

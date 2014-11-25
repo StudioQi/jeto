@@ -274,10 +274,10 @@ class DomainsApi(Resource):
 
     def post(self, id=None):
         if id is None:
-            domain = self._editDomain()
             # Should mean we are adding a new domain
+            domain = self._editDomain()
             req.post(
-                self._get_url(),
+                self._get_url(domain),
                 headers=self._get_headers(),
                 data=json.dumps(marshal(domain, domain_fields))
             )
@@ -293,6 +293,10 @@ class DomainsApi(Resource):
             domain = Domain()
         else:
             domain = Domain.query.get(id)
+            for upstream in domain.upstreams:
+                db.session.delete(upstream)
+
+            db.session.commit()
 
         uri = request.json['uri']
 
@@ -308,11 +312,13 @@ class DomainsApi(Resource):
                 upstream.ip = upstreamInfo['ip']
                 upstream.port = upstreamInfo['port']
                 upstream.port_ssl = upstreamInfo['port_ssl']
+                db.session.add(upstream)
+                db.session.commit()
                 domain.upstreams.append(upstream)
 
         domain.domain_controller = None
         if 'domain_controller' in request.json\
-                and request.json['domain_controller'] != None:
+                and request.json['domain_controller'] is not None:
             domain_controller = DomainController.query.get(
                 request.json['domain_controller']['id']
             )
@@ -327,25 +333,41 @@ class DomainsApi(Resource):
         return domain
 
     def delete(self, id):
-        db.session.delete(Domain.query.get(id))
+        domain = Domain.query.get(id)
+        db.session.delete(domain)
         db.session.commit()
-        url = self._get_url() + '/{}'.format(id)
+        url = self._get_url(domain) + '/{}'.format(id)
         req.delete(url=url, headers=self._get_headers())
         return self.get()
 
+    def _delete_on_dc(self, domain):
+        url = self._get_url(domain) + '/{}'.format(domain.id)
+        req.delete(url=url, headers=self._get_headers())
+
     def put(self, id=None):
+        domain = Domain.query.get(id)
+        if 'domain_controller' in request.json:
+            if domain.domain_controller is not None and\
+                    request.json['domain_controller'] is not None:
+                app.logger.debug('Deleting domain on old controller')
+                self._delete_on_dc(domain)
+
         domain = self._editDomain(id)
-        # Should mean we are adding a new domain
+
         req.put(
-            '{}/{}'.format(self._get_url(), id),
+            '{}/{}'.format(self._get_url(domain), id),
             headers=self._get_headers(),
             data=json.dumps(marshal(domain, domain_fields))
         )
 
         return self.get(domain.id)
 
-    def _get_url(self):
-        return 'http://' + DOMAINS_API_URL + ':' + DOMAINS_API_PORT
+    def _get_url(self, domain=None):
+        if domain is None or domain.domain_controller is None:
+            return 'http://' + DOMAINS_API_URL + ':' + DOMAINS_API_PORT
+        else:
+            return domain.domain_controller.address + ':' +\
+                domain.domain_controller.port
 
     def _get_headers(self):
         return {'Content-Type': 'application/json',
@@ -656,45 +678,36 @@ class DomainControllerApi(RestrictedResource):
             domain_controllers = DomainController.query.order_by('name')
             return {
                 'domain_controllers': map(
-                    lambda t: marshal(t, domain_controller_fields_with_domains),
+                    lambda t: marshal(
+                        t,
+                        domain_controller_fields_with_domains
+                    ),
                     domain_controllers
                 ),
             }
         else:
             domain_controller = DomainController.query.get(id)
-            return marshal(domain_controller, domain_controller_fields_with_domains)
+            return marshal(
+                domain_controller,
+                domain_controller_fields_with_domains
+            )
 
     @adminAuthenticate
     def post(self, id=None):
         if 'state' in request.json and request.json['state'] == 'create':
-            team = Team(
+            app.logger.debug(request.json)
+            domain_controller = DomainController(
                 None,
                 request.json['name'],
+                request.json['address'],
+                request.json['port'],
+                request.json['accept_self_signed']
             )
-            db.session.add(team)
+            db.session.add(domain_controller)
             db.session.commit()
-            return {
-                'team': marshal(team, team_fields),
-            }
+            return self.get(domain_controller.id)
         else:
-            # Not used right now, put() is called instead.
-            team = Team.query.get(id)
-            name = clean(request.json['name'])
-            if name != '':
-                team.name = name
-
-            # team = self._updatePermissions(team)
-
-            db.session.add(team)
-            db.session.commit()
             return self.get(id)
-
-    @adminAuthenticate
-    def put(self, id):
-        team = Team.query.get(id)
-        team = self._updatePermissions(team)
-        db.session.add(team)
-        db.session.commit()
 
     def _updatePermissions(self, team):
         users = []
@@ -720,8 +733,9 @@ class DomainControllerApi(RestrictedResource):
 
     @adminAuthenticate
     def delete(self, id):
-        team = Team.query.get(id)
-        db.session.delete(team)
+        app.logger.debug(id)
+        domain_controller = DomainController.query.get(id)
+        db.session.delete(domain_controller)
         db.session.commit()
 
 

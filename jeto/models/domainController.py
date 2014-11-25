@@ -12,13 +12,20 @@ class DomainController(db.Model):
     accept_self_signed = db.Column(db.Boolean())
     domains = db.relationship(
         'Domain',
-        backref='domain_controller',
+        backref=db.backref('domain_controller', lazy='joined'),
     )
 
-    def __init__(self, id, name, address, port, accept_self_signed=False, domains=[]):
+    def __init__(self, id, name, address, port, accept_self_signed=False,
+                 domains=[]):
         self.id = id
         self.name = name
         self.address = address
         self.port = port
         self.accept_self_signed = accept_self_signed
         self.domains = domains
+
+    def __eq__(self, other):
+        if other.id == self.id:
+            return True
+
+        return False

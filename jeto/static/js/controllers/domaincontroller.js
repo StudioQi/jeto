@@ -31,8 +31,11 @@ function DomainControllerListController($scope, $routeParams, DomainControllers,
                label: 'Add',
                fn: function(){
                    $('.loading').show();
-                   var domain_controller = new DomainController();
-                   domain_controller.name = $scope.projectInfo.name;
+                   var domain_controller = new DomainControllers();
+                   domain_controller.name = $scope.domain_controllerInfo.name;
+                   domain_controller.address = $scope.domain_controllerInfo.address;
+                   domain_controller.port = $scope.domain_controllerInfo.port;
+                   domain_controller.accept_self_signed = $scope.domain_controllerInfo.accept_self_signed;
                    domain_controller.state = 'create';
                    domain_controller.$save();
                    setTimeout($scope.resetInfos, 100);
@@ -58,7 +61,7 @@ function DomainControllerListController($scope, $routeParams, DomainControllers,
                 fn: function(){
                     $('.loading').show();
                     id = $scope.deleteItemId;
-                    $http.delete('/api/domainController/' + id)
+                    $http.delete('/api/domainControllers/' + id)
                     .success(function() {
                         setTimeout($scope.update, 100);
                     });
@@ -72,9 +75,15 @@ function DomainControllerListController($scope, $routeParams, DomainControllers,
 }
 
 function DomainControllerController($scope, $routeParams, DomainControllers, $http, $location, $log) {
+    watchFunction = function(newValue, oldValue) {
+        if(newValue !== undefined && newValue !== oldValue){
+            $scope.domain_controller.$save();
+        }
+    };
     $scope.update = function() {
         DomainControllers.get({id: $routeParams.id}, function(infos) {
             $scope.domain_controller = infos;
+            $scope.$watch('domain_controller', watchFunction, true);
             $scope.resource = infos;
         });
     };

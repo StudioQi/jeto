@@ -5,7 +5,7 @@
     <div class="row">
       <div class="col-md-6">
         <div class="panel panel-default">
-          <div class="panel-heading">{{ _('Latests Projects') }}
+          <div class="panel-heading">{{ _('Latest Projects') }}
               <div class="pull-right">
                   <a href="/admin/projects">{{ _('View all') }}</a>
               </div>
@@ -32,7 +32,7 @@
       <div class="col-md-6">
         <div class="panel panel-default">
           <div class="panel-heading">
-              {{ _('Latests Teams') }}
+              {{ _('Latest Teams') }}
               <div class="pull-right">
                 <a href="/admin/teams">{{ _('View all') }}</a>
               </div>
@@ -60,7 +60,7 @@
       <div class="col-md-6">
         <div class="panel panel-default">
           <div class="panel-heading">
-              {{ _('Latests Hosts') }}
+              {{ _('Latest Hosts') }}
               <div class="pull-right">
                 <a href="/admin/hosts">View all</a>
               </div>
@@ -86,7 +86,7 @@
       <div class="col-md-6">
         <div class="panel panel-default">
           <div class="panel-heading">
-              {{ _('Latests Users') }}
+              {{ _('Latest Users') }}
               <div class="pull-right">
                 <a href="/admin/users">{{ _('View all') }}</a>
               </div>
@@ -102,6 +102,32 @@
               <tr ng-repeat="user in users">
                   <td>[[ user.name ]]</td>
                   <td><a href="/admin/users/[[ user.id ]]">{{ _('View') }}</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+              {{ _('Latest Domain Controllers') }}
+              <div class="pull-right">
+                <a href="/admin/domainControllers">{{ _('View all') }}</a>
+              </div>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>{{ _('Name') }}</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="domain_controller in domain_controllers">
+                  <td>[[ domain_controller.name ]]</td>
+                  <td><a href="/admin/domainControllers/[[ domain_controller.id ]]">{{ _('View') }}</a></td>
               </tr>
             </tbody>
           </table>
