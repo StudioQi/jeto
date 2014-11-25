@@ -9,7 +9,6 @@ function DomainsController($scope, $routeParams, Domains, $http, createDialog, H
 
         Htpassword.get({}, function(infos){
             $scope.htpasswdLst = infos.lists.map(function(current){ return current.slug; });
-            console.log($scope.htpasswdLst);
         });
     };
     $scope.upstream_states = [
