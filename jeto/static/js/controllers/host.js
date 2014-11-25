@@ -19,10 +19,10 @@ function HostsListController($scope, $routeParams, Hosts, $http, createDialog) {
     $scope.resetInfos();
 
     $scope.create = function() {
-        createDialog('/partials/admin/hosts/form.html',{ 
-           id : 'createDialog', 
+        createDialog('/partials/admin/hosts/form.html',{
+           id : 'createDialog',
            title: 'Create a new host',
-           backdrop: true, 
+           backdrop: true,
            scope: $scope,
            success: {
                label: 'Create',
@@ -46,9 +46,9 @@ function HostsListController($scope, $routeParams, Hosts, $http, createDialog) {
     $scope.delete = function(host) {
         $scope.deleteHostId = host.id;
         createDialog({
-            id : 'deleteDialog', 
+            id : 'deleteDialog',
             title: 'Delete host',
-            backdrop: true, 
+            backdrop: true,
             scope: $scope,
             btntype: 'danger',
             template: 'Are you sure you want to delete <b>' + host.name +'</b> ?',
@@ -84,7 +84,4 @@ function HostController($scope, $routeParams, $log, Hosts) {
         });
     };
     $scope.update();
-    $scope.resetInfos = function(){
-       setTimeout($scope.update, 100);
-    };
 }

@@ -89,7 +89,4 @@ function DomainControllerController($scope, $routeParams, DomainControllers, $ht
     };
 
     $scope.update();
-    $scope.resetInfos = function(){
-       setTimeout($scope.update, 100);
-    };
 }

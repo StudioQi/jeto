@@ -279,7 +279,8 @@ class DomainsApi(Resource):
             req.post(
                 self._get_url(domain),
                 headers=self._get_headers(),
-                data=json.dumps(marshal(domain, domain_fields))
+                data=json.dumps(marshal(domain, domain_fields)),
+                verify=self._get_verify(domain)
             )
             return self.get(domain.id)
         else:
@@ -337,19 +338,32 @@ class DomainsApi(Resource):
         db.session.delete(domain)
         db.session.commit()
         url = self._get_url(domain) + '/{}'.format(id)
-        req.delete(url=url, headers=self._get_headers())
+        req.delete(url=url, headers=self._get_headers(), verify=self._get_verify(domain))
         return self.get()
 
     def _delete_on_dc(self, domain):
         url = self._get_url(domain) + '/{}'.format(domain.id)
-        req.delete(url=url, headers=self._get_headers())
+        req.delete(url=url, headers=self._get_headers(), verify=self._get_verify(domain))
 
     def put(self, id=None):
         domain = Domain.query.get(id)
         if 'domain_controller' in request.json:
+            # If the controller is to be changed in the _edit,
+            # Delete the domain on the current controller
             if domain.domain_controller is not None and\
                     request.json['domain_controller'] is not None:
-                app.logger.debug('Deleting domain on old controller')
+                self._delete_on_dc(domain)
+
+            # If the domain is currently on the default controller and the new
+            # controller is expected to be different, delete it on the default
+            # controller
+            if domain.domain_controller is None and\
+                    request.json['domain_controller'] is not None:
+                self._delete_on_dc(domain)
+
+            # If we are changing the controller to be the default one
+            if domain.domain_controller is not None and\
+                    request.json['domain_controller'] is None:
                 self._delete_on_dc(domain)
 
         domain = self._editDomain(id)
@@ -357,7 +371,8 @@ class DomainsApi(Resource):
         req.put(
             '{}/{}'.format(self._get_url(domain), id),
             headers=self._get_headers(),
-            data=json.dumps(marshal(domain, domain_fields))
+            data=json.dumps(marshal(domain, domain_fields)),
+            verify=self._get_verify(domain)
         )
 
         return self.get(domain.id)
@@ -373,6 +388,11 @@ class DomainsApi(Resource):
         return {'Content-Type': 'application/json',
                 'Accept': 'application/json'}
 
+    def _get_verify(self, domain):
+        if domain.domain_controller is not None:
+            return domain.domain_controller.accept_self_signed
+
+        return True
 
 class HtpasswordService(object):
     def _get_url(self):
@@ -695,7 +715,6 @@ class DomainControllerApi(RestrictedResource):
     @adminAuthenticate
     def post(self, id=None):
         if 'state' in request.json and request.json['state'] == 'create':
-            app.logger.debug(request.json)
             domain_controller = DomainController(
                 None,
                 request.json['name'],
@@ -707,6 +726,22 @@ class DomainControllerApi(RestrictedResource):
             db.session.commit()
             return self.get(domain_controller.id)
         else:
+            domain_controller = DomainController.query.get(id)
+            name = clean(request.json['name'].rstrip())
+            address = clean(request.json['address'].rstrip())
+            port = clean(request.json['port'].rstrip())
+
+            if name != '':
+                domain_controller.name = name
+
+            if address != '':
+                domain_controller.address = address
+
+            if port != '':
+                domain_controller.port = port
+
+            db.session.add(domain_controller)
+            db.session.commit()
             return self.get(id)
 
     def _updatePermissions(self, team):
