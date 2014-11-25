@@ -9,6 +9,7 @@ function DomainsController($scope, $routeParams, Domains, $http, createDialog, H
 
         Htpassword.get({}, function(infos){
             $scope.htpasswdLst = infos.lists.map(function(current){ return current.slug; });
+            console.log($scope.htpasswdLst);
         });
     };
     $scope.upstream_states = [
@@ -60,7 +61,7 @@ function DomainsController($scope, $routeParams, Domains, $http, createDialog, H
     }
 
     $scope.create = function() {
-        createDialog('/partials/domains/form.html',{ 
+        createDialog('/partials/domains/form.html',{
            id : 'createDialog', 
            title: 'Create a new domain',
            backdrop: true, 
@@ -72,10 +73,8 @@ function DomainsController($scope, $routeParams, Domains, $http, createDialog, H
                    domain.uri = $scope.domainInfo.uri;
                    domain.htpasswd = $scope.domainInfo.htpasswd;
                    domain.upstreams = $scope.domainInfo.upstreams;
+                   domain.ssl_key = $scope.domainInfo.ssl_key;
 
-                   if($scope.domainInfo.ssl_key !== undefined){
-                        domain.ssl_key = $scope.domainInfo.ssl_key.value;
-                   }
                    domain.$save();
 
                    $scope.resetInfos();
@@ -95,12 +94,8 @@ function DomainsController($scope, $routeParams, Domains, $http, createDialog, H
             'uri': domainInfo.uri,
             'htpasswd': domainInfo.htpasswd,
             'upstreams': domainInfo.upstreams,
+            'ssl_key': domainInfo.ssl_key,
         };
-        angular.forEach($scope.ssl_keys, function(ssl_key) {
-            if(ssl_key !== undefined && ssl_key.value == domainInfo.ssl_key){
-                $scope.domainInfo.ssl_key = ssl_key;
-            }
-        });
         createDialog('/partials/domains/form.html',{ 
            id : 'editDialog', 
            title: 'Edit a domain',
@@ -114,10 +109,8 @@ function DomainsController($scope, $routeParams, Domains, $http, createDialog, H
                    domain.uri = $scope.domainInfo.uri;
                    domain.htpasswd = $scope.domainInfo.htpasswd;
                    domain.upstreams = $scope.domainInfo.upstreams;
+                   domain.ssl_key = $scope.domainInfo.ssl_key;
 
-                   if($scope.domainInfo.ssl_key !== undefined && $scope.domainInfo.ssl_key !== null){
-                     domain.ssl_key = $scope.domainInfo.ssl_key.value;
-                   }
                    domain.$save();
 
                    $scope.resetInfos();
