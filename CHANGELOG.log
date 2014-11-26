@@ -2,6 +2,8 @@
 ---
 - Now displaying full console with autoscrolling option enabled by default
 - Now support multiple google domains
+- Introducing the Domain Controllers. You can now have multiple nginx-api (or any API with the same ReST interface) to manage domains pointing to different end points.
+- Adding Nginx upstream states (up, down, backup)
 
 0.1.5 - October 23th 2014
 ---

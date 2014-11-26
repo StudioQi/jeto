@@ -1,0 +1,69 @@
+{% set breadcrumbs = [(_('Administration'),'/admin'),(_('Domain Controllers'), '/admin/domainControllers'), ('[[ domain_controller.name ]]',),] %}
+{% set titleSuffix = 'Domain Controller - <span contenteditable ng-model="domain_controller.name"></span>' %}
+{% extends 'partials/admin/partialBase.html' %}
+
+{% block contentAdmin %}
+<h3>{{ _('Domain Controller :') }} <b contenteditable ng-model="domain_controller.name">[[ domain_controller.name ]]</b></h3>
+<div class="row">
+    <div class="col-md-6">
+       <div class="panel panel-default">
+            <div class="panel-heading">
+                <span contenteditable ng-model="domain_controller.name">[[ domain_controller.name ]]</span>
+            </div>
+            <table class="table table-bordered">
+                <tr>
+                    <th>{{ _('ID') }}</th>
+                    <td>[[ domain_controller.id ]]</td>
+                </tr>
+                <tr ng-show="domain_controller.address">
+                    <th>{{ _('Address') }}</th>
+                    <td><span contenteditable ng-model="domain_controller.address"></span></td>
+                </tr>
+                <tr ng-show="domain_controller.port">
+                    <th>{{ _('Port') }}</th>
+                    <td><span contenteditable ng-model="domain_controller.port"></span></td>
+                </tr>
+                <tr ng-show="domain_controller.accept_self_signed">
+                    <th>{{ _('Accept self-signed certificate?') }}</th>
+                    <td>
+                        <div class="btn-group" data-toggle="buttons">
+                            <label class="btn btn-default" ng-class="{active: domain_controller.accept_self_signed}">
+                            <input type="radio" name="accept_self_signed" id="accept_self_signed_true" autocomplete="off"> {{ _('Yes') }}
+                            </label>
+                            <label class="btn btn-default" ng-class="{active: !domain_controller.accept_self_signed}">
+                            <input type="radio" name="accept_self_signed" id="accept_self_signed_false" autocomplete="off" checked>  {{ _('No') }}
+                            </label>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="col-md-6 pull-right">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {{ _('Domains assigned to domain controller') }}
+            </div>
+            <table class="table table-bordered">
+                <tr>
+                    <th>{{ _('URI') }}</th>
+                    <th>{{ _('Number of servers') }}</th>
+                    <th></th>
+                </tr>
+                <tr ng-repeat="domain in domain_controller.domains">
+                    <td>[[ domain.uri ]]</td>
+                    <td>[[ domain.upstreams.length ]]</td>
+                    <td><a href="/domains/[[ domain.id ]]">{{ _('View') }}</a></td>
+                </tr>
+                <tr ng-show="!domain_controller.domains.length">
+                    <td colspan="3">
+                        {{ _('No domain are assigned to this domain controller yet.') }}
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

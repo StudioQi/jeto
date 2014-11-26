@@ -1,5 +1,5 @@
 angular.module('angularFlaskServices', ['ngResource'])
-    .value('version', '0.1.4')
+    .value('version', '0.1.6')
     .factory('Instances', function($resource) {
         return $resource('/api/instances/:id', {id:'@id'}, {
             query: {
@@ -29,5 +29,8 @@ angular.module('angularFlaskServices', ['ngResource'])
     })
     .factory('Users', function($resource) {
         return $resource('/api/users/:id', {id:'@id'});
+    })
+    .factory('DomainControllers', function($resource) {
+        return $resource('/api/domainControllers/:id', {id:'@id'});
     })
 ;

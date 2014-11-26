@@ -16,6 +16,7 @@ from jeto.models.project import Project
 from jeto.models.host import Host
 from jeto.models.team import Team
 from jeto.models.domain import Domain, Upstream
+from jeto.models.domainController import DomainController
 from jeto.models.user import User, ROLE_DEV, ROLE_ADMIN
 from jeto.models.permission import ViewHostPermission,\
     TeamPermissionsGrids, ProvisionInstancePermission,\
@@ -69,6 +70,14 @@ upstream_fields = {
     'state': fields.String,
 }
 
+domain_controller_fields = {
+    'id': fields.String,
+    'name': fields.String,
+    'address': fields.String,
+    'port': fields.String,
+    'accept_self_signed': fields.Boolean,
+}
+
 domain_fields = {
     'id': fields.Integer,
     'slug': fields.String,
@@ -76,6 +85,7 @@ domain_fields = {
     'htpasswd': fields.String,
     'ssl_key': fields.String,
     'upstreams': fields.Nested(upstream_fields),
+    'domain_controller': fields.Nested(domain_controller_fields),
 }
 
 htpassword_list_fields = {
@@ -122,6 +132,13 @@ user_fields_with_teams = dict(
     user_fields,
     **{
         'teams': fields.Nested(team_fields_wo_users)
+    }
+)
+
+domain_controller_fields_with_domains = dict(
+    domain_controller_fields,
+    **{
+        'domains': fields.Nested(domain_fields),
     }
 )
 
@@ -251,12 +268,13 @@ class DomainsApi(Resource):
 
     def post(self, id=None):
         if id is None:
-            domain = self._editDomain()
             # Should mean we are adding a new domain
+            domain = self._editDomain()
             req.post(
-                self._get_url(),
+                self._get_url(domain),
                 headers=self._get_headers(),
-                data=json.dumps(marshal(domain, domain_fields))
+                data=json.dumps(marshal(domain, domain_fields)),
+                verify=self._get_verify(domain)
             )
             return self.get(domain.id)
         else:
@@ -269,11 +287,15 @@ class DomainsApi(Resource):
             domain = Domain()
         else:
             domain = Domain.query.get(id)
+            for upstream in domain.upstreams:
+                db.session.delete(upstream)
+
+            db.session.commit()
 
         uri = query['uri']
         htpasswd = query.get('htpasswd')
         ssl_key = query.get('ssl_key')
-        state = query.get('state')
+        domain_controller = query.get('domain_controller')
 
         domain.upstreams = []
         for upstreamInfo in query.get('upstreams', []):
@@ -284,6 +306,13 @@ class DomainsApi(Resource):
             upstream.state = upstreamInfo['state']
             domain.upstreams.append(upstream)
 
+        domain.domain_controller = None
+        if domain_controller:
+            domain_controller = DomainController.query.get(
+                domain_controller['id']
+            )
+            domain.domain_controller = domain_controller
+
         domain.uri = uri
         domain.htpasswd = htpasswd
         domain.ssl_key = ssl_key
@@ -293,29 +322,73 @@ class DomainsApi(Resource):
         return domain
 
     def delete(self, id):
-        db.session.delete(Domain.query.get(id))
+        domain = Domain.query.get(id)
+        db.session.delete(domain)
         db.session.commit()
-        url = self._get_url() + '/{}'.format(id)
-        req.delete(url=url, headers=self._get_headers())
+        url = self._get_url(domain) + '/{}'.format(id)
+        req.delete(
+            url=url,
+            headers=self._get_headers(),
+            verify=self._get_verify(domain)
+        )
         return self.get()
 
-    def put(self, id=None):
-        domain = self._editDomain(id)
-        # Should mean we are adding a new domain
-        req.put(
-            '{}/{}'.format(self._get_url(), id),
+    def _delete_on_dc(self, domain):
+        url = self._get_url(domain) + '/{}'.format(domain.id)
+        req.delete(
+            url=url,
             headers=self._get_headers(),
-            data=json.dumps(marshal(domain, domain_fields))
+            verify=self._get_verify(domain)
+        )
+
+    def put(self, id=None):
+        domain = Domain.query.get(id)
+        if 'domain_controller' in request.json:
+            # If the controller is to be changed in the _edit,
+            # Delete the domain on the current controller
+            if domain.domain_controller is not None and\
+                    request.json['domain_controller'] is not None:
+                self._delete_on_dc(domain)
+
+            # If the domain is currently on the default controller and the new
+            # controller is expected to be different, delete it on the default
+            # controller
+            if domain.domain_controller is None and\
+                    request.json['domain_controller'] is not None:
+                self._delete_on_dc(domain)
+
+            # If we are changing the controller to be the default one
+            if domain.domain_controller is not None and\
+                    request.json['domain_controller'] is None:
+                self._delete_on_dc(domain)
+
+        domain = self._editDomain(id)
+
+        req.put(
+            '{}/{}'.format(self._get_url(domain), id),
+            headers=self._get_headers(),
+            data=json.dumps(marshal(domain, domain_fields)),
+            verify=self._get_verify(domain)
         )
 
         return self.get(domain.id)
 
-    def _get_url(self):
-        return 'http://' + DOMAINS_API_URL + ':' + DOMAINS_API_PORT
+    def _get_url(self, domain=None):
+        if domain is None or domain.domain_controller is None:
+            return 'http://' + DOMAINS_API_URL + ':' + DOMAINS_API_PORT
+        else:
+            return domain.domain_controller.address + ':' +\
+                domain.domain_controller.port
 
     def _get_headers(self):
         return {'Content-Type': 'application/json',
                 'Accept': 'application/json'}
+
+    def _get_verify(self, domain):
+        if domain.domain_controller is not None:
+            return domain.domain_controller.accept_self_signed
+
+        return True
 
 
 class HtpasswordService(object):
@@ -510,7 +583,6 @@ class HostApi(RestrictedResource):
                 request.json['params'].replace("<br>", "\r\n"),
                 clean(request.json['provider'])
             )
-            app.logger.debug(host.params)
             db.session.add(host)
             db.session.commit()
             return {
@@ -613,6 +685,87 @@ class TeamApi(RestrictedResource):
     def delete(self, id):
         team = Team.query.get(id)
         db.session.delete(team)
+        db.session.commit()
+
+
+class DomainControllerApi(RestrictedResource):
+    def get(self, id=None):
+        if id is None:
+            domain_controllers = DomainController.query.order_by('name')
+            return {
+                'domain_controllers': map(
+                    lambda t: marshal(
+                        t,
+                        domain_controller_fields_with_domains
+                    ),
+                    domain_controllers
+                ),
+            }
+        else:
+            domain_controller = DomainController.query.get(id)
+            return marshal(
+                domain_controller,
+                domain_controller_fields_with_domains
+            )
+
+    @adminAuthenticate
+    def post(self, id=None):
+        if 'state' in request.json and request.json['state'] == 'create':
+            domain_controller = DomainController(
+                None,
+                request.json['name'],
+                request.json['address'],
+                request.json['port'],
+                request.json['accept_self_signed']
+            )
+            db.session.add(domain_controller)
+            db.session.commit()
+            return self.get(domain_controller.id)
+        else:
+            domain_controller = DomainController.query.get(id)
+            name = clean(request.json['name'].rstrip())
+            address = clean(request.json['address'].rstrip())
+            port = clean(request.json['port'].rstrip())
+
+            if name != '':
+                domain_controller.name = name
+
+            if address != '':
+                domain_controller.address = address
+
+            if port != '':
+                domain_controller.port = port
+
+            db.session.add(domain_controller)
+            db.session.commit()
+            return self.get(id)
+
+    def _updatePermissions(self, team):
+        users = []
+        if 'users' in request.json:
+            usersId = request.json['users']
+            for userId in usersId:
+                users.append(User.query.get(userId))
+
+        team.users = users
+
+        permissions = []
+        if 'permissionsGrid' in request.json:
+            for permission in request.json['permissionsGrid']:
+                teamPermission = TeamPermissionsGrids()
+                teamPermission.objectId = permission['objectId']
+                teamPermission.action = permission['action']
+                teamPermission.objectType = permission['objectType']
+                permissions.append(teamPermission)
+
+        team.permissions_grids = permissions
+
+        return team
+
+    @adminAuthenticate
+    def delete(self, id):
+        domain_controller = DomainController.query.get(id)
+        db.session.delete(domain_controller)
         db.session.commit()
 
 

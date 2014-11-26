@@ -180,6 +180,7 @@ a {
 }
 #console {
     overflow:auto;
+    font-family: 'Ubuntu Mono';
 }
 
 /* ansiconv */
@@ -265,13 +266,23 @@ label {
 }
 
 .input-group .form-control.field-ip { 
-    width:310px;
+    width:227px;
 }
 .input-group .form-control.field-port {
     width:50px;
 }
 .input-group .form-control.field-port-ssl {
     width:80px;
+}
+.input-group .form-control.field-state { 
+    width:90px;
+}
+.list-group-item .upstream-list {
+    margin-top:-5px;
+}
+
+.list-group-item > .badge {
+    margin-top:5px;
 }
 .nav-tabs li a {
     outline: 0;

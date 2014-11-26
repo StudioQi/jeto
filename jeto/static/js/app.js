@@ -74,6 +74,14 @@ angular.module(
                 templateUrl: '/partials/admin/users/item.html',
                 controller: UserController
             })
+            .when('/admin/domainControllers', {
+                templateUrl: '/partials/admin/domainController/list.html',
+                controller: DomainControllerListController
+            })
+            .when('/admin/domainControllers/:id', {
+                templateUrl: '/partials/admin/domainController/item.html',
+                controller: DomainControllerController
+            })
             .otherwise({
                 redirectTo: '/'
             });

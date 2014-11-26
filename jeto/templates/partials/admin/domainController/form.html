@@ -1,0 +1,35 @@
+<div class="row-fluid">
+    <form class="form">
+        <div class="col-md-12">
+           <div class="form-group">
+               <label for="name">{{ _('Name') }}</label>
+               <input type="text" name="name" id="name" ng-model="domain_controllerInfo.name" placeholder="{{ _('Name') }}" class="form-control"/>
+           </div>
+        </div>
+        <div class="col-md-12">
+           <div class="form-group">
+               <label for="name">{{ _('Address') }}</label>
+               <input type="text" name="address" id="name" ng-model="domain_controllerInfo.address" placeholder="https://127.0.0.1" class="form-control"/>
+           </div>
+        </div>
+        <div class="col-md-12">
+           <div class="form-group">
+               <label for="port">{{ _('Port') }}</label>
+               <input type="text" name="port" id="port" ng-model="domain_controllerInfo.port" placeholder="5000" class="form-control"/>
+           </div>
+        </div>
+        <div class="col-md-12">
+           <div class="form-group">
+               <label for="accept_self_signed">{{ _('Accept self-signed certificate?') }}</label><br />
+               <div class="btn-group" data-toggle="buttons">
+                 <label class="btn btn-default" ng-class="{active: domain_controllerInfo.accept_self_signed}">
+                   <input type="radio" name="accept_self_signed" id="accept_self_signed_true" autocomplete="off"> {{ _('Yes') }}
+                 </label>
+                 <label class="btn btn-default" ng-class="{active: !domain_controllerInfo.accept_self_signed}">
+                   <input type="radio" name="accept_self_signed" id="accept_self_signed_false" autocomplete="off" checked>  {{ _('No') }}
+                 </label>
+               </div>
+           </div>
+        </div>
+    </form>
+</div>

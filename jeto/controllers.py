@@ -26,6 +26,7 @@ from jeto.services import ProjectApi
 from jeto.services import HostApi
 from jeto.services import TeamApi
 from jeto.services import UserApi
+from jeto.services import DomainControllerApi
 from jeto.models.user import User
 from jeto.models.project import Project
 from jeto.models.permission import ViewHostPermission, ViewHostNeed
@@ -357,3 +358,8 @@ api.add_resource(TeamApi, '/api/teams/<int:id>')
 
 api.add_resource(UserApi, '/api/users', endpoint='users')
 api.add_resource(UserApi, '/api/users/<id>')
+
+api.add_resource(DomainControllerApi,
+                 '/api/domainControllers',
+                 endpoint='domainController')
+api.add_resource(DomainControllerApi, '/api/domainControllers/<id>')

@@ -105,7 +105,7 @@ angular.module('fundoo.services', []).factory('createDialog', ["$document", "$co
       };
       scope.$modalSuccessLabel = options.success.label;
       scope.$modalCancelLabel = options.cancel.label;
-      
+
       if (options.controller) {
         locals = angular.extend({$scope: scope}, passedInLocals);
         ctrl = $controller(options.controller, locals);
