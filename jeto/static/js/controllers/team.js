@@ -17,10 +17,10 @@ function TeamsListController($scope, $routeParams, Teams, $http, $location, crea
     $scope.resetInfos();
 
     $scope.create = function() {
-        createDialog('/partials/admin/teams/form.html',{ 
-           id : 'createDialog', 
+        createDialog('/partials/admin/teams/form.html',{
+           id : 'createDialog',
            title: 'Create a new team',
-           backdrop: true, 
+           backdrop: true,
            scope: $scope,
            success: {
                label: 'Create',
@@ -44,9 +44,9 @@ function TeamsListController($scope, $routeParams, Teams, $http, $location, crea
     $scope.delete = function(item) {
         $scope.deleteItemId = item.id;
         createDialog({
-            id : 'deleteDialog', 
+            id : 'deleteDialog',
             title: 'Delete team',
-            backdrop: true, 
+            backdrop: true,
             scope: $scope,
             btntype: 'danger', template: 'Are you sure you want to delete <b>' + item.name +'</b> ?', success: { label: 'Delete',
                 fn: function(){
@@ -65,7 +65,7 @@ function TeamsListController($scope, $routeParams, Teams, $http, $location, crea
     };
 }
 
-function TeamController($scope, $routeParams, Teams, Users, Hosts, Projects, $http, $location) {
+function TeamController($scope, $routeParams, Teams, Users, Hosts, Projects, DomainControllers, $http, $location) {
     // Will fetch the team and all the infos with it
     $scope.init = function() {
         Teams.get({id: $routeParams.id}, function(infos) {
@@ -82,6 +82,10 @@ function TeamController($scope, $routeParams, Teams, Users, Hosts, Projects, $ht
             $scope.projects = infos.projects;
         });
 
+         DomainControllers.get({}, function(infos) {
+            $scope.domain_controllers = infos.domain_controllers;
+        });
+
         $scope.clearInfos();
         $scope.$watch('newPermission.objectType', function(newType, oldType) {
             if(newType != oldType){
@@ -93,23 +97,29 @@ function TeamController($scope, $routeParams, Teams, Users, Hosts, Projects, $ht
                     Projects.get({}, function(infos) {
                         $scope.newPermission.objects = infos.projects;
                     });
+                } else if(newType == 'domainController'){
+                    DomainControllers.get({}, function(infos) {
+                        $scope.newPermission.objects = infos.domain_controllers;
+                    });
                 }
             }
         });
     };
     $scope.clearInfos = function() {
-        $scope.newPermission = { 
+        $scope.newPermission = {
             'objectType' : '',
             'objectId': '',
             'objects': Array(),
             'ViewHost': true,
             'ViewInstances': true,
-            'ProvisionInstances': false,
-            'StartInstances': false,
-            'StopInstances': false,
-            'DestroyInstances': false,
+            'ProvisionInstances': true,
+            'StartInstances': true,
+            'StopInstances': true,
+            'DestroyInstances': true,
+            'ViewDomain': true,
+            'EditDomain': true,
+            'CreateDomain': true,
         };
-
     };
     // Will fetch all users and remove those already in team.users
     // Used in the "Add user" box, also called to filter out values
@@ -174,9 +184,23 @@ function TeamController($scope, $routeParams, Teams, Users, Hosts, Projects, $ht
     $scope.addPermission = function() {
         if($scope.newPermission.objectType == 'project'){
             $scope.newPermission.ViewHost = false;
+            $scope.newPermission.ViewDomain = false;
+            $scope.newPermission.EditDomain = false;
+            $scope.newPermission.CreateDomain = false;
         }
         if($scope.newPermission.objectType == 'host'){
             $scope.newPermission.ViewInstances = false;
+            $scope.newPermission.ViewDomain = false;
+            $scope.newPermission.EditDomain = false;
+            $scope.newPermission.CreateDomain = false;
+        }
+        if($scope.newPermission.objectType == 'domainController'){
+            $scope.newPermission.ViewHost = false;
+            $scope.newPermission.ViewInstances = false;
+            $scope.newPermission.ProvisionInstances = false;
+            $scope.newPermission.StartInstances = false;
+            $scope.newPermission.StopInstances = false;
+            $scope.newPermission.DestroyInstances = false;
         }
 
         newPermission = {
@@ -184,7 +208,7 @@ function TeamController($scope, $routeParams, Teams, Users, Hosts, Projects, $ht
             'objectType': $scope.newPermission.objectType,
         };
 
-        if($scope.newPermission.ViewHost || $scope.newPermission.ViewInstances){
+        if($scope.newPermission.ViewHost || $scope.newPermission.ViewInstances || $scope.newPermission.ViewDomain){
             permission = angular.copy(newPermission);
             permission.action = 'view';
             $scope.team.permissions_grids.push(permission);
@@ -209,6 +233,16 @@ function TeamController($scope, $routeParams, Teams, Users, Hosts, Projects, $ht
             permission.action = 'provision';
             $scope.team.permissions_grids.push(permission);
         }
+        if($scope.newPermission.EditDomain){
+            permission = angular.copy(newPermission);
+            permission.action = 'edit';
+            $scope.team.permissions_grids.push(permission);
+        }
+        if($scope.newPermission.CreateDomain){
+            permission = angular.copy(newPermission);
+            permission.action = 'create';
+            $scope.team.permissions_grids.push(permission);
+        }
 
         $scope.clearInfos();
     };
@@ -216,15 +250,21 @@ function TeamController($scope, $routeParams, Teams, Users, Hosts, Projects, $ht
     $scope.getObjectName = function(objectId, objectType) {
         var found;
         if(objectType == 'host') {
-            angular.forEach($scope.hosts, function(host) { 
+            angular.forEach($scope.hosts, function(host) {
                 if(host.id == objectId) {
                     found = host;
                 }
             }, found);
         } else if (objectType == 'project') {
-            angular.forEach($scope.projects, function(project) { 
+            angular.forEach($scope.projects, function(project) {
                 if(project.id == objectId) {
                     found = project;
+                }
+            }, found);
+        } else if (objectType == 'domainController') {
+            angular.forEach($scope.domain_controllers, function(domain_controller) {
+                if(domain_controller.id == objectId) {
+                    found = domain_controller;
                 }
             }, found);
         }

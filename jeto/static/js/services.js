@@ -13,7 +13,12 @@ angular.module('angularFlaskServices', ['ngResource'])
         return $resource('/api/instances/:id/:machineName/ip', {id:'@id'});
     })
     .factory('Domains', function($resource) {
-        return $resource('/api/domains/:id', {id:'@id'});
+        return $resource('/api/domains/:id', {id:'@id'},{
+            update: {
+                method: 'PUT',
+                params: { id: '' },
+            }
+        });
     })
     .factory('Htpassword', function($resource) {
         return $resource('/api/htpassword/:slug', {slug:'@slug'});

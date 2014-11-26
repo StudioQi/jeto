@@ -3,6 +3,7 @@
 from flask.ext.principal import RoleNeed, Permission
 
 from jeto import db
+from jeto import app
 
 ROLE_DEV = 'dev'
 ROLE_ADMIN = 'admin'
@@ -64,10 +65,19 @@ class User(db.Model):
     def get_permissions_grids(self):
         return sorted(self.permissions_grids, key=lambda item: item.objectType)
 
-    def has_permission(self, permissionType, objectId):
-        permission = permissionType(unicode(objectId))
-        admin = Permission(RoleNeed(ROLE_ADMIN))
-        if permission.can() or admin.can():
+    def has_permission(self, permission_type, objectId):
+        if objectId is None:
             return True
+
+        admin = Permission(RoleNeed(ROLE_ADMIN))
+        if isinstance(permission_type, tuple):
+            for permission_type_item in permission_type:
+                permission = permission_type_item(unicode(objectId))
+                if permission.can() or admin.can():
+                    return True
+        else:
+            permission = permission_type(unicode(objectId))
+            if permission.can() or admin.can():
+                return True
 
         return False

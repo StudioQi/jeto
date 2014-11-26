@@ -23,7 +23,7 @@
     <div class="col-md-9">
         <div class="panel panel-default">
             <div class="panel-heading">
-                {{ _('Users') }} 
+                {{ _('Users') }}
             </div>
             <div class="panel-body">
                 <form class="form">
@@ -72,6 +72,7 @@
                                 <option value=""></option>
                                 <option value="host">{{ _('Host') }}</option>
                                 <option value="project">{{ _('Project') }}</option>
+                                <option value="domainController">{{ _('Domain Controller') }}</option>
                             </select>
                         </div>
                         <div class="col-md-6">
@@ -88,6 +89,26 @@
                             </div>
                         </div>
                     </div>
+                    <div class="row" ng-show="newPermission.objectType == 'domainController'">
+                        <div class="col-md-6">
+                            <div class="checkbox-inline">
+                                <label><input type="checkbox" ng-model="newPermission.ViewDomain"/><span>{{ _('View domains') }}</span></label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="checkbox-inline">
+                                <label><input type="checkbox" ng-model="newPermission.EditDomain"/><span>{{ _('Edit domains') }}</span></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" ng-show="newPermission.objectType == 'domainController'">
+                        <div class="col-md-6">
+                            <div class="checkbox-inline">
+                                <label><input type="checkbox" ng-model="newPermission.CreateDomain"/><span>{{ _('Create domains') }}</span></label>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="row" ng-show="newPermission.objectType == 'project'">
                         <div class="col-md-6">
                             <div class="checkbox-inline">
@@ -138,11 +159,15 @@
                     <td>[[ permission.objectType ]]</td>
                     <td><a href="/admin/[[ permission.objectType ]]s/[[ permission.objectId ]]">[[ getObjectName(permission.objectId, permission.objectType) ]]</a></td>
                     <td>
-                        <span ng-show="permission.action == 'view'">{{ _('View instances on') }} [[ permission.objectType ]]</span>
+                        <span ng-show="permission.action == 'view' && permission.objectType !== 'domainController'">{{ _('View instances on') }} [[ permission.objectType ]]</span>
+                        <span ng-show="permission.action == 'view' && permission.objectType == 'domainController'">{{ _('View domains') }}</span>
                         <span ng-show="permission.action == 'start'">{{ _('Start instances') }}</span>
                         <span ng-show="permission.action == 'stop'">{{ _('Stop instances') }}</span>
                         <span ng-show="permission.action == 'provision'">{{ _('Provision instances') }}</span>
                         <span ng-show="permission.action == 'destroy'">{{ _('Destroy instances') }}</span>
+
+                        <span ng-show="permission.action == 'create' && permission.objectType == 'domainController'">{{ _('Create domains') }}</span>
+                        <span ng-show="permission.action == 'edit' && permission.objectType == 'domainController'">{{ _('Edit domains') }}</span>
                     </td>
                     <td>
                         <button ng-click="removePermission(permission)" class="btn btn-danger"><span class="glyphicon glyphicon-trash" /><span class="sr-only">{{ _('Delete') }}</span></button>

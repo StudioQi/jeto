@@ -80,7 +80,11 @@ function DomainsController($scope, $routeParams, Domains, $http, createDialog, H
                    domain.ssl_key = $scope.domainInfo.ssl_key;
 
                    if($scope.domainInfo.domain_controller !== undefined){
-                        domain.domain_controller = $scope.domainInfo.domain_controller;
+                       angular.forEach($scope.domain_controllers, function(value){
+                           if(value.id == $scope.domainInfo.domain_controller){
+                               domain.domain_controller = value;
+                           }
+                       });
                    }
                    domain.$save();
 
@@ -126,7 +130,7 @@ function DomainsController($scope, $routeParams, Domains, $http, createDialog, H
                            }
                        });
                    }
-                   domain.$save();
+                   domain.$update({'id': domain.id});
 
                    $scope.resetInfos();
                }

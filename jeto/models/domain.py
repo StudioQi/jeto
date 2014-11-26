@@ -6,7 +6,9 @@ UPSTREAM_STATES = [
     'up',
     'down',
     'backup'
-    ]
+]
+
+
 class Domain(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     slug = db.Column(db.String(255))
