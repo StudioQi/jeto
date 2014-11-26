@@ -66,7 +66,7 @@ function DomainsController($scope, $routeParams, Domains, $http, createDialog, H
 
     $scope.create = function() {
         createDialog('/partials/domains/form.html',{
-           id : 'createDialog', 
+           id : 'createDialog',
            title: 'Create a new domain',
            backdrop: true,
            scope: $scope,
@@ -96,17 +96,16 @@ function DomainsController($scope, $routeParams, Domains, $http, createDialog, H
     };
 
     $scope.edit = function(domainInfo) {
-        console.log(domainInfo);
         $scope.domainInfo = {
             'id': domainInfo.id,
             'uri': domainInfo.uri,
             'htpasswd': domainInfo.htpasswd,
             'upstreams': domainInfo.upstreams,
-            'domain_controller': domainInfo.domain_controller,
+            'domain_controller': domainInfo.domain_controller.id,
             'ssl_key': domainInfo.ssl_key,
         };
-        createDialog('/partials/domains/form.html',{ 
-           id : 'editDialog', 
+        createDialog('/partials/domains/form.html',{
+           id : 'editDialog',
            title: 'Edit a domain',
            backdrop: true,
            scope: $scope,
@@ -121,7 +120,11 @@ function DomainsController($scope, $routeParams, Domains, $http, createDialog, H
                    domain.ssl_key = $scope.domainInfo.ssl_key;
 
                    if($scope.domainInfo.domain_controller !== undefined){
-                        domain.domain_controller = $scope.domainInfo.domain_controller;
+                       angular.forEach($scope.domain_controllers, function(value){
+                           if(value.id == $scope.domainInfo.domain_controller){
+                               domain.domain_controller = value;
+                           }
+                       });
                    }
                    domain.$save();
 

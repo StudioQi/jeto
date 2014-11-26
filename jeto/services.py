@@ -268,7 +268,6 @@ class DomainsApi(Resource):
     def get(self, id=None):
         if id is None:
             domains = Domain.query.all()
-            app.logger.debug(domains[0].upstreams[0])
         else:
             domains = Domain.query.get(id)
 
@@ -307,7 +306,6 @@ class DomainsApi(Resource):
 
         domain.upstreams = []
         for upstreamInfo in query.get('upstreams', []):
-            app.logger.debug(upstreamInfo)
             upstream = Upstream()
             upstream.ip = upstreamInfo['ip']
             upstream.port = upstreamInfo['port']
@@ -592,7 +590,6 @@ class HostApi(RestrictedResource):
                 request.json['params'].replace("<br>", "\r\n"),
                 clean(request.json['provider'])
             )
-            app.logger.debug(host.params)
             db.session.add(host)
             db.session.commit()
             return {
@@ -774,7 +771,6 @@ class DomainControllerApi(RestrictedResource):
 
     @adminAuthenticate
     def delete(self, id):
-        app.logger.debug(id)
         domain_controller = DomainController.query.get(id)
         db.session.delete(domain_controller)
         db.session.commit()

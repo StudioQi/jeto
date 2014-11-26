@@ -8,6 +8,10 @@
         <form class="form-inline">
             <input ng-model="query.name" class="form-control" placeholder="Search" style="width:500px"/>
             <button type="button" class="btn btn-default pull-right" ng-click="create()">{{ _('Create a new domain') }}</button>
+            <select ng-model="query.domain_controller" class="form-control" style="width:200px" ui-select2>
+                <option value="">{{ _('All domain controllers') }}</option>
+                <option ng-repeat="domain_controller in domain_controllers">[[ domain_controller.name ]]</option>
+            </select>
         </form>
         <hr />
     </div>
@@ -25,7 +29,7 @@
                         <th></th>
                 </thead>
                 <tbody>
-                        <tr ng-repeat="domain in domains | filter:query.name">
+                        <tr ng-repeat="domain in domains | filter:query.name | filter:query.domain_controller">
                                 <td>
                                     <a href="#" ng-click="edit(domain)" class="pull-left">[[ domain.uri ]]</a><a href="http://[[ domain.uri ]]" target="_blank" class="pull-right"><span class="glyphicon glyphicon-link"></span></a>
                                 </td>
