@@ -62,6 +62,7 @@ upstream_fields = {
     'ip': fields.String,
     'port': fields.Integer,
     'port_ssl': fields.Integer,
+    'state': fields.String,
 }
 
 domain_controller_fields = {
@@ -267,6 +268,7 @@ class DomainsApi(Resource):
     def get(self, id=None):
         if id is None:
             domains = Domain.query.all()
+            app.logger.debug(domains[0].upstreams[0])
         else:
             domains = Domain.query.get(id)
 
@@ -287,8 +289,7 @@ class DomainsApi(Resource):
             return self.put(id)
 
     def _editDomain(self, id=None):
-        htpasswd = None
-        ssl_key = None
+        query = request.get_json()
 
         if id is None:
             domain = Domain()
@@ -299,29 +300,25 @@ class DomainsApi(Resource):
 
             db.session.commit()
 
-        uri = request.json['uri']
+        uri = query['uri']
+        htpasswd = query.get('htpasswd')
+        ssl_key = query.get('ssl_key')
+        domain_controller = query.get('domain_controller')
 
-        if 'htpasswd' in request.json:
-            htpasswd = request.json['htpasswd']
-        if 'ssl_key' in request.json:
-            ssl_key = request.json['ssl_key']
-
-        if 'upstreams' in request.json:
-            domain.upstreams = []
-            for upstreamInfo in request.json['upstreams']:
-                upstream = Upstream()
-                upstream.ip = upstreamInfo['ip']
-                upstream.port = upstreamInfo['port']
-                upstream.port_ssl = upstreamInfo['port_ssl']
-                db.session.add(upstream)
-                db.session.commit()
-                domain.upstreams.append(upstream)
+        domain.upstreams = []
+        for upstreamInfo in query.get('upstreams', []):
+            app.logger.debug(upstreamInfo)
+            upstream = Upstream()
+            upstream.ip = upstreamInfo['ip']
+            upstream.port = upstreamInfo['port']
+            upstream.port_ssl = upstreamInfo['port_ssl']
+            upstream.state = upstreamInfo['state']
+            domain.upstreams.append(upstream)
 
         domain.domain_controller = None
-        if 'domain_controller' in request.json\
-                and request.json['domain_controller'] is not None:
+        if domain_controller:
             domain_controller = DomainController.query.get(
-                request.json['domain_controller']['id']
+                domain_controller['id']
             )
             domain.domain_controller = domain_controller
 
@@ -338,12 +335,20 @@ class DomainsApi(Resource):
         db.session.delete(domain)
         db.session.commit()
         url = self._get_url(domain) + '/{}'.format(id)
-        req.delete(url=url, headers=self._get_headers(), verify=self._get_verify(domain))
+        req.delete(
+            url=url,
+            headers=self._get_headers(),
+            verify=self._get_verify(domain)
+        )
         return self.get()
 
     def _delete_on_dc(self, domain):
         url = self._get_url(domain) + '/{}'.format(domain.id)
-        req.delete(url=url, headers=self._get_headers(), verify=self._get_verify(domain))
+        req.delete(
+            url=url,
+            headers=self._get_headers(),
+            verify=self._get_verify(domain)
+        )
 
     def put(self, id=None):
         domain = Domain.query.get(id)
@@ -393,6 +398,7 @@ class DomainsApi(Resource):
             return domain.domain_controller.accept_self_signed
 
         return True
+
 
 class HtpasswordService(object):
     def _get_url(self):

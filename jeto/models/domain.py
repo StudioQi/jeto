@@ -2,7 +2,11 @@
 # vim:fenc=utf-8
 from jeto import db
 
-
+UPSTREAM_STATES = [
+    'up',
+    'down',
+    'backup'
+    ]
 class Domain(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     slug = db.Column(db.String(255))
@@ -38,6 +42,7 @@ class Upstream(db.Model):
     ip = db.Column(db.String(32))
     port = db.Column(db.Integer)
     port_ssl = db.Column(db.Integer)
+    state = db.Column(db.Enum(*UPSTREAM_STATES))
     domain_id = db.Column(
         db.Integer,
         db.ForeignKey('domain.id')
@@ -52,3 +57,7 @@ class Upstream(db.Model):
             return True
 
         return False
+
+    def __str__(self):
+        return 'Upstream {}: {} with state : {}'\
+            .format(self.id, self.ip, self.state)
