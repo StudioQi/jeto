@@ -21,6 +21,8 @@ from jeto.models.user import User, ROLE_DEV, ROLE_ADMIN
 from jeto.models.permission import ViewHostPermission,\
     TeamPermissionsGrids, ProvisionInstancePermission,\
     StopInstancePermission, StartInstancePermission
+from jeto.models.permission import ViewDomainPermission,\
+    EditDomainPermission, CreateDomainPermission
 
 from settings import DOMAINS_API_URL, DOMAINS_API_PORT
 from settings import HTPASSWORD_API_URL, HTPASSWORD_API_PORT
@@ -29,6 +31,26 @@ states = {
     'stop': StopInstancePermission,
     'start': StartInstancePermission,
     'provision': ProvisionInstancePermission}
+
+def adminAuthenticate(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        if current_user.is_admin():
+            return func(*args, **kwargs)
+
+        abort(403)
+    return wrapper
+
+
+def authenticate(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        if current_user.is_authenticated():
+            return func(*args, **kwargs)
+
+        abort(403)
+    return wrapper
+
 
 project_wo_instance_fields = {
     'id': fields.String,
@@ -261,24 +283,28 @@ class DomainsApi(Resource):
     def get(self, id=None):
         if id is None:
             domains = Domain.query.all()
+            domains = filter(
+                lambda domain: current_user.has_permission(
+                    (ViewDomainPermission, EditDomainPermission, CreateDomainPermission),
+                    domain.domain_controller and domain.domain_controller.id or None
+                ),
+                domains
+           )
         else:
             domains = Domain.query.get(id)
 
         return marshal(domains, domain_fields)
 
-    def post(self, id=None):
-        if id is None:
-            # Should mean we are adding a new domain
-            domain = self._editDomain()
-            req.post(
-                self._get_url(domain),
-                headers=self._get_headers(),
-                data=json.dumps(marshal(domain, domain_fields)),
-                verify=self._get_verify(domain)
-            )
-            return self.get(domain.id)
-        else:
-            return self.put(id)
+    def post(self):
+        # Should mean we are adding a new domain
+        domain = self._editDomain()
+        req.post(
+            self._get_url(domain),
+            headers=self._get_headers(),
+            data=json.dumps(marshal(domain, domain_fields)),
+            verify=self._get_verify(domain)
+        )
+        return self.get(domain.id)
 
     def _editDomain(self, id=None):
         query = request.get_json()
@@ -317,6 +343,13 @@ class DomainsApi(Resource):
         domain.htpasswd = htpasswd
         domain.ssl_key = ssl_key
 
+        if id is None:
+            if current_user.has_permission(CreateDomainPermission, getattr(domain.domain_controller, 'id')) is False:
+                return abort(403)
+        else:
+            if current_user.has_permission(EditDomainPermission, getattr(domain.domain_controller, 'id')) is False:
+                return abort(403)
+
         db.session.add(domain)
         db.session.commit()
         return domain
@@ -343,33 +376,34 @@ class DomainsApi(Resource):
 
     def put(self, id=None):
         domain = Domain.query.get(id)
-        if 'domain_controller' in request.json:
-            # If the controller is to be changed in the _edit,
-            # Delete the domain on the current controller
-            if domain.domain_controller is not None and\
-                    request.json['domain_controller'] is not None:
-                self._delete_on_dc(domain)
+        if current_user.has_permission(EditDomainPermission, getattr(domain.domain_controller, 'id')):
+            if 'domain_controller' in request.json:
+                # If the controller is to be changed in the _edit,
+                # Delete the domain on the current controller
+                if domain.domain_controller is not None and\
+                        request.json['domain_controller'] is not None:
+                    self._delete_on_dc(domain)
 
-            # If the domain is currently on the default controller and the new
-            # controller is expected to be different, delete it on the default
-            # controller
-            if domain.domain_controller is None and\
-                    request.json['domain_controller'] is not None:
-                self._delete_on_dc(domain)
+                # If the domain is currently on the default controller and the new
+                # controller is expected to be different, delete it on the default
+                # controller
+                if domain.domain_controller is None and\
+                        request.json['domain_controller'] is not None:
+                    self._delete_on_dc(domain)
 
-            # If we are changing the controller to be the default one
-            if domain.domain_controller is not None and\
-                    request.json['domain_controller'] is None:
-                self._delete_on_dc(domain)
+                # If we are changing the controller to be the default one
+                if domain.domain_controller is not None and\
+                        request.json['domain_controller'] is None:
+                    self._delete_on_dc(domain)
 
-        domain = self._editDomain(id)
+            domain = self._editDomain(id)
 
-        req.put(
-            '{}/{}'.format(self._get_url(domain), id),
-            headers=self._get_headers(),
-            data=json.dumps(marshal(domain, domain_fields)),
-            verify=self._get_verify(domain)
-        )
+            req.put(
+                '{}/{}'.format(self._get_url(domain), id),
+                headers=self._get_headers(),
+                data=json.dumps(marshal(domain, domain_fields)),
+                verify=self._get_verify(domain)
+            )
 
         return self.get(domain.id)
 
@@ -473,25 +507,6 @@ class HtpasswordListApi(Resource, HtpasswordService):
         return {'Accept': 'application/json',
                 'Content-Type': 'application/json'}
 
-
-def adminAuthenticate(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        if current_user.is_admin():
-            return func(*args, **kwargs)
-
-        abort(403)
-    return wrapper
-
-
-def authenticate(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        if current_user.is_authenticated():
-            return func(*args, **kwargs)
-
-        abort(403)
-    return wrapper
 
 
 class RestrictedResource(Resource):
@@ -692,6 +707,13 @@ class DomainControllerApi(RestrictedResource):
     def get(self, id=None):
         if id is None:
             domain_controllers = DomainController.query.order_by('name')
+            domain_controllers = filter(
+                lambda domain_controller: current_user.has_permission(
+                    (ViewDomainPermission, EditDomainPermission, CreateDomainPermission),
+                    domain_controller.id
+                ),
+                domain_controllers
+            )
             return {
                 'domain_controllers': map(
                     lambda t: marshal(

@@ -21,6 +21,11 @@ ViewHostNeed = partial(HostNeed, 'view')
 ProjectNeed = namedtuple('project', ['method', 'value'])
 ViewProjectNeed = partial(ProjectNeed, 'view')
 
+DomainNeed = namedtuple('project', ['method', 'value'])
+ViewDomainNeed = partial(DomainNeed, 'view')
+CreateDomainNeed = partial(DomainNeed, 'create')
+EditDomainNeed = partial(DomainNeed, 'edit')
+
 
 class StartInstancePermission(Permission):
     def __init__(self, instanceId):
@@ -84,3 +89,21 @@ class UserPermissionsGrids(db.Model):
         db.String(64),
         db.ForeignKey('user.id')
     )
+
+
+class ViewDomainPermission(Permission):
+    def __init__(self, projectId):
+        need = ViewDomainNeed(unicode(projectId))
+        super(ViewDomainPermission, self).__init__(need)
+
+
+class EditDomainPermission(Permission):
+    def __init__(self, projectId):
+        need = EditDomainNeed(unicode(projectId))
+        super(EditDomainPermission, self).__init__(need)
+
+
+class CreateDomainPermission(Permission):
+    def __init__(self, projectId):
+        need = CreateDomainNeed(unicode(projectId))
+        super(CreateDomainPermission, self).__init__(need)

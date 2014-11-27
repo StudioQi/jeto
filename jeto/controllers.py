@@ -32,7 +32,8 @@ from jeto.models.project import Project
 from jeto.models.permission import ViewHostPermission, ViewHostNeed
 from jeto.models.permission import ProvisionInstanceNeed, DestroyInstanceNeed,\
     ViewInstanceNeed, StartInstanceNeed
-# StopInstanceNeed
+from jeto.models.permission import CreateDomainNeed, ViewDomainNeed,\
+    EditDomainNeed
 
 
 @app.route('/')
@@ -85,7 +86,7 @@ def authorized(resp):
              data['hd'] not in app.config['GOOGLE_LIMIT_DOMAIN']):
 
         flash(_('Domain not allowed, please use an email associated with\
-              the domain : {}').format(app.config['GOOGLE_LIMIT_DOMAIN']))
+              the domain : {}').format(', '.join(app.config['GOOGLE_LIMIT_DOMAIN'])))
 
         return redirect(url_for('index'))
 
@@ -129,6 +130,8 @@ def _set_permissions(permissions_grids, identity):
         for permission in permissions_grids:
             if permission.objectType == 'host' and permission.action == 'view':
                 _set_permissions_host(identity, permission)
+            if permission.objectType == 'domainController':
+                _set_permissions_domain_controller(identity, permission)
             if permission.objectType == 'project':
                 project = Project.query.get(permission.objectId)
                 for instance in project.instances:
@@ -171,6 +174,16 @@ def _set_permissions_instance(identity, instance, permission):
         identity.provides.add(DestroyInstanceNeed(unicode(instance.id)))
     if permission.action == 'view':
         identity.provides.add(ViewInstanceNeed(unicode(instance.id)))
+
+
+def _set_permissions_domain_controller(identity, permission):
+    objectId = unicode(permission.objectId)
+    if permission.action == 'create':
+        identity.provides.add(CreateDomainNeed(objectId))
+    if permission.action == 'edit':
+        identity.provides.add(EditDomainNeed(objectId))
+    if permission.action == 'view':
+        identity.provides.add(ViewDomainNeed(objectId))
 
 
 @app.route('/login')
