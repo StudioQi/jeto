@@ -3,7 +3,6 @@
 from flask.ext.principal import RoleNeed, Permission
 
 from jeto import db
-from jeto import app
 
 ROLE_DEV = 'dev'
 ROLE_ADMIN = 'admin'
