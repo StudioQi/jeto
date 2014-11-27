@@ -1,4 +1,4 @@
-"""empty message
+"""missing col for domain_controller
 
 Revision ID: 3787ddc53c21
 Revises: 77f60cf3876

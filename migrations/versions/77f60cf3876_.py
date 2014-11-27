@@ -1,4 +1,4 @@
-"""empty message
+"""domain controller
 
 Revision ID: 77f60cf3876
 Revises: 51b66b3d835a

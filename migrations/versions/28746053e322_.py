@@ -1,14 +1,14 @@
 """vagrant_instance.archive_url
 
 Revision ID: 28746053e322
-Revises: 51b66b3d835a
+Revises: 3787ddc53c21
 Create Date: 2014-11-21 20:02:51.919751
 
 """
 
 # revision identifiers, used by Alembic.
 revision = '28746053e322'
-down_revision = '51b66b3d835a'
+down_revision = '3787ddc53c21'
 
 from alembic import op
 import sqlalchemy as sa

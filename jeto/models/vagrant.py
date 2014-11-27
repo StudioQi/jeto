@@ -62,7 +62,6 @@ class VagrantBackend(BackendProvider):
             environment = request['environment']
         else:
             environment = ''
-        app.logger.debug(request)
 
         project = Project.query.get(request['project'])
         host = Host.query.get(request['host'])
