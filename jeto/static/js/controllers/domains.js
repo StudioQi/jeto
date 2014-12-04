@@ -4,7 +4,7 @@ function DomainsController($scope, $routeParams, Domains, $http, createDialog, H
             $scope.domains = infos;
             $scope.domains.sort(function(a, b){ return a.domain > b.domain; });
             $scope.resource = infos;
-            $scope.resetInfosUpstream();
+            $scope.resetInfos(false);
         });
 
         Htpassword.get({}, function(infos){
@@ -33,17 +33,27 @@ function DomainsController($scope, $routeParams, Domains, $http, createDialog, H
             'state': 'up',
         };
     }
-    $scope.resetInfos = function(){
+    $scope.resetInfosAlias = function(){
+        $scope.aliasInfo = {uri: ''};
+    }
+    $scope.resetInfos = function(refresh){
+        if(refresh == undefined){
+            refresh = true;
+        }
         $scope.domainInfo = {
             'id': '',
             'uri': '',
             'htpasswd': '',
             'ssl_key': '',
             'upstreams': [],
+            'aliases': [],
             'domain_controller': '',
         };
         $scope.resetInfosUpstream();
-        setTimeout($scope.update, 200);
+        $scope.resetInfosAlias();
+        if(refresh){
+            setTimeout($scope.update, 200);
+        }
     };
 
     $scope.addUpstream = function() {
@@ -55,9 +65,23 @@ function DomainsController($scope, $routeParams, Domains, $http, createDialog, H
         $scope.domainInfo.upstreams.push(upstream);
         $scope.resetInfosUpstream();
     }
+
+    $scope.addAlias = function() {
+        alias = angular.copy($scope.aliasInfo);
+        $scope.domainInfo.aliases.push(alias);
+        $scope.resetInfosAlias();
+    }
     $scope.deleteUpstream = function(upstream) {
         $scope.domainInfo.upstreams = $scope.domainInfo.upstreams.filter(function(value){
             if(value.ip == upstream.ip && value.port == upstream.port && value.port_ssl == upstream.port_ssl){
+                return false;
+            }
+            return true;
+        });
+    }
+    $scope.deleteAlias = function(alias) {
+        $scope.domainInfo.aliases = $scope.domainInfo.aliases.filter(function(value){
+            if(value.toString() == alias.toString()){
                 return false;
             }
             return true;
@@ -77,6 +101,7 @@ function DomainsController($scope, $routeParams, Domains, $http, createDialog, H
                    domain.uri = $scope.domainInfo.uri;
                    domain.htpasswd = $scope.domainInfo.htpasswd;
                    domain.upstreams = $scope.domainInfo.upstreams;
+                   domain.aliases = $scope.domainInfo.aliases;
                    domain.ssl_key = $scope.domainInfo.ssl_key;
 
                    if($scope.domainInfo.domain_controller !== undefined){
@@ -105,6 +130,7 @@ function DomainsController($scope, $routeParams, Domains, $http, createDialog, H
             'uri': domainInfo.uri,
             'htpasswd': domainInfo.htpasswd,
             'upstreams': domainInfo.upstreams,
+            'aliases': domainInfo.aliases,
             'domain_controller': domainInfo.domain_controller.id,
             'ssl_key': domainInfo.ssl_key,
         };
@@ -121,6 +147,7 @@ function DomainsController($scope, $routeParams, Domains, $http, createDialog, H
                    domain.uri = $scope.domainInfo.uri;
                    domain.htpasswd = $scope.domainInfo.htpasswd;
                    domain.upstreams = $scope.domainInfo.upstreams;
+                   domain.aliases = $scope.domainInfo.aliases;
                    domain.ssl_key = $scope.domainInfo.ssl_key;
 
                    if($scope.domainInfo.domain_controller !== undefined){

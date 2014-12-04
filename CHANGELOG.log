@@ -1,3 +1,7 @@
+0.1.7 -
+---
+- Adding support for domain aliases in the domain interface
+
 0.1.6 - November 27th 2014
 ---
 - Now displaying full console with autoscrolling option enabled by default

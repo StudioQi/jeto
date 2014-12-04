@@ -15,7 +15,7 @@ from jeto.models.vagrant import VagrantBackend
 from jeto.models.project import Project
 from jeto.models.host import Host
 from jeto.models.team import Team
-from jeto.models.domain import Domain, Upstream
+from jeto.models.domain import Domain, Upstream, Alias
 from jeto.models.domainController import DomainController
 from jeto.models.user import User, ROLE_DEV, ROLE_ADMIN
 from jeto.models.permission import ViewHostPermission,\
@@ -30,7 +30,9 @@ from settings import HTPASSWORD_API_URL, HTPASSWORD_API_PORT
 states = {
     'stop': StopInstancePermission,
     'start': StartInstancePermission,
-    'provision': ProvisionInstancePermission}
+    'provision': ProvisionInstancePermission
+}
+
 
 def adminAuthenticate(func):
     @wraps(func)
@@ -100,6 +102,11 @@ domain_controller_fields = {
     'accept_self_signed': fields.Boolean,
 }
 
+aliases_fields = {
+    'id': fields.Integer,
+    'uri': fields.String,
+}
+
 domain_fields = {
     'id': fields.Integer,
     'slug': fields.String,
@@ -107,6 +114,7 @@ domain_fields = {
     'htpasswd': fields.String,
     'ssl_key': fields.String,
     'upstreams': fields.Nested(upstream_fields),
+    'aliases': fields.Nested(aliases_fields),
     'domain_controller': fields.Nested(domain_controller_fields),
 }
 
@@ -289,7 +297,7 @@ class DomainsApi(Resource):
                     domain.domain_controller and domain.domain_controller.id or None
                 ),
                 domains
-           )
+            )
         else:
             domains = Domain.query.get(id)
 
@@ -316,11 +324,15 @@ class DomainsApi(Resource):
             for upstream in domain.upstreams:
                 db.session.delete(upstream)
 
+            for alias in domain.aliases:
+                db.session.delete(alias)
+
             db.session.commit()
 
         uri = query['uri']
         htpasswd = query.get('htpasswd')
         ssl_key = query.get('ssl_key')
+        aliases = query.get('aliases', [])
         domain_controller = query.get('domain_controller')
 
         domain.upstreams = []
@@ -328,9 +340,15 @@ class DomainsApi(Resource):
             upstream = Upstream()
             upstream.ip = upstreamInfo['ip']
             upstream.port = upstreamInfo['port']
-            upstream.port_ssl = upstreamInfo['port_ssl']
+            upstream.port_ssl = upstreamInfo['port_ssl'] or None
             upstream.state = upstreamInfo['state']
             domain.upstreams.append(upstream)
+
+        domain.aliases = []
+        for aliasInfo in aliases:
+            alias = Alias()
+            alias.uri = aliasInfo['uri']
+            domain.aliases.append(alias)
 
         domain.domain_controller = None
         if domain_controller:
@@ -398,6 +416,7 @@ class DomainsApi(Resource):
 
             domain = self._editDomain(id)
 
+            app.logger.debug(self._get_url(domain))
             req.put(
                 '{}/{}'.format(self._get_url(domain), id),
                 headers=self._get_headers(),
@@ -506,7 +525,6 @@ class HtpasswordListApi(Resource, HtpasswordService):
     def _get_headers(self):
         return {'Accept': 'application/json',
                 'Content-Type': 'application/json'}
-
 
 
 class RestrictedResource(Resource):
