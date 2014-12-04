@@ -3,8 +3,26 @@
         <form class="form">
             <div class="form-group">
                 <label for="name">{{ _('Domain') }}</label>
-                <input type="text" name="name" id="domain" ng-model="domainInfo.uri" placeholder="{{ _('test.example.com') }}" class="form-control"/>
+                <input type="text" name="name" id="domain" ng-model="domainInfo.uri" placeholder="{{ _('example.com') }}" class="form-control"/>
             </div>
+            <div class="form-group">
+                <label for="aliases">{{ _('Any aliases for the domain') }}</label>
+                <div class="list-group field-aliases">
+                    <div class="list-group-item" ng-repeat="alias in domainInfo.aliases">
+                        <span>[[ alias.uri ]]</span>
+                        <div class="pull-right upstream-list">
+                            <button type="button" class="btn btn-danger glyphicon glyphicon-trash" ng-click="deleteAlias(alias)"><span class="sr-only">{{ _('Delete') }}</span></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <input type="text" class="form-control field-alias" placeholder="www.example.com" ng-model="aliasInfo.uri">
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="button" ng-click="addAlias()">{{ _('Add') }}</button>
+                    </span>
+                </div>
+            </div>
+
             <div class="form-group">
                 <label for="name">{{ _('Security list') }}</label>
                 <select name="htpasswd" id="htpasswd" ng-model="domainInfo.htpasswd" class="form-control" ui-select2>
@@ -13,17 +31,17 @@
                 </select>
             </div>
             <div class="form-group">
-                <label for="name">{{ _('SSL key') }}</label>
-                <select name="ssl_key" id="ssl_key" ng-model="domainInfo.ssl_key" class="form-control" ui-select2>
-                    <option value="">--- {{ _('None') }} ---</option>
-                    <option ng-repeat="key in ssl_keys track by key.value" value="[[ key.value ]]">[[ key.name ]]</option>
-                </select>
-            </div>
-            <div class="form-group">
                 <label for="name">{{ _('Domain Controller') }}</label>
                 <select name="domain_controller" id="domain_controller" ng-model="domainInfo.domain_controller" class="form-control" ui-select2>
                     <option value="">--- {{ _('None') }} ---</option>
                     <option ng-repeat="domain_controller in domain_controllers track by domain_controller.id" value="[[ domain_controller.id ]]">[[ domain_controller.name ]]</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="name">{{ _('SSL key') }}</label>
+                <select name="ssl_key" id="ssl_key" ng-model="domainInfo.ssl_key" class="form-control" ui-select2>
+                    <option value="">--- {{ _('None') }} ---</option>
+                    <option ng-repeat="key in ssl_keys track by key.value" value="[[ key.value ]]">[[ key.name ]]</option>
                 </select>
             </div>
             <div class="form-group">
@@ -43,12 +61,12 @@
                     <input type="text" class="form-control field-ip" placeholder="IP" ng-model="upstreamInfo.ip">
                     <input type="text" class="form-control field-port" placeholder="port" ng-model="upstreamInfo.port">
                     <input type="text" class="form-control field-port-ssl" placeholder="port SSL" ng-model="upstreamInfo.port_ssl">
-                <select name="state" class="form-control field-state" ng-model="upstreamInfo.state" ui-select2>
-                    <option ng-repeat="state in upstream_states">[[ state ]]</option>
-                </select>
-                <span class="input-group-btn">
-                    <button class="btn btn-primary" type="button" ng-click="addUpstream()">{{ _('Add') }}</button>
-                </span>
+                    <select name="state" class="form-control field-state" ng-model="upstreamInfo.state" ui-select2>
+                        <option ng-repeat="state in upstream_states">[[ state ]]</option>
+                    </select>
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="button" ng-click="addUpstream()">{{ _('Add') }}</button>
+                    </span>
                 </div>
             </div>
         </form>

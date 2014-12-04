@@ -27,6 +27,11 @@ class Domain(db.Model):
         db.ForeignKey('domain_controller.id')
     )
 
+    aliases = db.relationship(
+        'Alias',
+        backref=db.backref('domain', lazy='joined'),
+    )
+
     def has_upstream(self, upstreamInfo):
         for upstream in self.upstreams:
             if upstream == upstreamInfo:
@@ -37,6 +42,15 @@ class Domain(db.Model):
     def __str__(self):
         return 'Domain {}: {} with controller : {}'\
             .format(self.id, self.uri, self.domain_controller.id)
+
+
+class Alias(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    uri = db.Column(db.String(255))
+    domain_id = db.Column(
+        db.Integer,
+        db.ForeignKey('domain.id')
+    )
 
 
 class Upstream(db.Model):

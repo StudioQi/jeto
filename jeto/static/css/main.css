@@ -287,3 +287,7 @@ label {
 .nav-tabs li a {
     outline: 0;
 }
+
+.field-aliases {
+    margin-bottom: 0;
+}
