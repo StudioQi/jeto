@@ -28,3 +28,7 @@ class DomainController(db.Model):
             return True
 
         return False
+
+    @property
+    def url(self):
+        return self.address + ':' + self.port
