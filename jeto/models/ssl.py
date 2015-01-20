@@ -6,3 +6,7 @@ from jeto import db
 class SSL(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
+    domaincontroller = db.relationship(
+        'DomainController',
+        backref=db.backref('SSL', lazy='joined'),
+    )

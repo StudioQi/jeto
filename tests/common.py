@@ -16,20 +16,22 @@ restful = MagicMock(autospec=True)
 mock_resource = type('Resource', bases, attrs)
 restful.Resource = mock_resource
 
-mock_modules = {'logging': mock,
-                'rq': mock,
-                'ansiconv': mock,
-                'slugify': mock,
-                'redis': mock,
-                'flask': mock,
-                'flask_oauth': mock,
-                'flask.ext': mock,
-                'flask.ext.login': mock,
-                'flask.ext.babel': mock,
-                'flask.ext.sqlalchemy': mock,
-                'flask.ext.principal': mock,
-                'flask.ext.restful': restful,
-                }
+mock_modules = {
+    'ansiconv': mock,
+    'flask': mock,
+    'flask_oauth': mock,
+    'flask.ext': mock,
+    'flask.ext.login': mock,
+    'flask.ext.babel': mock,
+    'flask.ext.sqlalchemy': mock,
+    'flask.ext.principal': mock,
+    'flask.ext.restful': restful,
+    'logging': mock,
+    'redis': mock,
+    'requests': mock,
+    'rq': mock,
+    'slugify': mock,
+}
 
 # with patch.dict(
 #         'sys.modules',
