@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -=- encoding: utf-8 -=-
 from unittest import TestCase
 from unittest import main
 from mock import patch
@@ -7,8 +8,11 @@ from json import dumps
 
 
 @patch.dict('sys.modules', mock_modules)
-@patch('jeto.db')
+#@patch('jeto.db')
 @patch('jeto.services.SSL')
+@patch("jeto.services.req")
+@patch("jeto.services.request")
+@patch("jeto.services.json")
 class TestSSLApi(TestCase):
     def setUp(self):
         pass
@@ -16,8 +20,49 @@ class TestSSLApi(TestCase):
     def tearDown(self):
         pass
 
+    @patch('jeto.services.DomainController')
+    def test_delete(self, dc, json, request, requests, ssl_model):
+        """delete a certificate"""
+        from jeto import db
+        json.dumps.side_effect = lambda *args: dumps(*args)
+        name = "what a nice name"
+        domaincontroller = "my domaincontroller"
+        cert_value = "347D34DB33F175600D"
+        query_content = {
+            "name": name,
+            "domaincontroller": domaincontroller,
+            "value": cert_value
+            }
+        request.get_json.return_value = query_content
+        dc.query.get.return_value.url = "http://test"
+        from jeto.services import SSLApi
+        # mock a SqlAlchemy query result
+        key_obj = type('SSLModel', (object,),
+                       {'id': '123',
+                        'name': name,
+                        'domaincontroller': type(
+                            'DCModel',
+                            (object,),
+                            {'url': 'http://test'})
+                        })
+
+        ssl_model.query.get.side_effect = lambda *args: key_obj
+        SSLApi().delete('123')
+        # remove from the db
+        ssl_model.query.get.assert_called_with('123')
+        db.session.delete.assert_called_with(key_obj)
+        # forward to nginx-api
+        requests.delete.assert_called_with(
+            "http://test",
+            headers={
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'},
+            data=dumps(
+                {"name": name}
+            ))
+
     # patch passes mocks from bottom to top
-    def test_get(self, ssl_model, db):
+    def test_get(self, json, request, requests, ssl_model):
         """Get a list of available certificates"""
         # FIXME: find a way to not import at every test (code duplication)
         from jeto.services import SSLApi
@@ -28,12 +73,12 @@ class TestSSLApi(TestCase):
         ssl_model.query.filter_by.assert_called_with(domaincontroller='1')
         self.assertEquals(res, ssl_model.query.filter_by(domaincontroller='1'))
 
-    @patch("jeto.services.req")
-    @patch("jeto.services.request")
     @patch('jeto.services.DomainController')
-    @patch("jeto.services.json")
-    def test_post(self, json, dc, request, requests, ssl_model, db):
+    def test_post(self, dc, json, request, requests, ssl_model):
         """Create a certificate"""
+        # FIXME: actuellement 'post' écrase
+        #   faut-il refuser si une clef existe ?
+        from jeto import db
         json.dumps.side_effect = lambda *args: dumps(*args)
         name = "what a nice name"
         domaincontroller = "my domaincontroller"
@@ -51,6 +96,7 @@ class TestSSLApi(TestCase):
         ssl_model.assert_called_with(
             name=name,
             domaincontroller=domaincontroller)
+        db.session.add.assert_called()
         # ensure we forwarded the query to the domain controller
         requests.post.assert_called_with(
             "http://test",
