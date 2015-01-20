@@ -291,7 +291,7 @@ class VagrantInstance(db.Model):
         with Connection():
             queue = Queue('high', connection=redis_conn)
             action = 'worker.{}'.format(action)
-            job = queue.enqueue_call(func=action, timeout=600, kwargs=kwargs)
+            job = queue.enqueue_call(func=action, timeout=1200, kwargs=kwargs)
 
             # job = queue.enqueue(action, **kwargs)
 
