@@ -84,6 +84,7 @@ instance_fields = {
     'environment': fields.String,
     'project': fields.Nested(project_wo_instance_fields),
     'host': fields.Nested(host_fields),
+    'jeto_infos': fields.List(fields.String),
 }
 
 upstream_fields = {
@@ -236,7 +237,8 @@ class InstanceApi(Resource):
         instance = self._getInstance(id)
 
         if machineName is None:
-            instance.status = instance._status()
+            instance.status, instance.jeto_infos = instance._status()
+            #instance.jeto_infos = json.dumps(instance.jeto_infos)
         else:
             # app.logger.debug(instance._ip(machineName))
             return {'ip': instance._ip(machineName)}
