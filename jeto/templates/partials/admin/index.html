@@ -133,6 +133,30 @@
           </table>
         </div>
       </div>
+      <div class="col-md-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+              {{ _('SSL keys') }}
+              <div class="pull-right">
+                <a href="/admin/ssl">{{ _('View all') }}</a>
+              </div>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>{{ _('Name') }}</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="ssl_key in ssl_keys">
+                  <td>[[ ssl_key.name ]]</td>
+                  <td><a href="/admin/ssl/[[ ssl_key.id ]]">{{ _('View') }}</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 {% endblock %}

@@ -66,6 +66,14 @@ angular.module(
                 templateUrl: '/partials/admin/hosts/item.html',
                 controller: HostController
             })
+            .when('/admin/ssl', {
+                templateUrl: '/partials/admin/SSLKeys/list.html',
+                controller: SSLKeysListController
+            })
+            .when('/admin/ssl/:id', {
+                templateUrl: '/partials/admin/SSLKeys/item.html',
+                controller: SSLKeyController
+            })
             .when('/admin/users', {
                 templateUrl: '/partials/admin/users/list.html',
                 controller: UsersListController

@@ -40,7 +40,7 @@ class TestSSLApi(TestCase):
         key_obj = type('SSLModel', (object,),
                        {'id': '123',
                         'name': name,
-                        'domaincontroller': type(
+                        'domain_controller': type(
                             'DCModel',
                             (object,),
                             {'url': 'http://test'})
@@ -70,8 +70,8 @@ class TestSSLApi(TestCase):
         ssl_model.query.all.assert_called_with()
         self.assertEquals(res, ssl_model.query.all())
         res = SSLApi().get('1')
-        ssl_model.query.filter_by.assert_called_with(domaincontroller='1')
-        self.assertEquals(res, ssl_model.query.filter_by(domaincontroller='1'))
+        ssl_model.query.filter_by.assert_called_with(domain_controller='1')
+        self.assertEquals(res, ssl_model.query.filter_by(domain_controller='1'))
 
     @patch('jeto.services.DomainController')
     def test_post(self, dc, json, request, requests, ssl_model):
@@ -95,7 +95,7 @@ class TestSSLApi(TestCase):
         # ensure we created an SSL object in DB
         ssl_model.assert_called_with(
             name=name,
-            domaincontroller=domaincontroller)
+            domain_controller=domaincontroller)
         db.session.add.assert_called()
         # ensure we forwarded the query to the domain controller
         requests.post.assert_called_with(

@@ -27,6 +27,7 @@ from jeto.services.projects import ProjectApi
 from jeto.services.hosts import HostApi
 from jeto.services.teams import TeamApi
 from jeto.services.users import UserApi, user_fields
+from jeto.services.ssl import SSLApi
 from jeto.models.user import User
 from jeto.models.project import Project
 from jeto.models.permission import ViewHostPermission, ViewHostNeed
@@ -400,6 +401,9 @@ api.add_resource(TeamApi, '/api/teams/<int:id>')
 
 api.add_resource(UserApi, '/api/users', endpoint='users')
 api.add_resource(UserApi, '/api/users/<id>')
+
+api.add_resource(SSLApi, '/api/SSLKeys', endpoint='SSLKey')
+api.add_resource(SSLApi, '/api/SSLKeys/<id>')
 
 api.add_resource(DomainControllerApi,
                  '/api/domainControllers',

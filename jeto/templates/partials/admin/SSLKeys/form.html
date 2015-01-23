@@ -1,0 +1,22 @@
+<div class="row-fluid">
+    <form class="form">
+        <div class="col-md-12">
+           <div class="form-group">
+               <label for="name">{{ _('Name') }}</label>
+               <input type="text" name="name" id="name" ng-model="ssl_keyInfo.name" placeholder="{{ _('Name') }}" class="form-control"/>
+           </div>
+        </div>
+        <div class="col-md-12">
+           <div class="form-group">
+               <label for="name">{{ _('Domain controller') }}</label>
+               <input type="text" name="dc" id="name" ng-model="ssl_keyInfo.domain_controller" placeholder="local" class="form-control"/>
+           </div>
+        </div>
+        <div class="col-md-12">
+           <div class="form-group">
+               <label for="port">{{ _('Certificate') }}</label>
+               <textarea name="value" id="value" ng-model="ssl_keyInfo.value" placeholder="" class="form-control"></textarea>
+           </div>
+        </div>
+    </form>
+</div>
