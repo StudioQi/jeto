@@ -149,6 +149,7 @@ class VagrantInstance(db.Model):
             'status',
             path=path,
             host=self.host,
+	    environment=self.environment,
         )
 
         machines = self._parse_status(results)
