@@ -208,6 +208,7 @@ class VagrantInstance(db.Model):
             path=self._generatePath(),
             machineName=machineName,
             host=self.host,
+            environment=self.environment,
         )
         return results
 
