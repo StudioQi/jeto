@@ -266,6 +266,7 @@ class VagrantInstance(db.Model):
             'destroy',
             path=self._generatePath(),
             host=self.host,
+            environment=self.environment,
         )
         db.session.delete(self)
         db.session.commit()
