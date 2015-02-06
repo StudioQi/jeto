@@ -604,6 +604,7 @@ class HostApi(RestrictedResource):
         else:
             host = Host.query.get(id)
             host.params = host.params.replace('\r\n', '<br>')
+            host.params = host.params.replace('\n', '<br>')
 
             return marshal(host, host_fields)
 
@@ -624,7 +625,16 @@ class HostApi(RestrictedResource):
         else:
             host = Host.query.get(id)
             name = clean(request.json['name'].rstrip())
-            params = request.json['params'].replace("<br>", "\r\n")
+
+            params = request.json['params']
+            while(params.find('<br><br>') != -1):
+                params = params.replace("<br><br>", "<br>")
+
+            params = params.replace("<br>", "\r\n")
+            params = params.replace('<div>', '\r\n')
+            params = params.replace('&nbsp;', '')
+            params = params.replace('</div>', '\r\n')
+
             provider = clean(request.json['provider'].rstrip())
 
             if name != '':
