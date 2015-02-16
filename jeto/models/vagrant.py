@@ -254,6 +254,7 @@ class VagrantInstance(db.Model):
         results = self._submit_job(
             'stop',
             path=self._generatePath(),
+            environment=self.environment,
             machineName=machineName,
             host=self.host,
         )
@@ -263,6 +264,7 @@ class VagrantInstance(db.Model):
         self._submit_job(
             'destroy',
             path=self._generatePath(),
+            environment=self.environment,
             host=self.host,
         )
         db.session.delete(self)
