@@ -237,13 +237,16 @@ class InstanceApi(Resource):
         instance = self._getInstance(id)
 
         if machineName is None:
-            instance.status, instance.jeto_infos = instance._status()
-            #instance.jeto_infos = json.dumps(instance.jeto_infos)
+            instance.status, jeto_infos = instance._status()
+            app.logger.debug(instance)
+            # instance.jeto_infos = json.dumps(instance.jeto_infos)
         else:
             # app.logger.debug(instance._ip(machineName))
             return {'ip': instance._ip(machineName)}
 
-        return marshal(instance, instance_fields)
+        instance_json = marshal(instance, instance_fields)
+        instance_json['jeto_infos'] = jeto_infos
+        return instance_json
 
     def post(self, id):
         instance = self._getInstance(id)

@@ -127,7 +127,7 @@ class VagrantInstance(db.Model):
         # self.init_on_load()
 
     def __unicode__(self):
-        return self._generatePath()
+        return '{} : {} : {}'.format(self.name, self.status, self._generatePath())
 
     def __str__(self):
         return self.__unicode__()
