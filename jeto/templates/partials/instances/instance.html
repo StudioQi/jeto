@@ -35,14 +35,29 @@
                     <td>[[ instance.host.name ]] - [[ instance.host.provider ]]</td>
                 </tr>
             </table>
+            <div class="panel-footer">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-danger pull-right glyphicon glyphicon-trash" ng-bind-html="[[instance.state]]" ng-click="delete()"><span class="sr-only">{{ _('Delete') }}</span></button>
+                </div>
+            </div>
         </div>
-        <div class="btn-group pull-left">
-            <button type="button" class="btn btn-danger pull-right glyphicon glyphicon-trash" ng-bind-html="[[instance.state]]" ng-click="delete()"><span class="sr-only">{{ _('Delete') }}</span></button>
+    </div>
+    <div class="col-md-6" ng-show="instance.jeto_infos">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {{ _('Infos') }} 
+            </div>
+            <table class="table table-bordered">
+                <tr ng-repeat="(key, value) in instance.jeto_infos">
+                    <th>[[ key ]]</th>
+                    <td>[[ value ]]</td>
+                </tr>
+            </table>
         </div>
     </div>
 
-    <div class="col-md-6 pull-right">
-        <div class="panel panel-default" ng-repeat="machine in instance.status">
+    <div class="col-md-6" ng-repeat="machine in instance.status">
+        <div class="panel panel-default">
             <div class="panel-heading">
                 Status <em>[[ machine.name ]]</em>
             </div>

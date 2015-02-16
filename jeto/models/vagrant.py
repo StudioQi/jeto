@@ -10,6 +10,7 @@ from jeto.models.permission import ViewInstancePermission
 
 import time
 import slugify
+import json
 from flask import request, session
 from flask.ext.sqlalchemy import orm
 from flask.ext.login import current_user
@@ -126,7 +127,7 @@ class VagrantInstance(db.Model):
         # self.init_on_load()
 
     def __unicode__(self):
-        return self._generatePath()
+        return '{} : {} : {}'.format(self.name, self.status, self._generatePath())
 
     def __str__(self):
         return self.__unicode__()
@@ -152,7 +153,7 @@ class VagrantInstance(db.Model):
 	    environment=self.environment,
         )
 
-        machines = self._parse_status(results)
+        machines, jeto_infos = self._parse_status(results)
         machinesFormatted = []
         for machine, value in machines.iteritems():
             machinesFormatted.append(
@@ -163,14 +164,18 @@ class VagrantInstance(db.Model):
                 }
             )
 
-        return machinesFormatted
+        return machinesFormatted, jeto_infos
 
     def _parse_status(self, results):
-        results = results.split('\\n')
+        results = json.loads(results)
+
+        jeto_infos = results['jeto_infos']
+
+        results = results['vagrant']
+        results = results.split('\n')
         results = results[1:-3]
         formatted = []
         item = []
-        app.logger.debug(results)
         for result in results:
             result = result.replace('\\', ' ')
             if ',' in result and len(item) > 0:
@@ -199,8 +204,7 @@ class VagrantInstance(db.Model):
         # for machineName, value in machines.iteritems():
         #     machines[machineName]['ip'] = self._ip(machineName)
 
-        app.logger.debug(machines)
-        return machines
+        return (machines, jeto_infos)
 
     def _ip(self, machineName):
         results = self._submit_job(
