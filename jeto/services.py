@@ -239,7 +239,6 @@ class InstanceApi(Resource):
         jeto_infos = None
         if machineName is None:
             instance.status, jeto_infos = instance._status()
-            app.logger.debug(instance)
             # instance.jeto_infos = json.dumps(instance.jeto_infos)
         else:
             # app.logger.debug(instance._ip(machineName))

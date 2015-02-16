@@ -150,7 +150,7 @@ class VagrantInstance(db.Model):
             'status',
             path=path,
             host=self.host,
-	    environment=self.environment,
+            environment=self.environment,
         )
 
         machines, jeto_infos = self._parse_status(results)
@@ -171,7 +171,7 @@ class VagrantInstance(db.Model):
 
         jeto_infos = results.get('jeto_infos')
 
-        results = results('vagrant', 'Something went wrong\n')
+        results = results.get('vagrant', 'Something went wrong\n')
         results = results.split('\n')
         results = results[1:-3]
         formatted = []
@@ -272,7 +272,6 @@ class VagrantInstance(db.Model):
             path=self._generatePath(),
             environment=self.environment,
             host=self.host,
-            environment=self.environment,
         )
         db.session.delete(self)
         db.session.commit()
