@@ -84,6 +84,7 @@ instance_fields = {
     'environment': fields.String,
     'project': fields.Nested(project_wo_instance_fields),
     'host': fields.Nested(host_fields),
+    'jeto_infos': fields.List(fields.String),
 }
 
 upstream_fields = {
@@ -235,13 +236,18 @@ class InstanceApi(Resource):
     def get(self, id, machineName=None):
         instance = self._getInstance(id)
 
+        jeto_infos = None
         if machineName is None:
-            instance.status = instance._status()
+            instance.status, jeto_infos = instance._status()
+            app.logger.debug(instance)
+            # instance.jeto_infos = json.dumps(instance.jeto_infos)
         else:
             # app.logger.debug(instance._ip(machineName))
             return {'ip': instance._ip(machineName)}
 
-        return marshal(instance, instance_fields)
+        instance_json = marshal(instance, instance_fields)
+        instance_json['jeto_infos'] = jeto_infos
+        return instance_json
 
     def post(self, id):
         instance = self._getInstance(id)
@@ -604,6 +610,7 @@ class HostApi(RestrictedResource):
         else:
             host = Host.query.get(id)
             host.params = host.params.replace('\r\n', '<br>')
+            host.params = host.params.replace('\n', '<br>')
 
             return marshal(host, host_fields)
 
@@ -624,7 +631,16 @@ class HostApi(RestrictedResource):
         else:
             host = Host.query.get(id)
             name = clean(request.json['name'].rstrip())
-            params = request.json['params'].replace("<br>", "\r\n")
+
+            params = request.json['params']
+            while(params.find('<br><br>') != -1):
+                params = params.replace("<br><br>", "<br>")
+
+            params = params.replace("<br>", "\r\n")
+            params = params.replace('<div>', '\r\n')
+            params = params.replace('&nbsp;', '')
+            params = params.replace('</div>', '\r\n')
+
             provider = clean(request.json['provider'].rstrip())
 
             if name != '':
