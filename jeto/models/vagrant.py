@@ -169,9 +169,9 @@ class VagrantInstance(db.Model):
     def _parse_status(self, results):
         results = json.loads(results)
 
-        jeto_infos = results['jeto_infos']
+        jeto_infos = results.get('jeto_infos')
 
-        results = results['vagrant']
+        results = results('vagrant', 'Something went wrong\n')
         results = results.split('\n')
         results = results[1:-3]
         formatted = []

@@ -236,6 +236,7 @@ class InstanceApi(Resource):
     def get(self, id, machineName=None):
         instance = self._getInstance(id)
 
+        jeto_infos = None
         if machineName is None:
             instance.status, jeto_infos = instance._status()
             app.logger.debug(instance)
