@@ -149,6 +149,7 @@ class VagrantInstance(db.Model):
             'status',
             path=path,
             host=self.host,
+	    environment=self.environment,
         )
 
         machines = self._parse_status(results)
@@ -207,6 +208,7 @@ class VagrantInstance(db.Model):
             path=self._generatePath(),
             machineName=machineName,
             host=self.host,
+            environment=self.environment,
         )
         return results
 
@@ -264,6 +266,7 @@ class VagrantInstance(db.Model):
             'destroy',
             path=self._generatePath(),
             host=self.host,
+            environment=self.environment,
         )
         db.session.delete(self)
         db.session.commit()
