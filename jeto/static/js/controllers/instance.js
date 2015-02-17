@@ -8,6 +8,9 @@ function InstanceController($scope, $routeParams, Instances, MachineIP, $http, c
                 if(value.status.indexOf('running') === -1){
                     $scope.instance.status[key].stopDisabled = true;
                 }
+                if($scope.instance.status[key].stopDisabled != false){
+                    $scope.instance.stopDisabled = true;
+                }
             });
 
             if($scope.source === undefined){
@@ -38,6 +41,9 @@ function InstanceController($scope, $routeParams, Instances, MachineIP, $http, c
     };
 
     $scope.control = function(state, machineName) {
+        if(machineName === undefined){
+            machineName = '';
+        }
         $http.post('/api/instances/' + $scope.instance.id, {
             state : state,
             machine: machineName,

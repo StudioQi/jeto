@@ -37,7 +37,12 @@
             </table>
             <div class="panel-footer">
                 <div class="btn-group">
-                    <button type="button" class="btn btn-danger pull-right glyphicon glyphicon-trash" ng-bind-html="[[instance.state]]" ng-click="delete()"><span class="sr-only">{{ _('Delete') }}</span></button>
+                    <button type="button" class="btn btn-danger glyphicon glyphicon-trash" ng-bind-html="[[instance.state]]" ng-click="delete()"><span class="sr-only">{{ _('Delete') }}</span></button>
+                </div>
+                <div class="btn-group pull-right">
+                    <button class="btn btn-warning" ng-click="control('stop', undefined)" ng-disabled="instance.stopDisabled">{{ _('Stop') }}</button>
+                    <button class="btn btn-primary" ng-click="control('provision', undefined)" ng-disabled="instance.stopDisabled">{{ _('Provision') }}</button>
+                    <button class="btn btn-primary" ng-click="control('start', undefined)" ng-disabled="!instance.stopDisabled">{{ _('Start') }}</button>
                 </div>
             </div>
         </div>
