@@ -1,4 +1,11 @@
-0.1.7 -
+0.2 - February 16 2015
+---
+- Adding buttons to provision/start/stop all machines in a vagrant instance.
+- Fix for destroy of instance using external provider (like vsphere)
+- Bumping version to fit with vagrant-worker
+- Fixing status with vagrant instances that required proper environment to be passed on
+
+0.1.7
 ---
 - Adding support for domain aliases in the domain interface
 
