@@ -153,7 +153,7 @@ class VagrantInstance(db.Model):
             environment=self.environment,
         )
 
-        machines, jeto_infos = self._parse_status(results)
+        machines, jeto_infos, scripts = self._parse_status(results)
         machinesFormatted = []
         for machine, value in machines.iteritems():
             machinesFormatted.append(
@@ -164,12 +164,15 @@ class VagrantInstance(db.Model):
                 }
             )
 
-        return machinesFormatted, jeto_infos
+        return machinesFormatted, jeto_infos, scripts
 
     def _parse_status(self, results):
         results = json.loads(results)
 
         jeto_infos = results.get('jeto_infos')
+        scripts = jeto_infos.get('scripts', None)
+        if scripts:
+            del jeto_infos['scripts']
 
         results = results.get('vagrant', 'Something went wrong\n')
         results = results.split('\n')
@@ -204,7 +207,7 @@ class VagrantInstance(db.Model):
         # for machineName, value in machines.iteritems():
         #     machines[machineName]['ip'] = self._ip(machineName)
 
-        return (machines, jeto_infos)
+        return (machines, jeto_infos, scripts)
 
     def _ip(self, machineName):
         results = self._submit_job(
@@ -295,13 +298,22 @@ class VagrantInstance(db.Model):
         )
         return results
 
+    def runScript(self, script, machineName='default'):
+        app.logger.debug('hey salut')
+        results = self._submit_job(
+            'run_script',
+            path=self._generatePath(),
+            host=self.host,
+            machineName=machineName,
+            script=script,
+        )
+        return results
+
     def _submit_job(self, action, **kwargs):
         with Connection():
             queue = Queue('high', connection=redis_conn)
             action = 'worker.{}'.format(action)
             job = queue.enqueue_call(func=action, timeout=1200, kwargs=kwargs)
-
-            # job = queue.enqueue(action, **kwargs)
 
             if action != 'status':
                 if 'jobs' not in session:

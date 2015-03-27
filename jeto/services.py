@@ -20,7 +20,7 @@ from jeto.models.domainController import DomainController
 from jeto.models.user import User, ROLE_DEV, ROLE_ADMIN
 from jeto.models.permission import ViewHostPermission,\
     TeamPermissionsGrids, ProvisionInstancePermission,\
-    StopInstancePermission, StartInstancePermission
+    StopInstancePermission, StartInstancePermission, RunScriptInstancePermission
 from jeto.models.permission import ViewDomainPermission,\
     EditDomainPermission, CreateDomainPermission
 
@@ -30,7 +30,8 @@ from settings import HTPASSWORD_API_URL, HTPASSWORD_API_PORT
 states = {
     'stop': StopInstancePermission,
     'start': StartInstancePermission,
-    'provision': ProvisionInstancePermission
+    'provision': ProvisionInstancePermission,
+    'runScript': RunScriptInstancePermission
 }
 
 
@@ -238,7 +239,7 @@ class InstanceApi(Resource):
 
         jeto_infos = None
         if machineName is None:
-            instance.status, jeto_infos = instance._status()
+            instance.status, jeto_infos, scripts = instance._status()
             # instance.jeto_infos = json.dumps(instance.jeto_infos)
         else:
             # app.logger.debug(instance._ip(machineName))
@@ -246,6 +247,7 @@ class InstanceApi(Resource):
 
         instance_json = marshal(instance, instance_fields)
         instance_json['jeto_infos'] = jeto_infos
+        instance_json['scripts'] = scripts
         return instance_json
 
     def post(self, id):
@@ -268,7 +270,10 @@ class InstanceApi(Resource):
         permission = states.get(state)
         if permission:
             if current_user.has_permission(permission, id):
-                getattr(self, state)(id, machineName)
+                if state == 'runScript':
+                    instance.runScript(query.get('script'), machineName)
+                else:
+                    getattr(self, state)(id, machineName)
             else:
                 abort(403)
 
@@ -421,7 +426,6 @@ class DomainsApi(Resource):
 
             domain = self._editDomain(id)
 
-            app.logger.debug(self._get_url(domain))
             req.put(
                 '{}/{}'.format(self._get_url(domain), id),
                 headers=self._get_headers(),

@@ -1,5 +1,6 @@
 function InstanceController($scope, $routeParams, Instances, MachineIP, $http, createDialog, $location) {
     $('.loading').show();
+    $scope.runScripts = [];
     $scope.updateInfos = function() {
         Instances.get({id: $routeParams.id}, function(instance) {
             $scope.instance = instance;
@@ -86,6 +87,19 @@ function InstanceController($scope, $routeParams, Instances, MachineIP, $http, c
             },
         });
     };
+
+    $scope.scriptMachineSelected = function(key) {
+        $('#btnRunScript_' + key).addClass('btn-warning');
+    }
+
+    $scope.runScript = function(machineName, script) {
+        $http.post('/api/instances/' + $scope.instance.id, {
+            state : 'runScript',
+            machine: machineName,
+            script: script,
+            async: true
+        });
+    }
 
     $scope.console = {};
     pubsubCallback = function(consoleData) {
