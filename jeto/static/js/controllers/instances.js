@@ -1,4 +1,4 @@
-function InstancesController($scope, Instances, Projects, Hosts, $http, createDialog, $log) {
+function InstancesController($scope, Instances, Projects, Hosts, $http, $location, createDialog, $log) {
     $scope.states = [
         {label: 'Development', type:'dev'},
         {label: 'Sandbox', type:'sandbox'},
@@ -94,8 +94,10 @@ function InstancesController($scope, Instances, Projects, Hosts, $http, createDi
                    instance.gitReference = $scope.instanceInfo.gitReference;
                    instance.archive_url = $scope.instanceInfo.archive_url;
                    instance.state = 'create';
-                   instance.$save();
-                   setTimeout($scope.updateInfos, 100);
+                   instance.async = true;
+                   instance.$save(function(data){
+                       $location.path('/instances/' + data.instance.id);
+                   });
                }
            },
            cancel: {
