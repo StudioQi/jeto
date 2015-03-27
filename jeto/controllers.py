@@ -31,7 +31,7 @@ from jeto.models.user import User
 from jeto.models.project import Project
 from jeto.models.permission import ViewHostPermission, ViewHostNeed
 from jeto.models.permission import ProvisionInstanceNeed, DestroyInstanceNeed,\
-    ViewInstanceNeed, StartInstanceNeed
+    ViewInstanceNeed, StartInstanceNeed, RunScriptInstanceNeed
 from jeto.models.permission import CreateDomainNeed, ViewDomainNeed,\
     EditDomainNeed
 
@@ -174,6 +174,8 @@ def _set_permissions_instance(identity, instance, permission):
         identity.provides.add(DestroyInstanceNeed(unicode(instance.id)))
     if permission.action == 'view':
         identity.provides.add(ViewInstanceNeed(unicode(instance.id)))
+    if permission.action == 'runScript':
+        identity.provides.add(RunScriptInstanceNeed(unicode(instance.id)))
 
 
 def _set_permissions_domain_controller(identity, permission):

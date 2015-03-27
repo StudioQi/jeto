@@ -116,6 +116,7 @@ function TeamController($scope, $routeParams, Teams, Users, Hosts, Projects, Dom
             'StartInstances': true,
             'StopInstances': true,
             'DestroyInstances': true,
+            'RunScriptInstances': true,
             'ViewDomain': true,
             'EditDomain': true,
             'CreateDomain': true,
@@ -201,6 +202,7 @@ function TeamController($scope, $routeParams, Teams, Users, Hosts, Projects, Dom
             $scope.newPermission.StartInstances = false;
             $scope.newPermission.StopInstances = false;
             $scope.newPermission.DestroyInstances = false;
+            $scope.newPermission.RunScriptInstances = false;
         }
 
         newPermission = {
@@ -226,6 +228,11 @@ function TeamController($scope, $routeParams, Teams, Users, Hosts, Projects, Dom
         if($scope.newPermission.DestroyInstances){
             permission = angular.copy(newPermission);
             permission.action = 'destroy';
+            $scope.team.permissions_grids.push(permission);
+        }
+        if($scope.newPermission.RunScriptInstances){
+            permission = angular.copy(newPermission);
+            permission.action = 'runScript';
             $scope.team.permissions_grids.push(permission);
         }
         if($scope.newPermission.ProvisionInstances){

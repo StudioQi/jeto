@@ -60,6 +60,33 @@
             </table>
         </div>
     </div>
+    <div class="col-md-6" ng-show="instance.scripts">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {{ _('Custom scripts') }} 
+            </div>
+            <table class="table table-bordered" ng-repeat="(key, value) in instance.scripts">
+                <tr>
+                    <th>{{ _('Name') }}</th>
+                    <td><b>[[ key ]]</b></td>
+                </tr>
+                <tr>
+                    <th>{{ _('Description') }}</th>
+                    <td>[[ value.description ]]</td>
+                </tr>
+                <tr>
+                    <th>{{ _('Run on') }}</th>
+                    <td>
+                        <select name="script-machine" ui-select2 placeholder="{{ _('Select a machine') }}" class="form-control" ng-model="runScript[key]" style="max-width:250px" ng-click="scriptMachineSelected(key)">
+                            <option value=""></option>
+                            <option ng-repeat="machine in instance.status" value="[[ machine.name ]]">[[ machine.name ]]</option>
+                        </select>
+                        <button class="btn btn-default" id="btnRunScript_[[ key ]]" ng-click="runScript( runScript[key], key)">{{ _('Run') }}</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
 
     <div class="col-md-6" ng-repeat="machine in instance.status">
         <div class="panel panel-default">
