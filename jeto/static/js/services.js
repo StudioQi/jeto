@@ -1,5 +1,5 @@
 angular.module('angularFlaskServices', ['ngResource'])
-    .value('version', '0.2.1')
+    .value('version', '0.3')
     .factory('Instances', function($resource) {
         return $resource('/api/instances/:id', {id:'@id'}, {
             query: {
