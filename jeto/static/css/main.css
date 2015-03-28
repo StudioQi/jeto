@@ -291,3 +291,13 @@ label {
 .field-aliases {
     margin-bottom: 0;
 }
+
+.autoscroll {
+    position: fixed;
+    bottom: 50px;
+    right: 50px;
+}
+
+.job_details.time_started {
+    text-align:right;
+}

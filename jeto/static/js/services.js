@@ -38,4 +38,7 @@ angular.module('angularFlaskServices', ['ngResource'])
     .factory('DomainControllers', function($resource) {
         return $resource('/api/domainControllers/:id', {id:'@id'});
     })
+    .factory('JobDetails', function($resource) {
+        return $resource('/api/jobdetails/:instanceId', {instanceId:'@instanceId'});
+    })
 ;

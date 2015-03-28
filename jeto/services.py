@@ -130,6 +130,7 @@ user_fields = {
     'name': fields.String,
     'email': fields.String,
     'role': fields.String,
+    'picture': fields.String,
 }
 
 team_permissions_grids_fields = {
@@ -289,6 +290,7 @@ class InstanceApi(Resource):
     def delete(self, id):
         instanceId = int(id)
         self.backend.delete(instanceId)
+
 
     def _getInstance(self, id):
         instances = self.backend.get_all_instances()
