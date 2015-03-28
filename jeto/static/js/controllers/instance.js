@@ -1,5 +1,6 @@
-function InstanceController($scope, $routeParams, Instances, MachineIP, $http, createDialog, $location) {
+function InstanceController($scope, $routeParams, Instances, JobDetails, MachineIP, $http, createDialog, $location) {
     $('.loading').show();
+    $scope.job = { author: 'PP', time_started: 'now'};
     $scope.runScripts = [];
     $scope.updateInfos = function() {
         Instances.get({id: $routeParams.id}, function(instance) {
@@ -107,6 +108,11 @@ function InstanceController($scope, $routeParams, Instances, MachineIP, $http, c
             if(consoleData.data !== ''){
                 $scope.console = consoleData.data;
                 $('#console').html($scope.console);
+                JobDetails.get({instanceId: $scope.instance.id}, function(details){
+                    $scope.job.author = details.user;
+                    $scope.job.time_started = details.time_started;
+                });
+
                 autoScroll = $('[name="auto-scroll"].active').val();
                 if(autoScroll === '1'){
                     autoScrollSep = $('#auto-scroll-separator').get(0);

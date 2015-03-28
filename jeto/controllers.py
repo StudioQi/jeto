@@ -4,6 +4,7 @@ from flask import jsonify
 from flask.ext.login import login_user, logout_user
 from flask.ext.login import current_user, login_required
 from flask.ext.babel import gettext as _
+from flask.ext.restful import marshal
 
 from flask.ext.principal import Identity, AnonymousIdentity
 from flask.ext.principal import identity_changed, identity_loaded
@@ -27,6 +28,7 @@ from jeto.services import HostApi
 from jeto.services import TeamApi
 from jeto.services import UserApi
 from jeto.services import DomainControllerApi
+from jeto.services import user_fields
 from jeto.models.user import User
 from jeto.models.project import Project
 from jeto.models.permission import ViewHostPermission, ViewHostNeed
@@ -86,7 +88,9 @@ def authorized(resp):
              data['hd'] not in app.config['GOOGLE_LIMIT_DOMAIN']):
 
         flash(_('Domain not allowed, please use an email associated with\
-              the domain : {}').format(', '.join(app.config['GOOGLE_LIMIT_DOMAIN'])))
+              the domain : {}').format(', '.join(
+            app.config['GOOGLE_LIMIT_DOMAIN']
+            )))
 
         return redirect(url_for('index'))
 
@@ -135,7 +139,9 @@ def _set_permissions(permissions_grids, identity):
             if permission.objectType == 'project':
                 project = Project.query.get(permission.objectId)
                 for instance in project.instances:
-                    viewPermission = ViewHostPermission(unicode(instance.host.id))
+                    viewPermission = ViewHostPermission(
+                        unicode(instance.host.id)
+                    )
                     if viewPermission.can():
                         _set_permissions_instance(
                             identity,
@@ -231,21 +237,25 @@ def unauthorized_callback():
 def pubsub(instanceId=None):
     jobs = None
     output = ''
-    if 'jobs' in session:
-        jobs = session['jobs']
-        # session['jobs'] = []
-        for job in jobs:
-            if instanceId is not None and \
-                    int(instanceId) == int(job['instanceId']):
-                console = _read_console(job['jobId'])
-                output += console\
-                    .replace('\n', '<br />')\
-                    .replace('#BEGIN#', '')\
-                    .replace('#END#', '')
-                output = ansiconv.to_html(output)
-                if '#END#' in console:
-                    session['jobs'].remove(job)
-                # app.logger.debug(console)
+    # We keep all jobs for 10 hours
+    redis_conn.zremrangebyscore(
+        'jobs:{}'.format(instanceId),
+        0,
+        time.time() - 36000
+    )
+
+    if instanceId is not None:
+        jobs = redis_conn.zrevrange('jobs:{}'.format(instanceId), 0, 0, withscores=True)
+        if jobs:
+            for userId, job in jobs:
+                    console = _read_console(job)
+                    output += console\
+                        .replace('\n', '<br />')\
+                        .replace('#BEGIN#', '')\
+                        .replace('#END#', '')
+                    output = ansiconv.to_html(output)
+                    # if '#END#' in console:
+                    # Save job into the db auditlog
 
     return Response('data: {}\n\n'.format(output),
                     mimetype='text/event-stream')
@@ -257,6 +267,25 @@ def _read_console(jobId):
         console = ''
     return console
 
+
+@app.route('/api/jobdetails/<instanceId>')
+def getJobAuthorOnLastJob(instanceId):
+    jobs = redis_conn.zrevrange('jobs:{}'.format(instanceId), 0, -1, withscores=True)
+    details = {}
+    if len(jobs) > 0:
+        userId, timeStarted = jobs[0]
+
+        timeStarted = time.ctime(float(timeStarted))
+        user = User.query.get(userId)
+
+        userInfo = []
+        if user:
+            userInfos = marshal(user, user_fields)
+
+        details['user'] = userInfos
+        details['time_started'] = timeStarted
+
+    return jsonify(details)
 
 @app.route('/partials/landing.html')
 def partials():

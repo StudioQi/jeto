@@ -11,7 +11,7 @@ from jeto.models.permission import ViewInstancePermission
 import time
 import slugify
 import json
-from flask import request, session
+from flask import request
 from flask.ext.sqlalchemy import orm
 from flask.ext.login import current_user
 from rq import Queue, Connection
@@ -127,7 +127,11 @@ class VagrantInstance(db.Model):
         # self.init_on_load()
 
     def __unicode__(self):
-        return '{} : {} : {}'.format(self.name, self.status, self._generatePath())
+        return '{} : {} : {}'.format(
+            self.name,
+            self.status,
+            self._generatePath()
+        )
 
     def __str__(self):
         return self.__unicode__()
@@ -299,7 +303,6 @@ class VagrantInstance(db.Model):
         return results
 
     def runScript(self, script, machineName='default'):
-        app.logger.debug('hey salut')
         results = self._submit_job(
             'run_script',
             path=self._generatePath(),
@@ -313,22 +316,21 @@ class VagrantInstance(db.Model):
         with Connection():
             queue = Queue('high', connection=redis_conn)
             action = 'worker.{}'.format(action)
-            job = queue.enqueue_call(func=action, timeout=1200, kwargs=kwargs)
-
-            if action != 'status':
-                if 'jobs' not in session:
-                    session['jobs'] = []
-
-                session['jobs'].append(
-                    {
-                        'jobId': job.id,
-                        'instanceId': self.id,
-                        'userId': current_user.id,
-                        'action': action
-                    }
+            job = queue.enqueue_call(
+                func=action,
+                timeout=1200,
+                job_id=str(time.time()),
+                kwargs=kwargs,
+            )
+            if action != 'worker.status':
+                redis_conn.zadd(
+                    'jobs:{}'.format(self.id),
+                    str(current_user.id),
+                    job.id,
                 )
-                if is_async() is False:
-                    while job.result is None:
-                        time.sleep(0.5)
+
+            if is_async() is False:
+                while job.result is None:
+                    time.sleep(0.5)
 
         return job.result
