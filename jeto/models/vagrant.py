@@ -174,9 +174,11 @@ class VagrantInstance(db.Model):
         results = json.loads(results)
 
         jeto_infos = results.get('jeto_infos')
-        scripts = jeto_infos.get('scripts', None)
-        if scripts:
-            del jeto_infos['scripts']
+        scripts = None
+        if jeto_infos:
+            scripts = jeto_infos.get('scripts', None)
+            if scripts:
+                del jeto_infos['scripts']
 
         results = results.get('vagrant', 'Something went wrong\n')
         results = results.split('\n')

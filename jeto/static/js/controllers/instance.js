@@ -1,6 +1,6 @@
 function InstanceController($scope, $routeParams, Instances, JobDetails, MachineIP, $http, createDialog, $location) {
     $('.loading').show();
-    $scope.job = { author: 'PP', time_started: 'now'};
+    $scope.job = {};
     $scope.runScripts = [];
     $scope.updateInfos = function() {
         Instances.get({id: $routeParams.id}, function(instance) {

@@ -1,4 +1,8 @@
-0.3 - March 27 2015
+0.3.1 - March 28 2015
+---
+- Critical issue with instance that don't have the jeto.json file. Now fixed.
+
+0.3 - March 28 2015
 ---
 - We now have a unified console output! Two users on the same page will get the same console output in real time. Jobs output are no longer bound to the user.
 - Issue #7, since we have unified console output, we now keep the last console output for at least 10 hours.

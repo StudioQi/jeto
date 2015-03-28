@@ -123,7 +123,7 @@
 </div>
 <div class="row">
     <div class="panel panel-default">
-        <div class="panel-heading clearfix">
+        <div class="panel-heading clearfix" ng-show="job.author">
             <div class="col-md-6"><img class="icon-google_plus" src="[[ job.author.picture ]]"/> [[ job.author.name ]]</div>
             <div class="col-md-6 job_details time_started">{{ _('Started at:') }} [[ job.time_started ]]</div>
         </div>
