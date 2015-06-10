@@ -33,7 +33,7 @@ from jeto.models.user import User
 from jeto.models.project import Project
 from jeto.models.permission import ViewHostPermission, ViewHostNeed
 from jeto.models.permission import ProvisionInstanceNeed, DestroyInstanceNeed,\
-    ViewInstanceNeed, StartInstanceNeed, RunScriptInstanceNeed
+    ViewInstanceNeed, StartInstanceNeed, StopInstanceNeed, RunScriptInstanceNeed
 from jeto.models.permission import CreateDomainNeed, ViewDomainNeed,\
     EditDomainNeed
 
@@ -173,7 +173,7 @@ def _set_permissions_instance(identity, instance, permission):
     if permission.action == 'start':
         identity.provides.add(StartInstanceNeed(unicode(instance.id)))
     if permission.action == 'stop':
-        identity.provides.add(StartInstanceNeed(unicode(instance.id)))
+        identity.provides.add(StopInstanceNeed(unicode(instance.id)))
     if permission.action == 'provision':
         identity.provides.add(ProvisionInstanceNeed(unicode(instance.id)))
     if permission.action == 'destroy':
