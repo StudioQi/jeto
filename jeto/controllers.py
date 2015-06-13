@@ -20,15 +20,13 @@ import ansiconv
 
 from jeto import app, babel, google, lm, db
 from jeto.core import api, redis_conn
-from jeto.services import InstanceApi, InstancesApi
-from jeto.services import DomainsApi
-from jeto.services import HtpasswordApi, HtpasswordListApi
-from jeto.services import ProjectApi
-from jeto.services import HostApi
-from jeto.services import TeamApi
-from jeto.services import UserApi
-from jeto.services import DomainControllerApi
-from jeto.services import user_fields
+from jeto.services.instances import InstanceApi, InstancesApi
+from jeto.services.domains import DomainsApi, DomainControllerApi
+from jeto.services.htpasswords import HtpasswordApi, HtpasswordListApi
+from jeto.services.projects import ProjectApi
+from jeto.services.hosts import HostApi
+from jeto.services.teams import TeamApi
+from jeto.services.users import UserApi, user_fields
 from jeto.models.user import User
 from jeto.models.project import Project
 from jeto.models.permission import ViewHostPermission, ViewHostNeed
