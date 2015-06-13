@@ -181,37 +181,38 @@ class VagrantInstance(db.Model):
                 del jeto_infos['scripts']
 
         results = results.get('vagrant', 'Something went wrong\n')
-        results = results.split('\n')
-        results = results[1:-3]
-        formatted = []
-        item = []
-        for result in results:
-            result = result.replace('\\', ' ')
-            if ',' in result and len(item) > 0:
-                formatted.append(item)
-                item = []
-
-            if ',' in result:
-                item = result.split(',')
-                item[-1] = item[-1].replace('%!(VAGRANT_COMMA)', ',')
-                formatted.append(item)
-            else:
-                result = result.replace('%!(VAGRANT_COMMA)', ',')
-                item[-1] = item[-1] + result
-
-        withoutTimestamp = []
-        for item in formatted:
-            withoutTimestamp.append(item[1:])
-
         machines = {}
-        for item in withoutTimestamp:
-            if item[0] not in machines:
-                machines[item[0]] = {}
+        if results:
+            results = results.split('\n')
+            results = results[1:-3]
+            formatted = []
+            item = []
+            for result in results:
+                app.logger.debug(result)
+                result = result.replace('\\', ' ')
+                if ',' in result and len(item) > 0:
+                    formatted.append(item)
+                    item = []
 
-            machines[item[0]][item[1]] = item[2]
+                    app.logger.debug(result)
+                    if ',' in result:
+                        item = result.split(',')
+                        item[-1] = item[-1].replace('%!(VAGRANT_COMMA)', ',')
+                        formatted.append(item)
+                    else:
+                        result = result.replace('%!(VAGRANT_COMMA)', ',')
+                        item[-1] = item[-1] + result
 
-        # for machineName, value in machines.iteritems():
-        #     machines[machineName]['ip'] = self._ip(machineName)
+            withoutTimestamp = []
+            for item in formatted:
+                withoutTimestamp.append(item[1:])
+
+            machines = {}
+            for item in withoutTimestamp:
+                if item[0] not in machines:
+                    machines[item[0]] = {}
+
+                machines[item[0]][item[1]] = item[2]
 
         return (machines, jeto_infos, scripts)
 
