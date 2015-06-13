@@ -182,32 +182,36 @@ class VagrantInstance(db.Model):
 
         results = results.get('vagrant', 'Something went wrong\n')
         machines = {}
-        if results:
+        if results is not None:
             results = results.split('\n')
+            # Vagrant returns 5 lines, the first one being #BEGIN# and
+            # the last line being #END#, we want everything else
             results = results[1:-3]
             formatted = []
             item = []
             for result in results:
-                app.logger.debug(result)
+                # Clean up
                 result = result.replace('\\', ' ')
+
                 if ',' in result and len(item) > 0:
                     formatted.append(item)
                     item = []
 
-                    app.logger.debug(result)
-                    if ',' in result:
-                        item = result.split(',')
-                        item[-1] = item[-1].replace('%!(VAGRANT_COMMA)', ',')
-                        formatted.append(item)
-                    else:
-                        result = result.replace('%!(VAGRANT_COMMA)', ',')
-                        item[-1] = item[-1] + result
+                # Each field is comma seperated
+                if ',' in result:
+                    item = result.split(',')
+                    # !(VAGRANT_COMMA) is a real comma, but escaped by vagrant
+                    item[-1] = item[-1].replace('%!(VAGRANT_COMMA)', ',')
+                    formatted.append(item)
+                else:
+                    # !(VAGRANT_COMMA) is a real comma, but escaped by vagrant
+                    result = result.replace('%!(VAGRANT_COMMA)', ',')
+                    item[-1] = item[-1] + result
 
             withoutTimestamp = []
             for item in formatted:
                 withoutTimestamp.append(item[1:])
 
-            machines = {}
             for item in withoutTimestamp:
                 if item[0] not in machines:
                     machines[item[0]] = {}
