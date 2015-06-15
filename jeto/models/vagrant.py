@@ -181,37 +181,42 @@ class VagrantInstance(db.Model):
                 del jeto_infos['scripts']
 
         results = results.get('vagrant', 'Something went wrong\n')
-        results = results.split('\n')
-        results = results[1:-3]
-        formatted = []
-        item = []
-        for result in results:
-            result = result.replace('\\', ' ')
-            if ',' in result and len(item) > 0:
-                formatted.append(item)
-                item = []
-
-            if ',' in result:
-                item = result.split(',')
-                item[-1] = item[-1].replace('%!(VAGRANT_COMMA)', ',')
-                formatted.append(item)
-            else:
-                result = result.replace('%!(VAGRANT_COMMA)', ',')
-                item[-1] = item[-1] + result
-
-        withoutTimestamp = []
-        for item in formatted:
-            withoutTimestamp.append(item[1:])
-
         machines = {}
-        for item in withoutTimestamp:
-            if item[0] not in machines:
-                machines[item[0]] = {}
+        if results is not None:
+            results = results.split('\n')
+            # Vagrant returns 5 lines, the first one being #BEGIN# and
+            # the last line being #END#, we want everything else
+            results = results[1:-3]
+            formatted = []
+            item = []
+            for result in results:
+                # Clean up
+                result = result.replace('\\', ' ')
 
-            machines[item[0]][item[1]] = item[2]
+                if ',' in result and len(item) > 0:
+                    formatted.append(item)
+                    item = []
 
-        # for machineName, value in machines.iteritems():
-        #     machines[machineName]['ip'] = self._ip(machineName)
+                # Each field is comma seperated
+                if ',' in result:
+                    item = result.split(',')
+                    # !(VAGRANT_COMMA) is a real comma, but escaped by vagrant
+                    item[-1] = item[-1].replace('%!(VAGRANT_COMMA)', ',')
+                    formatted.append(item)
+                else:
+                    # !(VAGRANT_COMMA) is a real comma, but escaped by vagrant
+                    result = result.replace('%!(VAGRANT_COMMA)', ',')
+                    item[-1] = item[-1] + result
+
+            withoutTimestamp = []
+            for item in formatted:
+                withoutTimestamp.append(item[1:])
+
+            for item in withoutTimestamp:
+                if item[0] not in machines:
+                    machines[item[0]] = {}
+
+                machines[item[0]][item[1]] = item[2]
 
         return (machines, jeto_infos, scripts)
 
