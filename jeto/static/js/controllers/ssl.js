@@ -14,7 +14,8 @@ function SSLKeysListController($scope, $routeParams, SSLKeys, $http, $location, 
        $scope.ssl_keyInfo = {
            'name': '',
            'domain_controller': '',
-           'value': '',
+           'cert': '',
+           'key': '',
        };
     };
 
@@ -33,7 +34,8 @@ function SSLKeysListController($scope, $routeParams, SSLKeys, $http, $location, 
                    var ssl_keys = new SSLKeys();
                    ssl_keys.name = $scope.ssl_keyInfo.name;
                    ssl_keys.domain_controller = $scope.ssl_keyInfo.domain_controller;
-                   ssl_keys.value = $scope.ssl_keyInfo.value;
+                   ssl_keys.cert = $scope.ssl_keyInfo.cert;
+                   ssl_keys.key = $scope.ssl_keyInfo.key;
                    ssl_keys.state = 'create';
                    ssl_keys.$save();
                    setTimeout($scope.resetInfos, 100);

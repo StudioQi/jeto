@@ -15,7 +15,13 @@
         <div class="col-md-12">
            <div class="form-group">
                <label for="port">{{ _('Certificate') }}</label>
-               <textarea name="value" id="value" ng-model="ssl_keyInfo.value" placeholder="" class="form-control"></textarea>
+               <textarea name="value" id="value" ng-model="ssl_keyInfo.cert" placeholder="" class="form-control"></textarea>
+           </div>
+        </div>
+        <div class="col-md-12">
+           <div class="form-group">
+               <label for="port">{{ _('Key') }}</label>
+               <textarea name="value" id="value" ng-model="ssl_keyInfo.key" placeholder="" class="form-control"></textarea>
            </div>
         </div>
     </form>

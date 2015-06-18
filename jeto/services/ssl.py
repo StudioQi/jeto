@@ -56,7 +56,8 @@ class SSLApi(RestrictedResource):
         query = request.get_json()
         DC = clean(query.get('domain_controller'))
         name = clean(query.get('name'))
-        value = clean(query.get('value'))
+        cert = clean(query.get('cert'))
+        key = clean(query.get('key'))
         new_cert = SSL()
         new_cert.name = name
         DC = DomainController.query.get(DC)
@@ -71,7 +72,8 @@ class SSLApi(RestrictedResource):
             headers=json_headers,
             data=json.dumps(
                 {'name': name,
-                 'value': value}),
+                 'cert': cert,
+                 'key': key}),
             verify=False
         )
 
