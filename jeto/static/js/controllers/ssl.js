@@ -1,8 +1,8 @@
 function SSLKeysListController($scope, $routeParams, SSLKeys, $http, $location, createDialog) {
     $scope.update = function() {
         SSLKeys.get({}, function(infos) {
-            $scope.ssl_keys = infos.ssl_keyss;
-            $scope.ssl_keyss.sort(function(a, b){ return a.name > b.name; });
+            $scope.ssl_keys = infos.keys;
+            $scope.ssl_keys.sort(function(a, b){ return a.name > b.name; });
             $scope.resource = infos;
             $('.loading').hide();
         });
