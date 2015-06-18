@@ -16,6 +16,7 @@ from jeto.services import RestrictedResource  # , adminAuthenticate
 from jeto.services.domains import domain_controller_fields
 
 
+
 json_headers = {'Content-Type': 'application/json',
                 'Accept': 'application/json'}
 
@@ -44,10 +45,14 @@ class SSLApi(RestrictedResource):
         return True
 
     @marshal_with(ssl_key_fields, envelope='keys')
-    def get(self, dc=None):
+    def get(self, id=None):
         """Retrieve a list of SSL certs/keys"""
-        # if dc:
-            # return SSL.query.filter_by(domain_controller=dc)
+        query = request.args
+        if id is not None:
+            return SSL.query.get(id)
+        if query is not None and 'domain_controller' in query:
+            dc = clean(query.get('domain_controller'))
+            return SSL.query.filter_by(domaincontroller_id=dc).all()
         marsh = SSL.query.all()
         return marsh
 
@@ -66,7 +71,6 @@ class SSLApi(RestrictedResource):
         db.session.commit()
         # if current_user.has_permission(ViewHostPermission, host.id):
         #     permittedHosts.append(host)
-        app.logger.debug(dir(DC))
         req.post(
             DC.url + '/ssl',
             headers=json_headers,

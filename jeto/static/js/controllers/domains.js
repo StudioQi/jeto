@@ -1,4 +1,4 @@
-function DomainsController($scope, $routeParams, Domains, $http, createDialog, Htpassword, DomainControllers) {
+function DomainsController($scope, $routeParams, Domains, $http, createDialog, Htpassword, DomainControllers, SSLKeys) {
     $scope.update = function() {
         Domains.query({}, function(infos) {
             $scope.domains = infos;
@@ -14,16 +14,27 @@ function DomainsController($scope, $routeParams, Domains, $http, createDialog, H
         DomainControllers.get({}, function(infos){
             $scope.domain_controllers = infos.domain_controllers;
         });
+
     };
+    $scope.get_keys = function() {
+        var dc = $scope.domainInfo.domain_controller;
+        dc = dc ? {'domain_controller': $scope.domainInfo.domain_controller} : {};
+        SSLKeys.get(
+            dc,
+            function(infos) {
+                $scope.ssl_keys = infos.keys;
+                $scope.ssl_keys.sort(function(a, b){ return a.name > b.name; });
+                $scope.resource = infos;
+                $('.loading').hide();
+            });
+    };
+
     $scope.upstream_states = [
         'up', 'down', 'backup'
     ];
     $scope.update();
-    $scope.ssl_keys = [
-        { name:'Development', value:'dev'},
-        { name:'QA', value:'qa'},
-        { name:'Validation', value:'val'},
-    ];
+    
+    $scope.$watch('domainInfo.domain_controller', $scope.get_keys, true);
 
     $scope.resetInfosUpstream = function(){
         $scope.upstreamInfo = {
