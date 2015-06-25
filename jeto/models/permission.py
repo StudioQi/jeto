@@ -15,6 +15,7 @@ ProvisionInstanceNeed = partial(InstanceNeed, 'provision')
 DestroyInstanceNeed = partial(InstanceNeed, 'destroy')
 ViewInstanceNeed = partial(InstanceNeed, 'view')
 RunScriptInstanceNeed = partial(InstanceNeed, 'runScript')
+SyncInstanceNeed = partial(InstanceNeed, 'sync')
 
 HostNeed = namedtuple('instance', ['method', 'value'])
 ViewHostNeed = partial(HostNeed, 'view')
@@ -65,6 +66,12 @@ class RunScriptInstancePermission(Permission):
     def __init__(self, instanceId):
         need = RunScriptInstanceNeed(unicode(instanceId))
         super(RunScriptInstancePermission, self).__init__(need)
+
+
+class SyncInstancePermission(Permission):
+    def __init__(self, instanceId):
+        need = SyncInstanceNeed(unicode(instanceId))
+        super(SyncInstancePermission, self).__init__(need)
 
 
 class ViewHostPermission(Permission):
