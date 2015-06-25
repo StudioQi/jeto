@@ -83,6 +83,10 @@ class VagrantBackend(BackendProvider):
 
         return instance
 
+    def sync(self, instanceId):
+        instance = VagrantInstance.query.get(instanceId)
+        return instance.sync()
+
     def delete(self, instanceId):
         instance = VagrantInstance.query.get(instanceId)
         instance.delete()
@@ -296,6 +300,13 @@ class VagrantInstance(db.Model):
             path=self._generatePath(),
             archive_url=self.archive_url,
             host=self.host,
+        )
+        return results
+
+    def sync(self):
+        results = self._submit_job(
+            'sync',
+            path=self._generatePath(),
         )
         return results
 

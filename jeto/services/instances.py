@@ -3,19 +3,22 @@ from flask import request, abort
 from flask.ext.restful import Resource, fields, marshal
 from flask.ext.login import current_user
 
+from jeto import app
+
 from jeto.services.hosts import host_fields
 from jeto.services import project_wo_instance_fields
 
 from jeto.models.vagrant import VagrantBackend
 from jeto.models.permission import ProvisionInstancePermission,\
     StopInstancePermission, StartInstancePermission,\
-    RunScriptInstancePermission
+    RunScriptInstancePermission, SyncInstancePermission
 
 states = {
     'stop': StopInstancePermission,
     'start': StartInstancePermission,
     'provision': ProvisionInstancePermission,
-    'runScript': RunScriptInstancePermission
+    'runScript': RunScriptInstancePermission,
+    'sync': SyncInstancePermission
 }
 
 
@@ -69,6 +72,8 @@ class InstancesApi(Resource):
 
             elif query.get('state') == 'stop':
                 instance.stop()
+            elif query.get('state') == 'sync':
+                instance.sync()
 
         elif query.get('state') == 'create':
             instance = self.backend.create(query)
@@ -78,6 +83,9 @@ class InstancesApi(Resource):
         return {
             'instance': marshal(instance, instance_fields),
         }
+
+    def _sync(self, id):
+        self.backend.sync(id)
 
     def _stop(self, id):
         self.backend.stop(id)
@@ -136,6 +144,8 @@ class InstanceApi(Resource):
             if current_user.has_permission(permission, id):
                 if state == 'runScript':
                     instance.runScript(query.get('script'), machineName)
+                elif state == 'sync':
+                    instance.sync()
                 else:
                     getattr(self, state)(id, machineName)
             else:
@@ -149,6 +159,9 @@ class InstanceApi(Resource):
 
     def start(self, id, machineName):
         self.backend.start(id, machineName)
+
+    def sync(self, id):
+        self.backend.sync(id)
 
     def delete(self, id):
         instanceId = int(id)
