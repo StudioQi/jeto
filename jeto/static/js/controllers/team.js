@@ -117,6 +117,7 @@ function TeamController($scope, $routeParams, Teams, Users, Hosts, Projects, Dom
             'StopInstances': true,
             'DestroyInstances': true,
             'RunScriptInstances': true,
+            'SyncInstances': true,
             'ViewDomain': true,
             'EditDomain': true,
             'CreateDomain': true,
@@ -203,54 +204,67 @@ function TeamController($scope, $routeParams, Teams, Users, Hosts, Projects, Dom
             $scope.newPermission.StopInstances = false;
             $scope.newPermission.DestroyInstances = false;
             $scope.newPermission.RunScriptInstances = false;
+            $scope.newPermission.SyncInstances = false;
         }
 
         newPermission = {
             'objectId': $scope.newPermission.objectId,
             'objectType': $scope.newPermission.objectType,
         };
+        objectType = $scope.newPermission.objectType;
 
-        if($scope.newPermission.ViewHost || $scope.newPermission.ViewInstances || $scope.newPermission.ViewDomain){
-            permission = angular.copy(newPermission);
-            permission.action = 'view';
-            $scope.team.permissions_grids.push(permission);
+        if(objectType == 'host'){
+            if($scope.newPermission.ViewHost || $scope.newPermission.ViewInstances || $scope.newPermission.ViewDomain){
+                permission = angular.copy(newPermission);
+                permission.action = 'view';
+                $scope.team.permissions_grids.push(permission);
+            }
         }
-        if($scope.newPermission.StartInstances){
-            permission = angular.copy(newPermission);
-            permission.action = 'start';
-            $scope.team.permissions_grids.push(permission);
-        }
-        if($scope.newPermission.StopInstances){
-            permission = angular.copy(newPermission);
-            permission.action = 'stop';
-            $scope.team.permissions_grids.push(permission);
-        }
-        if($scope.newPermission.DestroyInstances){
-            permission = angular.copy(newPermission);
-            permission.action = 'destroy';
-            $scope.team.permissions_grids.push(permission);
-        }
-        if($scope.newPermission.RunScriptInstances){
-            permission = angular.copy(newPermission);
-            permission.action = 'runScript';
-            $scope.team.permissions_grids.push(permission);
-        }
-        if($scope.newPermission.ProvisionInstances){
-            permission = angular.copy(newPermission);
-            permission.action = 'provision';
-            $scope.team.permissions_grids.push(permission);
-        }
-        if($scope.newPermission.EditDomain){
-            permission = angular.copy(newPermission);
-            permission.action = 'edit';
-            $scope.team.permissions_grids.push(permission);
-        }
-        if($scope.newPermission.CreateDomain){
-            permission = angular.copy(newPermission);
-            permission.action = 'create';
-            $scope.team.permissions_grids.push(permission);
+        if(objectType == 'project'){
+            if($scope.newPermission.ViewInstances){
+                permission = angular.copy(newPermission);
+                permission.action = 'view';
+                $scope.team.permissions_grids.push(permission);
+            }
+            if($scope.newPermission.StartInstances){
+                permission = angular.copy(newPermission);
+                permission.action = 'start';
+                $scope.team.permissions_grids.push(permission);
+            }
+            if($scope.newPermission.StopInstances){
+                permission = angular.copy(newPermission);
+                permission.action = 'stop';
+                $scope.team.permissions_grids.push(permission);
+            }
+            if($scope.newPermission.DestroyInstances){
+                permission = angular.copy(newPermission);
+                permission.action = 'destroy';
+                $scope.team.permissions_grids.push(permission);
+            }
+            if($scope.newPermission.RunScriptInstances){
+                permission = angular.copy(newPermission);
+                permission.action = 'runScript';
+                $scope.team.permissions_grids.push(permission);
+            }
+            if($scope.newPermission.SyncInstances){
+                permission = angular.copy(newPermission);
+                permission.action = 'sync';
+                $scope.team.permissions_grids.push(permission);
+            }
+            if($scope.newPermission.ProvisionInstances){
+                permission = angular.copy(newPermission);
+                permission.action = 'provision';
+                $scope.team.permissions_grids.push(permission);
+            }
         }
 
+        if(objectType == 'domainController'){
+            if($scope.newPermission.CreateDomain){
+                permission = angular.copy(newPermission);
+                permission.action = 'create';
+                $scope.team.permissions_grids.push(permission);
+            }
+        }
         $scope.clearInfos();
     };
 

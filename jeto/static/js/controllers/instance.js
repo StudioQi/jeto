@@ -5,6 +5,17 @@ function InstanceController($scope, $routeParams, Instances, JobDetails, Machine
     $scope.updateInfos = function() {
         Instances.get({id: $routeParams.id}, function(instance) {
             $scope.instance = instance;
+            console.log(instance);
+
+            // Let's say it's disabled by default
+            $scope.canSync = false;
+            if(instance.git_reference != ''){
+                // It should be of no use to update tag, only branches
+                if(instance.git_reference.indexOf('tags/') !== 0){
+                    $scope.canSync = true;
+                }
+            }
+
             angular.forEach($scope.instance.status, function(value, key) {
                 $scope.instance.status[key].stopDisabled = false;
                 if(value.status.indexOf('running') === -1){

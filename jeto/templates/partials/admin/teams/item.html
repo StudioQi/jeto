@@ -145,6 +145,13 @@
                             </div>
                         </div>
                     </div>
+                    <div class="row" ng-show="newPermission.objectType == 'project'">
+                        <div class="col-md-12">
+                            <div class="checkbox-inline">
+                                <label><input type="checkbox" ng-model="newPermission.SyncInstances" /><span>{{ _('Sync with git') }}</span></label>
+                            </div>
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col-md-12">
                             <br />
@@ -171,6 +178,7 @@
                         <span ng-show="permission.action == 'provision'">{{ _('Provision instances') }}</span>
                         <span ng-show="permission.action == 'destroy'">{{ _('Destroy instances') }}</span>
                         <span ng-show="permission.action == 'runScript'">{{ _('Run scripts on instances') }}</span>
+                        <span ng-show="permission.action == 'sync'">{{ _('Sync instances files with git') }}</span>
 
                         <span ng-show="permission.action == 'create' && permission.objectType == 'domainController'">{{ _('Create domains') }}</span>
                         <span ng-show="permission.action == 'edit' && permission.objectType == 'domainController'">{{ _('Edit domains') }}</span>
