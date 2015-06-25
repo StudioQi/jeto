@@ -7,6 +7,7 @@ angular.module(
         'fundoo.services',
         'ui.select2',
         'ngRoute',
+        'btford.socket-io',
     ]
 )
 .config(['$routeProvider', '$locationProvider', '$interpolateProvider', '$logProvider', 

@@ -41,4 +41,12 @@ angular.module('angularFlaskServices', ['ngResource'])
     .factory('JobDetails', function($resource) {
         return $resource('/api/jobdetails/:instanceId', {instanceId:'@instanceId'});
     })
+    .factory('PrivateSocket', function(socketFactory) {
+        var privateIOSocketConnection = io.connect('/private');
+        var privateSocket = socketFactory({
+            ioSocket: privateIOSocketConnection,
+            prefix: 'private:'
+        });
+        return privateSocket;
+    })
 ;

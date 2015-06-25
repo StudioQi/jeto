@@ -7,6 +7,7 @@ from flask.ext.babel import Babel
 from flask_oauth import OAuth
 from flask.ext.login import LoginManager
 from flask.ext.principal import Principal
+from flask.ext.socketio import SocketIO
 
 handler = FileHandler('/var/log/jeto/debug.log')
 formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
@@ -21,6 +22,7 @@ db = SQLAlchemy(app)
 babel = Babel(app)
 oauth = OAuth()
 principal = Principal(app)
+socketio = SocketIO(app)
 
 google = oauth.remote_app(
     'google',

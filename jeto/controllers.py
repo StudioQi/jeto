@@ -18,7 +18,7 @@ import json
 from requests import get
 import ansiconv
 
-from jeto import app, babel, google, lm, db
+from jeto import app, babel, google, lm, db, socketio
 from jeto.core import api, redis_conn
 from jeto.services.instances import InstanceApi, InstancesApi
 from jeto.services.domains import DomainsApi, DomainControllerApi
@@ -231,6 +231,25 @@ def unauthorized_callback():
     return redirect(url_for('index'))
 
 
+@socketio.on('connect', namespace='/private')
+def test():
+    print 'connection started'
+
+    ps = redis_conn.pubsub()
+    ps.subscribe('jobsstatus')
+    for item in ps.listen():
+        print item.get('data')
+        if item.get('data', None):
+            socketio.emit(
+                'test',
+                item.get('data'),
+                namespace='/private',
+            )
+
+
+@app.route('/test/register')
+
+
 @app.route('/pubsub/<instanceId>')
 def pubsub(instanceId=None):
     jobs = None
@@ -284,6 +303,7 @@ def getJobAuthorOnLastJob(instanceId):
         details['time_started'] = timeStarted
 
     return jsonify(details)
+
 
 @app.route('/partials/landing.html')
 def partials():
