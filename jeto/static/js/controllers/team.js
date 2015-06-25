@@ -259,9 +259,19 @@ function TeamController($scope, $routeParams, Teams, Users, Hosts, Projects, Dom
         }
 
         if(objectType == 'domainController'){
+            if($scope.newPermission.ViewDomain){
+                permission = angular.copy(newPermission);
+                permission.action = 'view';
+                $scope.team.permissions_grids.push(permission);
+            }
             if($scope.newPermission.CreateDomain){
                 permission = angular.copy(newPermission);
                 permission.action = 'create';
+                $scope.team.permissions_grids.push(permission);
+            }
+            if($scope.newPermission.EditDomain){
+                permission = angular.copy(newPermission);
+                permission.action = 'edit';
                 $scope.team.permissions_grids.push(permission);
             }
         }
