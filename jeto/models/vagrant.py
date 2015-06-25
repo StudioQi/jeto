@@ -206,13 +206,17 @@ class VagrantInstance(db.Model):
                 else:
                     # !(VAGRANT_COMMA) is a real comma, but escaped by vagrant
                     result = result.replace('%!(VAGRANT_COMMA)', ',')
-                    item[-1] = item[-1] + result
+                    if len(item):
+                        item[-1] = item[-1] + result
+
 
             withoutTimestamp = []
             for item in formatted:
                 withoutTimestamp.append(item[1:])
 
             for item in withoutTimestamp:
+                app.logger.debug(item)
+                app.logger.debug(machines)
                 if item[0] not in machines:
                     machines[item[0]] = {}
 
