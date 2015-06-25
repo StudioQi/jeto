@@ -1,10 +1,10 @@
 # -=- encoding: utf-8 -=-
-from flask import request
+from flask import request, abort
 
 # from flask.ext.login import current_user
 from flask.ext.restful import fields, marshal_with
 
-from jeto import db, app
+from jeto import db
 from jeto.core import clean
 import requests as req
 import json
@@ -14,7 +14,6 @@ from jeto.models.domainController import DomainController
 from jeto.services import RestrictedResource  # , adminAuthenticate
 # from jeto.models.permission import ViewHostPermission
 from jeto.services.domains import domain_controller_fields
-
 
 
 json_headers = {'Content-Type': 'application/json',
@@ -28,16 +27,6 @@ ssl_key_fields = {
 
 
 class SSLApi(RestrictedResource):
-    """
-    TODO:
-      - model: link to domain controller
-      - marshal: SSL
-      - post:
-        - get DC
-        - if not exist: create in model
-        - call nginx-api
-    DONE:
-    """
     def _get_verify(self, dc):
         if dc is not None:
             return dc.accept_self_signed
@@ -63,14 +52,18 @@ class SSLApi(RestrictedResource):
         name = clean(query.get('name'))
         cert = clean(query.get('cert'))
         key = clean(query.get('key'))
+        check = SSL.query.filter_by(
+            domaincontroller_id=DC,
+            name=name
+            ).count()
+        if check > 0:
+            abort(400)
         new_cert = SSL()
         new_cert.name = name
         DC = DomainController.query.get(DC)
         new_cert.domain_controller = DC
         db.session.add(new_cert)
         db.session.commit()
-        # if current_user.has_permission(ViewHostPermission, host.id):
-        #     permittedHosts.append(host)
         req.post(
             DC.url + '/ssl',
             headers=json_headers,
@@ -85,13 +78,17 @@ class SSLApi(RestrictedResource):
         """delete SSL cert/key"""
         key = SSL.query.get(id)
         db.session.delete(key)
-        req.delete(
-            key.domain_controller.url + '/ssl/' + key.name,
-            headers=json_headers,
-            data=json.dumps(
-                {'name': key.name}
-            ),
-        )
+        db.session.commit()
+        try:
+            req.delete(
+                key.domain_controller.url + '/ssl/' + key.name,
+                headers=json_headers,
+                data=json.dumps(
+                    {'name': key.name}
+                ),
+            )
+        except:
+            pass
 
     def put(self, id):
         """Update (override) an SSL cert/key"""

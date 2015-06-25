@@ -22,18 +22,13 @@
           <tbody>
             <tr ng-repeat="ssl_key in ssl_keys">
               <td>
-                  <a href="/admin/SSLKeys/[[ ssl_key.id ]]">[[ ssl_key.name ]]</a>
-              </td>
-              <td>
-                [[ ssl_key.domain_controller.name ]]
-              </td>
-              <td>
-                  <div class="btn-group pull-left">
-                    <a href="/admin/SSLKeys/[[ ssl_key.id ]]">{{ _('View') }}</a>
-                  </div>
                   <div class="btn-group pull-right">
-                    <button ng-click="delete(ssl_key)" class="btn btn-danger"><span class="glyphicon glyphicon-trash" /></button>
+                      <button ng-click="delete(ssl_key)" class="btn btn-danger"><span class="glyphicon glyphicon-trash" /></button>
                   </div>
+                  [[ ssl_key.name ]]
+              </td>
+              <td>
+                  [[ ssl_key.domain_controller.name ]]
               </td>
             </tr> 
             <tr ng-show="!ssl_keys.length">

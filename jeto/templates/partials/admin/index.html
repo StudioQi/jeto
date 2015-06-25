@@ -145,13 +145,13 @@
             <thead>
               <tr>
                 <th>{{ _('Name') }}</th>
-                <th></th>
+                <th>{{ _('Domain controller') }}</th>
               </tr>
             </thead>
             <tbody>
               <tr ng-repeat="ssl_key in ssl_keys">
                   <td>[[ ssl_key.name ]]</td>
-                  <td><a href="/admin/ssl/[[ ssl_key.id ]]">{{ _('View') }}</a></td>
+                  <td>[[ ssl_key.domain_controller.name ]]</td>
               </tr>
             </tbody>
           </table>
