@@ -35,6 +35,7 @@ upstream_fields = {
     'port': fields.Integer,
     'port_ssl': fields.Integer,
     'websocket': fields.Boolean,
+    'location': fields.String,
     'state': fields.String,
 }
 
@@ -121,6 +122,7 @@ class DomainsApi(Resource):
             upstream.ip = upstreamInfo['ip']
             upstream.port = upstreamInfo['port']
             upstream.websocket = upstreamInfo['websocket'] or False
+            upstream.location = upstreamInfo['location'] or '/'
             upstream.port_ssl = upstreamInfo['port_ssl'] or None
             upstream.state = upstreamInfo['state']
             domain.upstreams.append(upstream)
@@ -208,10 +210,10 @@ class DomainsApi(Resource):
 
             app.logger.debug(
                 (
-                '{}/{}'.format(self._get_url(domain), id),
-                 self._get_headers(),
-                 json.dumps(marshal(domain, domain_fields)),
-                 self._get_verify(domain)))
+                    '{}/{}'.format(self._get_url(domain), id),
+                    self._get_headers(),
+                    json.dumps(marshal(domain, domain_fields)),
+                    self._get_verify(domain)))
             req.put(
                 '{}/{}'.format(self._get_url(domain), id),
                 headers=self._get_headers(),

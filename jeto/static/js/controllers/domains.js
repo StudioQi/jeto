@@ -31,6 +31,7 @@ function DomainsController($scope, $routeParams, Domains, $http, createDialog, H
             'port': '',
             'port_ssl': '',
             'websocket': false,
+            'location': '/',
             'state': 'up',
         };
     }
