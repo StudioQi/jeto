@@ -160,10 +160,18 @@ class VagrantInstance(db.Model):
         machines, jeto_infos, scripts = self._parse_status(results)
         machinesFormatted = []
         for machine, value in machines.iteritems():
+            app.logger.debug(value)
+            if 'state-human-short' in value:
+                val = value['state-human-short']
+            elif 'error-exit' in value:
+                val = value['error-exit'] # Vagrant is not ready yet
+            else:
+                val = 'Something went wrong'
+
             machinesFormatted.append(
                 {
                     'name': machine,
-                    'status': value['state-human-short'],
+                    'status': val,
                     # 'ip': value['ip']
                 }
             )
@@ -215,12 +223,11 @@ class VagrantInstance(db.Model):
                 withoutTimestamp.append(item[1:])
 
             for item in withoutTimestamp:
-                app.logger.debug(item)
-                app.logger.debug(machines)
                 if item[0] not in machines:
                     machines[item[0]] = {}
 
-                machines[item[0]][item[1]] = item[2]
+                if len(item) >= 3:
+                    machines[item[0]][item[1]] = item[2]
 
         return (machines, jeto_infos, scripts)
 

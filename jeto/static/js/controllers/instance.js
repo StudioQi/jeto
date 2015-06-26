@@ -3,25 +3,33 @@ function InstanceController($scope, $routeParams, Instances, JobDetails, Machine
     $scope.job = {};
     $scope.runScripts = [];
     $scope.updateInfos = function() {
-        Instances.get({id: $routeParams.id}, function(instance) {
-            $scope.instance = instance;
-            angular.forEach($scope.instance.status, function(value, key) {
-                $scope.instance.status[key].stopDisabled = false;
-                if(value.status.indexOf('running') === -1){
-                    $scope.instance.status[key].stopDisabled = true;
-                }
-                if($scope.instance.status[key].stopDisabled != false){
-                    $scope.instance.stopDisabled = true;
-                }
-            });
+        Instances.get({id: $routeParams.id},
+                      function(instance) {
+                          $scope.instance = instance;
+                          angular.forEach($scope.instance.status, function(value, key) {
+                              $scope.instance.status[key].stopDisabled = false;
+                              if(value.status.indexOf('running') === -1){
+                                  $scope.instance.status[key].stopDisabled = true;
+                              }
+                              if($scope.instance.status[key].stopDisabled != false){
+                                  $scope.instance.stopDisabled = true;
+                              }
+                          });
 
-            if($scope.source === undefined){
-                $scope.source = new EventSource('/pubsub/' + $scope.instance.id);
-                $scope.source.addEventListener('message', pubsubCallback, false);
-            }
+                          if($scope.source === undefined){
+                              $scope.source = new EventSource('/pubsub/' + $scope.instance.id);
+                              $scope.source.addEventListener('message', pubsubCallback, false);
+                          }
 
-            $('.loading').hide();
-        });
+                          $('.loading').hide();
+                      },
+                      function(error) {
+                          alert("Something failed ... try to refresh.\n"
+                                +"if you think it's a bug please report it on github\n"
+                                +"https://github.com/StudioQi/jeto/issues\n"
+                                +"Error message :\n" + error.message);
+                      }
+                     );
     };
     $scope.updateInfos();
 
