@@ -58,6 +58,7 @@ class Upstream(db.Model):
     ip = db.Column(db.String(32))
     port = db.Column(db.Integer)
     port_ssl = db.Column(db.Integer)
+    websocket = db.Column(db.Boolean, default=False)
     state = db.Column(db.Enum(*UPSTREAM_STATES))
     domain_id = db.Column(
         db.Integer,

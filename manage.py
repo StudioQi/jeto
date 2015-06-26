@@ -24,7 +24,7 @@ def add_admin():
     users = User.query.all()
     print(
         '\n'.join(
-            '{} ) {} {}'.format(idx, user.name, user.email)
+            u'{} ) {} {}'.format(idx, user.name, user.email)
             for idx, user in enumerate(users)
         )
     )
