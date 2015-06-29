@@ -164,10 +164,18 @@ class VagrantInstance(db.Model):
         machines, jeto_infos, scripts = self._parse_status(results)
         machinesFormatted = []
         for machine, value in machines.iteritems():
+            app.logger.debug(value)
+            if 'state-human-short' in value:
+                val = value['state-human-short']
+            elif 'error-exit' in value:
+                val = value['error-exit'] # Vagrant is not ready yet
+            else:
+                val = 'Something went wrong'
+
             machinesFormatted.append(
                 {
                     'name': machine,
-                    'status': value['state-human-short'],
+                    'status': val,
                     # 'ip': value['ip']
                 }
             )
@@ -210,7 +218,9 @@ class VagrantInstance(db.Model):
                 else:
                     # !(VAGRANT_COMMA) is a real comma, but escaped by vagrant
                     result = result.replace('%!(VAGRANT_COMMA)', ',')
-                    item[-1] = item[-1] + result
+                    if len(item):
+                        item[-1] = item[-1] + result
+
 
             withoutTimestamp = []
             for item in formatted:
@@ -220,7 +230,8 @@ class VagrantInstance(db.Model):
                 if item[0] not in machines:
                     machines[item[0]] = {}
 
-                machines[item[0]][item[1]] = item[2]
+                if len(item) >= 3:
+                    machines[item[0]][item[1]] = item[2]
 
         return (machines, jeto_infos, scripts)
 
