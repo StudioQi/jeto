@@ -1,0 +1,43 @@
+{% set breadcrumbs = [(_('Administration'),'/admin'),(_('SSL Key'),),] %}
+{% set titleSuffix = 'SSL Key' %}
+{% extends 'partials/admin/partialBase.html' %}
+{% block contentAdmin %}
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <button type="button" class="btn btn-default" ng-click="create()">{{ _('Add a new SSL Key') }}</button>
+        <hr />
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12 table-responsive">
+        <table class="table table-hover table-bordered">
+          <thead>
+            <th>{{ _("Name") }}</th>
+            <th>{{ _("Domain controller") }}</th>
+          </thead>
+          <tbody>
+            <tr ng-repeat="ssl_key in ssl_keys">
+              <td>
+                  <div class="btn-group pull-right">
+                      <button ng-click="delete(ssl_key)" class="btn btn-danger"><span class="glyphicon glyphicon-trash" /></button>
+                  </div>
+                  [[ ssl_key.name ]]
+              </td>
+              <td>
+                  [[ ssl_key.domain_controller.name ]]
+              </td>
+            </tr> 
+            <tr ng-show="!ssl_keys.length">
+                <td colspan="3">
+                    {{ _('No SSL Key is defined. Use the button at the top of the page') }}
+                </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock %}

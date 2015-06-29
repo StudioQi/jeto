@@ -28,6 +28,9 @@ ViewDomainNeed = partial(DomainNeed, 'view')
 CreateDomainNeed = partial(DomainNeed, 'create')
 EditDomainNeed = partial(DomainNeed, 'edit')
 
+SSLKeyNeed = namedtuple('sslkey', ['method', 'value'])
+ViewSSLKeyNeed = partial(SSLKeyNeed, 'view')
+
 
 class StartInstancePermission(Permission):
     def __init__(self, instanceId):
@@ -121,3 +124,9 @@ class CreateDomainPermission(Permission):
     def __init__(self, projectId):
         need = CreateDomainNeed(unicode(projectId))
         super(CreateDomainPermission, self).__init__(need)
+
+
+class SSLKeyPermission(Permission):
+    def __init__(self, SSLId):
+        need = ViewSSLKeyNeed(unicode(SSLId))
+        super(SSLKeyPermission, self).__init__(need)

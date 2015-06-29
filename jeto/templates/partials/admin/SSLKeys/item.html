@@ -1,0 +1,28 @@
+{% set breadcrumbs = [(_('Administration'),'/admin'),(_('SSL Keys'), '/admin/SSLKeys'), ('[[ ssl_key.name ]]',),] %}
+{% set titleSuffix = 'SSL Key - <span contenteditable ng-model="ssl_key.name"></span>' %}
+{% extends 'partials/admin/partialBase.html' %}
+
+{% block contentAdmin %}
+<h3>{{ _('SSL Key :') }} <b contenteditable ng-model="ssl_key.name">[[ ssl_key.name ]]</b></h3>
+<div class="row">
+    <div class="col-md-6">
+       <div class="panel panel-default">
+            <div class="panel-heading">
+                <span contenteditable ng-model="ssl_key.name">[[ ssl_key.name ]]</span>
+            </div>
+            <table class="table table-bordered">
+                <tr>
+                    <th>{{ _('ID') }}</th>
+                    <td>[[ ssl_key.id ]]</td>
+                </tr>
+                <tr ng-show="ssl_key.domain_controller">
+                    <th>{{ _('Domain controller') }}</th>
+                    <td><span contenteditable ng-model="ssl_key.domain_controller"></span></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
