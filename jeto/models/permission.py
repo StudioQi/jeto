@@ -15,6 +15,7 @@ ProvisionInstanceNeed = partial(InstanceNeed, 'provision')
 DestroyInstanceNeed = partial(InstanceNeed, 'destroy')
 ViewInstanceNeed = partial(InstanceNeed, 'view')
 RunScriptInstanceNeed = partial(InstanceNeed, 'runScript')
+SyncInstanceNeed = partial(InstanceNeed, 'sync')
 
 HostNeed = namedtuple('instance', ['method', 'value'])
 ViewHostNeed = partial(HostNeed, 'view')
@@ -26,6 +27,9 @@ DomainNeed = namedtuple('project', ['method', 'value'])
 ViewDomainNeed = partial(DomainNeed, 'view')
 CreateDomainNeed = partial(DomainNeed, 'create')
 EditDomainNeed = partial(DomainNeed, 'edit')
+
+SSLKeyNeed = namedtuple('sslkey', ['method', 'value'])
+ViewSSLKeyNeed = partial(SSLKeyNeed, 'view')
 
 
 class StartInstancePermission(Permission):
@@ -62,6 +66,12 @@ class RunScriptInstancePermission(Permission):
     def __init__(self, instanceId):
         need = RunScriptInstanceNeed(unicode(instanceId))
         super(RunScriptInstancePermission, self).__init__(need)
+
+
+class SyncInstancePermission(Permission):
+    def __init__(self, instanceId):
+        need = SyncInstanceNeed(unicode(instanceId))
+        super(SyncInstancePermission, self).__init__(need)
 
 
 class ViewHostPermission(Permission):
@@ -114,3 +124,9 @@ class CreateDomainPermission(Permission):
     def __init__(self, projectId):
         need = CreateDomainNeed(unicode(projectId))
         super(CreateDomainPermission, self).__init__(need)
+
+
+class SSLKeyPermission(Permission):
+    def __init__(self, SSLId):
+        need = ViewSSLKeyNeed(unicode(SSLId))
+        super(SSLKeyPermission, self).__init__(need)

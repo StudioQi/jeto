@@ -30,6 +30,10 @@ Feel free to contact us if you want a little demo around the project.
 
 ![Vagrant-Control](v0.1.0.png)
 
+###TESTS
+requires: `pip install mock`
+from the checkout run `python tests/tests_services.py`
+
 ## License
 
 [Creative Commons Attribution 3.0 Unported] [2]

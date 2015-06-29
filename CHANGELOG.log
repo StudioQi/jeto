@@ -1,3 +1,8 @@
+0.4 - June 25 2015
+---
+- Now adding the possibility to Sync an instance with the git repo, with the same reference. Only works on branch and git projects.
+- You can now set your own SSL certificate
+
 0.3.1 - March 28 2015
 ---
 - Critical issue with instance that don't have the jeto.json file. Now fixed.

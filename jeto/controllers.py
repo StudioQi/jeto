@@ -27,11 +27,13 @@ from jeto.services.projects import ProjectApi
 from jeto.services.hosts import HostApi
 from jeto.services.teams import TeamApi
 from jeto.services.users import UserApi, user_fields
+from jeto.services.ssl import SSLApi
 from jeto.models.user import User
 from jeto.models.project import Project
 from jeto.models.permission import ViewHostPermission, ViewHostNeed
 from jeto.models.permission import ProvisionInstanceNeed, DestroyInstanceNeed,\
-    ViewInstanceNeed, StartInstanceNeed, StopInstanceNeed, RunScriptInstanceNeed
+    ViewInstanceNeed, StartInstanceNeed, StopInstanceNeed,\
+    RunScriptInstanceNeed, SyncInstanceNeed
 from jeto.models.permission import CreateDomainNeed, ViewDomainNeed,\
     EditDomainNeed
 
@@ -85,10 +87,10 @@ def authorized(resp):
             ('hd' not in data or
              data['hd'] not in app.config['GOOGLE_LIMIT_DOMAIN']):
 
-        flash(_('Domain not allowed, please use an email associated with\
-              the domain : {}').format(', '.join(
-            app.config['GOOGLE_LIMIT_DOMAIN']
-            )))
+        flash(
+            _('Domain not allowed, please use an email associated with\
+              the domain : {}').format(app.config['GOOGLE_LIMIT_DOMAIN'])
+        )
 
         return redirect(url_for('index'))
 
@@ -180,6 +182,8 @@ def _set_permissions_instance(identity, instance, permission):
         identity.provides.add(ViewInstanceNeed(unicode(instance.id)))
     if permission.action == 'runScript':
         identity.provides.add(RunScriptInstanceNeed(unicode(instance.id)))
+    if permission.action == 'sync':
+        identity.provides.add(SyncInstanceNeed(unicode(instance.id)))
 
 
 def _set_permissions_domain_controller(identity, permission):
@@ -243,7 +247,9 @@ def pubsub(instanceId=None):
     )
 
     if instanceId is not None:
-        jobs = redis_conn.zrevrange('jobs:{}'.format(instanceId), 0, 0, withscores=True)
+        jobs = redis_conn.zrevrange(
+            'jobs:{}'.format(instanceId), 0, 0, withscores=True
+        )
         if jobs:
             for userId, job in jobs:
                     console = _read_console(job)
@@ -268,7 +274,9 @@ def _read_console(jobId):
 
 @app.route('/api/jobdetails/<instanceId>')
 def getJobAuthorOnLastJob(instanceId):
-    jobs = redis_conn.zrevrange('jobs:{}'.format(instanceId), 0, -1, withscores=True)
+    jobs = redis_conn.zrevrange(
+        'jobs:{}'.format(instanceId), 0, -1, withscores=True
+    )
     details = {}
     if len(jobs) > 0:
         userId, timeStarted = jobs[0]
@@ -276,7 +284,7 @@ def getJobAuthorOnLastJob(instanceId):
         timeStarted = time.ctime(float(timeStarted))
         user = User.query.get(userId)
 
-        userInfo = []
+        userInfos = []
         if user:
             userInfos = marshal(user, user_fields)
 
@@ -284,6 +292,7 @@ def getJobAuthorOnLastJob(instanceId):
         details['time_started'] = timeStarted
 
     return jsonify(details)
+
 
 @app.route('/partials/landing.html')
 def partials():
@@ -400,6 +409,9 @@ api.add_resource(TeamApi, '/api/teams/<int:id>')
 
 api.add_resource(UserApi, '/api/users', endpoint='users')
 api.add_resource(UserApi, '/api/users/<id>')
+
+api.add_resource(SSLApi, '/api/SSLKeys', endpoint='SSLKey')
+api.add_resource(SSLApi, '/api/SSLKeys/<id>')
 
 api.add_resource(DomainControllerApi,
                  '/api/domainControllers',

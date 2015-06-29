@@ -9,6 +9,10 @@ class DomainController(db.Model):
     address = db.Column(db.String(256))
     port = db.Column(db.String(4))
     accept_self_signed = db.Column(db.Boolean())
+    ssl = db.relationship(
+        'SSL',
+        backref=db.backref('domain_controller', lazy='joined'),
+    )
     domains = db.relationship(
         'Domain',
         backref=db.backref('domain_controller', lazy='joined'),
@@ -28,3 +32,7 @@ class DomainController(db.Model):
             return True
 
         return False
+
+    @property
+    def url(self):
+        return self.address + ':' + self.port
