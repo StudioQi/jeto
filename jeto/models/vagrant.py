@@ -318,6 +318,7 @@ class VagrantInstance(db.Model):
         results = self._submit_job(
             'sync',
             path=self._generatePath(),
+            git_reference=self.git_reference,
         )
         return results
 
