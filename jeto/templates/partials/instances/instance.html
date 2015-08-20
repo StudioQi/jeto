@@ -34,7 +34,7 @@
                     <th>{{ _('Host') }}</th>
                     <td>[[ instance.host.name ]] - [[ instance.host.provider ]]</td>
                 </tr>
-                <tr>
+                <tr ng-show="instance.date_commit">
                     <th>{{ _('Date of the commit') }}</th>
                     <td>[[ instance.date_commit ]]</td>
                 </tr>
