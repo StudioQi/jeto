@@ -336,6 +336,7 @@ class VagrantInstance(db.Model):
             'run_script',
             path=self._generatePath(),
             host=self.host,
+            environment=self.environment,
             machineName=machineName,
             script=script,
         )
