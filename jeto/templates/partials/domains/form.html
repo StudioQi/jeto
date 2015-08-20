@@ -41,7 +41,7 @@
                 <label for="name">{{ _('SSL key') }}</label>
                 <select name="ssl_key" id="ssl_key" ng-model="domainInfo.ssl_key" class="form-control" ui-select2>
                     <option value="">--- {{ _('None') }} ---</option>
-                    <option ng-repeat="key in ssl_keys track by key.id" value="[[ key.id ]]">[[ key.name ]]</option>
+                    <option ng-repeat="key in ssl_keys track by key.id" value="[[ key.name ]]">[[ key.name ]]</option>
                 </select>
             </div>
             <div class="form-group">
