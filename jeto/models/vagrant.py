@@ -11,6 +11,7 @@ from jeto.models.permission import ViewInstancePermission
 import time
 import slugify
 import json
+import ansiconv
 from flask import request
 from flask.ext.sqlalchemy import orm
 from flask.ext.login import current_user
@@ -160,7 +161,7 @@ class VagrantInstance(db.Model):
             environment=self.environment,
         )
 
-        machines, jeto_infos, scripts = self._parse_status(results)
+        machines, jeto_infos, scripts, date_commit = self._parse_status(results)
         machinesFormatted = []
         for machine, value in machines.iteritems():
             app.logger.debug(value)
@@ -179,10 +180,12 @@ class VagrantInstance(db.Model):
                 }
             )
 
-        return machinesFormatted, jeto_infos, scripts
+        return machinesFormatted, jeto_infos, scripts, date_commit
 
     def _parse_status(self, results):
         results = json.loads(results)
+
+        date_commit = results.get('date_commit', None)
 
         jeto_infos = results.get('jeto_infos')
         scripts = None
@@ -232,7 +235,7 @@ class VagrantInstance(db.Model):
                 if len(item) >= 3:
                     machines[item[0]][item[1]] = item[2]
 
-        return (machines, jeto_infos, scripts)
+        return (machines, jeto_infos, scripts, date_commit)
 
     def _ip(self, machineName):
         results = self._submit_job(
