@@ -141,7 +141,6 @@ class VagrantInstance(db.Model):
         return self.__unicode__()
 
     def post(self):
-        print request.json
         return self
 
     @orm.reconstructor
