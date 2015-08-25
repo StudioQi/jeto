@@ -17,10 +17,14 @@ function DomainsController($scope, $routeParams, Domains, $http, createDialog, H
 
     };
     $scope.get_keys = function() {
-        $scope.domainInfo.ssl_key = null;
         if (!$scope.domainInfo) { return;}
         var dc = $scope.domainInfo.domain_controller;
-        dc = dc ? {'domain_controller': $scope.domainInfo.domain_controller} : {};
+        if(dc){
+            dc = {'domain_controller': $scope.domainInfo.domain_controller}
+        }else{
+            dc = {};
+            $scope.domainInfo.ssl_key = null;
+        }
         SSLKeys.get(
             dc,
             function(infos) {
@@ -35,7 +39,7 @@ function DomainsController($scope, $routeParams, Domains, $http, createDialog, H
         'up', 'down', 'backup'
     ];
     $scope.update();
-    
+
     $scope.$watch('domainInfo.domain_controller', $scope.get_keys, true);
 
     $scope.resetInfosUpstream = function(){
@@ -147,6 +151,7 @@ function DomainsController($scope, $routeParams, Domains, $http, createDialog, H
             'domain_controller': domainInfo.domain_controller.id,
             'ssl_key': domainInfo.ssl_key,
         };
+
         createDialog('/partials/domains/form.html',{
            id : 'editDialog',
            title: 'Edit a domain',
