@@ -1,0 +1,24 @@
+# test using http://interactive.blockdiag.com
+blockdiag {
+  jeto  -> htpasswd-api, nginx-api, vagrant-worker;
+  htpasswd-api -> "basic HTTP auth";
+  nginx-api -> domains;
+  vagrant-worker -> git, "vagrant commands";
+  group domain-controller {
+    htpasswd-api ;
+    nginx-api
+    "basic HTTP auth";
+    domains;
+    label="domain controller";
+    color="#11ccbb";
+    shape="line";
+  };
+  group host {
+    vagrant-worker;
+    git;
+    "vagrant commands";
+    label="Host";
+    color="#f60";
+    shape="line";
+  };
+}
