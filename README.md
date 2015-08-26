@@ -9,7 +9,7 @@ Why ĵeto ? Because https://translate.google.com/?ie=UTF-8&hl=en&client=tw-ob#eo
 
 With ĵeto you add and manage (start/stop/provision) vagrant projects on the fly without connecting via SSH.
 
-![Ĵeto architecture](doc/architecture.svg)
+![Ĵeto architecture](doc/architecture.png)
 
 ###Providers
 Providers like **vagrant-vsphere**, allowing you to deploy your vagrant project into a VMWare cluster;  **pluginvagrant-aws** which deploys your project right onto Amazon AWS or any other can all be used
