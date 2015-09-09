@@ -2,6 +2,7 @@ from flask import request
 
 from flask.ext.restful import fields, marshal
 from jeto import db
+from jeto.core import clean
 from jeto.services import RestrictedResource, adminAuthenticate
 from jeto.services import project_wo_instance_fields
 from jeto.services.instances import instance_fields
@@ -45,10 +46,12 @@ class ProjectApi(RestrictedResource):
 
         if 'name' in request.json\
                 and request.json['name'] != '':
-            project.name = request.json['name']
+            project.name = clean(request.json['name'])
         if 'git_address' in request.json\
                 and request.json['git_address'] != '':
-            project.git_address = request.json['git_address']
+            project.git_address = clean(
+                request.json['git_address'].replace(' ', '')
+            )
         elif 'base_path' in request.json:
             project.base_path = request.json['base_path']
 
