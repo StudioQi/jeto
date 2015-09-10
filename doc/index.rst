@@ -15,33 +15,33 @@ You can create team, add users, projects and hosts and give specific permissions
     :maxdepth: 1
     :caption: Quickstart to Jeto
 
-    quickstart/create-new-instance
-    quickstart/create-new-domain
-    quickstart/create-new-project
+    /quickstart/create-new-instance
+    /quickstart/create-new-domain
+    /quickstart/create-new-project
 
 
 .. toctree::
     :maxdepth: 1
     :caption: Design and architecture
 
-    design-architecture/intro
-    design-architecture/jeto
-    design-architecture/vagrant-worker
-    design-architecture/nginx-api
-    design-architecture/htpasswd-api
-    design-architecture/domain-controllers
+    /design-architecture/intro
+    /design-architecture/jeto
+    /design-architecture/vagrant-worker
+    /design-architecture/nginx-api
+    /design-architecture/htpasswd-api
+    /design-architecture/domain-controllers
 
 
 .. toctree::
     :maxdepth: 1
     :caption: API
 
-    api/generate-access-token
-    api/endpoints-summary
-    api/instances
-    api/users
-    api/projects
-    api/domains
-    api/htpasswd
-    api/hosts
-    api/ssl
+    /api/generate-access-token
+    /api/endpoints-summary
+    /api/instances
+    /api/users
+    /api/projects
+    /api/domains
+    /api/htpasswd
+    /api/hosts
+    /api/ssl

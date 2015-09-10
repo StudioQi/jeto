@@ -124,7 +124,7 @@ class InstanceApi(Resource):
         return instance_json
 
     def post(self, id):
-        instance = self._getInstance(id)
+        instance = self._getInstance(id) or abort(404)
 
         changed = False
         query = request.get_json()

@@ -2,3 +2,6 @@
 
 Domains
 =======
+
+/api/domains
+------------

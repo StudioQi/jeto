@@ -1,4 +1,7 @@
 .. _api-htpasswd:
 
-htpasswd
+HTPasswd
 ========
+
+/api/htpasswd
+-------------
