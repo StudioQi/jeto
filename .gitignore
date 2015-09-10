@@ -9,3 +9,6 @@ settings_dev.py
 settings_pheromone.py
 .ropeproject
 vagrantControl/static/img/nav-logo.png
+doc/_build
+doc/_static
+doc/_templates
