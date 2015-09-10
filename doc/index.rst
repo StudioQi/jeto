@@ -1,6 +1,12 @@
 Welcome to Jeto's documentation
 ===============================
 
+
+Intro
+=====
+
+Jeto is a web UI to provide a centralized and unified access to vagrant machines.
+
 .. toctree::
     :maxdepth: 2
     :caption: Quickstart to Jeto
