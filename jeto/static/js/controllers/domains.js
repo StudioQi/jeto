@@ -128,9 +128,16 @@ function DomainsController($scope, $routeParams, Domains, $http, createDialog, H
                            }
                        });
                    }
-                   domain.$save();
+                   domain.$save(
+                       {},
+                       function(data){
+                           $scope.resetInfos();
+                       },
+                       function(error){
+                           alert('An error occurred: ' + error.toString());
+                       }
+                   );
 
-                   $scope.resetInfos();
                }
            },
            cancel: {
