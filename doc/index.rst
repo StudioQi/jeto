@@ -5,10 +5,14 @@ Welcome to Jeto's documentation
 Intro
 =====
 
-Jeto is a web UI to provide a centralized and unified access to vagrant machines.
+Jeto gives you a centralized interface to manage hundreds of vagrant machines.
+It can interact with multiple providers : Amazon, VMWare, LXC, VirtualBox. Any providers supported by Vagrant is supported by Jeto.
+
+You can create team, add users, projects and hosts and give specific permissions to every team.
+
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
     :caption: Quickstart to Jeto
 
     quickstart/create_new_instance
@@ -17,7 +21,7 @@ Jeto is a web UI to provide a centralized and unified access to vagrant machines
 
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
     :caption: Design and architecture
 
     design-architecture/intro
@@ -29,7 +33,7 @@ Jeto is a web UI to provide a centralized and unified access to vagrant machines
 
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
     :caption: API
 
     api/generate-access-token

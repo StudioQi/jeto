@@ -118,6 +118,7 @@ html_theme = 'alabaster'
 html_theme_options = {
    'github_user': 'StudioQi',
    'github_repo': 'Jeto',
+#   'sidebar_link': 'gray_1',
 }
 
 # Add any paths that contain custom themes here, relative to this directory.
