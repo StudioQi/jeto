@@ -1,4 +1,4 @@
 .. design-nginx-api:
 
-NGinx API
+Nginx API
 =========

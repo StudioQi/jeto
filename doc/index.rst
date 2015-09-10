@@ -3,7 +3,7 @@ Welcome to Jeto's documentation
 
 
 Intro
-=====
+-----
 
 Jeto gives you a centralized interface to manage hundreds of vagrant machines.
 It can interact with multiple providers : Amazon, VMWare, LXC, VirtualBox. Any providers supported by Vagrant is supported by Jeto.
@@ -15,9 +15,9 @@ You can create team, add users, projects and hosts and give specific permissions
     :maxdepth: 1
     :caption: Quickstart to Jeto
 
-    quickstart/create_new_instance
-    quickstart/create_new_domain
-    quickstart/create_new_project
+    quickstart/create-new-instance
+    quickstart/create-new-domain
+    quickstart/create-new-project
 
 
 .. toctree::
