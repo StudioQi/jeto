@@ -1,7 +1,7 @@
 # ĵeto
 
 Why ĵeto ? Because https://translate.google.com/?ie=UTF-8&hl=en&client=tw-ob#eo/en/%C4%B5eto
-
+DOC: http://jeto.readthedocs.org/en/latest/
 
 *This is currently a work in progress* 
 
