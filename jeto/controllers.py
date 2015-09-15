@@ -14,6 +14,7 @@ from flask.ext.principal import UserNeed, RoleNeed
 from rq import Queue, Connection
 import time
 import json
+import base64
 
 from requests import get
 import ansiconv
@@ -28,6 +29,7 @@ from jeto.services.hosts import HostApi
 from jeto.services.teams import TeamApi
 from jeto.services.users import UserApi, user_fields
 from jeto.services.ssl import SSLApi
+from jeto.services.api_keys import APIKeyApi
 from jeto.models.user import User
 from jeto.models.project import Project
 from jeto.models.permission import ViewHostPermission, ViewHostNeed
@@ -229,6 +231,31 @@ def load_user(id):
     return User.query.get(int(id))
 
 
+@lm.request_loader
+def api_user(request):
+    # first, try to login using the api_key url arg
+    api_key = request.args.get('api_key')
+    if api_key:
+        user = User.query.filter_by(api_key=api_key).first()
+        if user:
+            return user
+
+    # next, try to login using Basic Auth
+    api_key = request.headers.get('Authorization')
+    if api_key:
+        api_key = api_key.replace('Basic ', '', 1)
+        try:
+            api_key = base64.b64decode(api_key)
+        except TypeError:
+            pass
+        user = User.query.filter_by(api_key=api_key).first()
+        if user:
+            return user
+
+    # finally, return None if both methods did not login the user
+    return None
+
+
 @lm.unauthorized_handler
 def unauthorized_callback():
     flash(_('Please login to use this page'))
@@ -412,6 +439,9 @@ api.add_resource(UserApi, '/api/users/<id>')
 
 api.add_resource(SSLApi, '/api/SSLKeys', endpoint='SSLKey')
 api.add_resource(SSLApi, '/api/SSLKeys/<id>')
+
+api.add_resource(APIKeyApi, '/api/APIKeys', endpoint='APIKeys')
+api.add_resource(APIKeyApi, '/api/APIKeys/<id>')
 
 api.add_resource(DomainControllerApi,
                  '/api/domainControllers',
