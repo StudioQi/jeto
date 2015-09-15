@@ -34,6 +34,8 @@ upstream_fields = {
     'ip': fields.String,
     'port': fields.Integer,
     'port_ssl': fields.Integer,
+    'websocket': fields.Boolean,
+    'location': fields.String,
     'state': fields.String,
 }
 
@@ -80,6 +82,11 @@ class DomainsApi(Resource):
     def post(self):
         # Should mean we are adding a new domain
         domain = self._editDomain()
+        app.logger.debug(
+            (self._get_url(domain),
+             self._get_headers(),
+             json.dumps(marshal(domain, domain_fields)),
+             self._get_verify(domain)))
         req.post(
             self._get_url(domain),
             headers=self._get_headers(),
@@ -114,6 +121,8 @@ class DomainsApi(Resource):
             upstream = Upstream()
             upstream.ip = upstreamInfo['ip']
             upstream.port = upstreamInfo['port']
+            upstream.websocket = upstreamInfo['websocket'] or False
+            upstream.location = upstreamInfo['location'] or '/'
             upstream.port_ssl = upstreamInfo['port_ssl'] or None
             upstream.state = upstreamInfo['state']
             domain.upstreams.append(upstream)
@@ -199,6 +208,12 @@ class DomainsApi(Resource):
 
             domain = self._editDomain(id)
 
+            app.logger.debug(
+                (
+                    '{}/{}'.format(self._get_url(domain), id),
+                    self._get_headers(),
+                    json.dumps(marshal(domain, domain_fields)),
+                    self._get_verify(domain)))
             req.put(
                 '{}/{}'.format(self._get_url(domain), id),
                 headers=self._get_headers(),

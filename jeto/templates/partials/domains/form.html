@@ -68,6 +68,10 @@
                         <button class="btn btn-primary" type="button" ng-click="addUpstream()">{{ _('Add') }}</button>
                     </span>
                 </div>
+                <div class="input-group">
+                    <input type="text" class="form-control field-location" placeholder="location" ng-model="upstreamInfo.location">
+                    <input type="checkbox" class="form-control field-websocket" ng-model="upstreamInfo.websocket">
+                </div>
             </div>
         </form>
     </div>
