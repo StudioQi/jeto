@@ -7,8 +7,9 @@ from flask.ext.babel import Babel
 from flask_oauth import OAuth
 from flask.ext.login import LoginManager
 from flask.ext.principal import Principal
+from .settings import LOGS
 
-handler = FileHandler('/var/log/jeto/debug.log')
+handler = FileHandler(LOGS)
 formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 handler.setFormatter(formatter)
 

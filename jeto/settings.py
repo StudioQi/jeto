@@ -1,6 +1,7 @@
 # -=- encoding: utf-8 -=-
 
 DEBUG = True
+LOGS = '/var/log/jeto/debug.log'
 ETH = 'eth0'
 SECRET_KEY = 'waiquohzi7OpealeiquahChaipautheiy1Giefah0thaw2ieD1Hae5eereimeix8\
 quo5wimei8ohsh0lohweeng7moothah6aoshahcoo6'
