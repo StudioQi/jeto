@@ -249,9 +249,9 @@ def api_user(request):
             api_key = base64.b64decode(api_key)
         except TypeError:
             pass
-        user = User.query.filter_by(api_key=api_key).first()
-        if user:
-            return user
+        key = APIKeys.query.filter_by(name=api_key).first()
+        if key:
+            return key.user
 
     # finally, return None if both methods did not login the user
     return None
