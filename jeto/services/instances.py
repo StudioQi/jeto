@@ -111,13 +111,14 @@ class InstanceApi(Resource):
 
         jeto_infos = None
         if machineName is None:
-            instance.status, jeto_infos, scripts = instance._status()
+            instance.status, jeto_infos, scripts, date_commit = instance._status()
             # instance.jeto_infos = json.dumps(instance.jeto_infos)
         else:
             # app.logger.debug(instance._ip(machineName))
             return {'ip': instance._ip(machineName)}
 
         instance_json = marshal(instance, instance_fields)
+        instance_json['date_commit'] = date_commit
         instance_json['jeto_infos'] = jeto_infos
         instance_json['scripts'] = scripts
         return instance_json

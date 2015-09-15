@@ -9,10 +9,12 @@ Why ĵeto ? Because https://translate.google.com/?ie=UTF-8&hl=en&client=tw-ob#eo
 
 With ĵeto you add and manage (start/stop/provision) vagrant projects on the fly without connecting via SSH.
 
+![Ĵeto architecture](doc/architecture.png)
+
 ###Providers
 Providers like **vagrant-vsphere**, allowing you to deploy your vagrant project into a VMWare cluster;  **pluginvagrant-aws** which deploys your project right onto Amazon AWS or any other can all be used
 
-![Vagrant-Control](v0.1.0-list-instances.png)
+![Vagrant-Control](doc/v0.1.0-list-instances.png)
 
 ###ACL
 
@@ -28,7 +30,11 @@ from a git repository. At creation time you can choose which branch/tag you want
 
 Feel free to contact us if you want a little demo around the project.
 
-![Vagrant-Control](v0.1.0.png)
+![Vagrant-Control](doc/v0.1.0.png)
+
+###TESTS
+requires: `pip install mock`
+from the checkout run `python tests/tests_services.py`
 
 ## License
 

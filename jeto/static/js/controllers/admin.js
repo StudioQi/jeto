@@ -1,7 +1,10 @@
 /* Controllers */
 
-function AdminController($scope, Users, Teams, Projects, Hosts, DomainControllers) {
+function AdminController($scope, SSLKeys, Users, Teams, Projects, Hosts, DomainControllers) {
     $scope.update = function() {
+        SSLKeys.get({}, function(infos) {
+            $scope.ssl_keys = infos.keys;
+        });
         Users.get({}, function(infos) {
             $scope.users = infos.users;
         });

@@ -95,8 +95,14 @@ function InstancesController($scope, Instances, Projects, Hosts, $http, $locatio
                    instance.archive_url = $scope.instanceInfo.archive_url;
                    instance.state = 'create';
                    instance.async = true;
-                   instance.$save(function(data){
+                   instance.$save({}, function(data){
                        $location.path('/instances/' + data.instance.id);
+                   }, function(error){
+                       $('.loading').hide();
+                       alert("Something failed ... try to refresh.\n"
+                           +"if you think it's a bug please report it on github\n"
+                           +"https://github.com/StudioQi/jeto/issues\n"
+                           +"Error message :\n" + error.message);
                    });
                }
            },
@@ -137,10 +143,17 @@ function InstancesController($scope, Instances, Projects, Hosts, $http, $locatio
                     instanceId = $scope.deleteId;
                     $('.loading').show();
                     $http.delete('/api/instances/' + instanceId)
-                    .success(function(infos) {
-                        setTimeout($scope.updateInfos, 100);
-                        $scope.deleteId = undefined;
-                    });
+                        .success(function(){
+                            setTimeout($scope.updateInfos, 100);
+                            $scope.deleteId = undefined;
+                        })
+                        .error(function(error){
+                            $('.loading').hide();
+                            alert("Something failed ... try to refresh.\n"
+                                +"if you think it's a bug please report it on github\n"
+                                +"https://github.com/StudioQi/jeto/issues\n"
+                                +"Error message :\n" + error.message);
+                        });
                 }
             },
             cancel: {

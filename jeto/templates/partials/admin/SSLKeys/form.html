@@ -1,0 +1,30 @@
+<div class="row-fluid">
+    <form class="form">
+        <div class="col-md-12">
+           <div class="form-group">
+               <label for="name">{{ _('Name') }}</label>
+               <input type="text" name="name" id="name" ng-model="ssl_keyInfo.name" placeholder="{{ _('Name') }}" class="form-control"/>
+           </div>
+        </div>
+        <div class="col-md-12">
+           <div class="form-group">
+                <select name="domain_controller" id="domain_controller" ng-model="
+ssl_keyInfo.domain_controller" class="form-control" ui-select2>
+                    <option ng-repeat="domain_controller in domain_controllers track by domain_controller.id" value="[[ domain_controller.id ]]">[[ domain_controller.name ]]</option>
+                </select>
+           </div>
+        </div>
+        <div class="col-md-12">
+           <div class="form-group">
+               <label for="port">{{ _('Certificate') }}</label>
+               <textarea name="value" id="value" ng-model="ssl_keyInfo.cert" placeholder="" class="form-control"></textarea>
+           </div>
+        </div>
+        <div class="col-md-12">
+           <div class="form-group">
+               <label for="port">{{ _('Key') }}</label>
+               <textarea name="value" id="value" ng-model="ssl_keyInfo.key" placeholder="" class="form-control"></textarea>
+           </div>
+        </div>
+    </form>
+</div>

@@ -11,6 +11,7 @@ from jeto.models.permission import ViewInstancePermission
 import time
 import slugify
 import json
+import ansiconv
 from flask import request
 from flask.ext.sqlalchemy import orm
 from flask.ext.login import current_user
@@ -141,7 +142,6 @@ class VagrantInstance(db.Model):
         return self.__unicode__()
 
     def post(self):
-        print request.json
         return self
 
     @orm.reconstructor
@@ -161,21 +161,31 @@ class VagrantInstance(db.Model):
             environment=self.environment,
         )
 
-        machines, jeto_infos, scripts = self._parse_status(results)
+        machines, jeto_infos, scripts, date_commit = self._parse_status(results)
         machinesFormatted = []
         for machine, value in machines.iteritems():
+            app.logger.debug(value)
+            if 'state-human-short' in value:
+                val = value['state-human-short']
+            elif 'error-exit' in value:
+                val = value['error-exit'] # Vagrant is not ready yet
+            else:
+                val = 'Something went wrong'
+
             machinesFormatted.append(
                 {
                     'name': machine,
-                    'status': value['state-human-short'],
+                    'status': val,
                     # 'ip': value['ip']
                 }
             )
 
-        return machinesFormatted, jeto_infos, scripts
+        return machinesFormatted, jeto_infos, scripts, date_commit
 
     def _parse_status(self, results):
         results = json.loads(results)
+
+        date_commit = results.get('date_commit', None)
 
         jeto_infos = results.get('jeto_infos')
         scripts = None
@@ -210,7 +220,9 @@ class VagrantInstance(db.Model):
                 else:
                     # !(VAGRANT_COMMA) is a real comma, but escaped by vagrant
                     result = result.replace('%!(VAGRANT_COMMA)', ',')
-                    item[-1] = item[-1] + result
+                    if len(item):
+                        item[-1] = item[-1] + result
+
 
             withoutTimestamp = []
             for item in formatted:
@@ -220,9 +232,10 @@ class VagrantInstance(db.Model):
                 if item[0] not in machines:
                     machines[item[0]] = {}
 
-                machines[item[0]][item[1]] = item[2]
+                if len(item) >= 3:
+                    machines[item[0]][item[1]] = item[2]
 
-        return (machines, jeto_infos, scripts)
+        return (machines, jeto_infos, scripts, date_commit)
 
     def _ip(self, machineName):
         results = self._submit_job(
@@ -307,6 +320,7 @@ class VagrantInstance(db.Model):
         results = self._submit_job(
             'sync',
             path=self._generatePath(),
+            git_reference=self.git_reference,
         )
         return results
 
@@ -325,6 +339,7 @@ class VagrantInstance(db.Model):
             'run_script',
             path=self._generatePath(),
             host=self.host,
+            environment=self.environment,
             machineName=machineName,
             script=script,
         )
