@@ -35,6 +35,9 @@ angular.module('angularFlaskServices', ['ngResource'])
     .factory('Users', function($resource) {
         return $resource('/api/users/:id', {id:'@id'});
     })
+    .factory('APIKeys', function($resource) {
+        return $resource('/api/APIKeys/:userId/:id', {userId:'@userId', id:'@id'});
+    })
     .factory('SSLKeys', function($resource) {
         return $resource('/api/SSLKeys/:id', {id:'@id'});
     })

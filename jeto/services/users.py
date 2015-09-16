@@ -12,8 +12,10 @@ from jeto.services.teams import team_fields_wo_users
 
 from jeto.models.user import User, ROLE_ADMIN, ROLE_DEV
 
-key_fields = {
-    'value': fields.String,
+api_key_fields = {
+    'id': fields.Integer,
+    'comment': fields.String,
+    'name': fields.String,
 }
 
 user_fields = {
@@ -43,11 +45,10 @@ class UserApi(RestrictedResource):
         else:
             user = User.query.get(id)
             if user == current_user:
-                user.api_keys = [{'value': '1234123123'}, {'value': '9292882'}]
                 user_fields_with_keys = dict(
                     user_fields,
                     **{
-                        'api_keys': fields.Nested(key_fields)
+                        'api_keys': fields.Nested(api_key_fields)
                     }
                 )
                 return {'user': marshal(user, user_fields_with_keys)}

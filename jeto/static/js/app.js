@@ -36,7 +36,7 @@ angular.module(
             })
             .when('/users/:id/api-keys', {
                 templateUrl: '/partials/users/api-keys.html',
-                controller: UserController
+                controller: UserApiKeysController
             })
             .when('/htpassword/:slug', {
                 templateUrl: '/partials/htpassword/view.html',

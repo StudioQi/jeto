@@ -443,7 +443,8 @@ api.add_resource(SSLApi, '/api/SSLKeys', endpoint='SSLKey')
 api.add_resource(SSLApi, '/api/SSLKeys/<id>')
 
 api.add_resource(APIKeyApi, '/api/APIKeys', endpoint='APIKeys')
-api.add_resource(APIKeyApi, '/api/APIKeys/<id>')
+api.add_resource(APIKeyApi, '/api/APIKeys/<userId>', endpoint='ApiKeysUser')
+api.add_resource(APIKeyApi, '/api/APIKeys/<userId>/<int:id>')
 
 api.add_resource(DomainControllerApi,
                  '/api/domainControllers',

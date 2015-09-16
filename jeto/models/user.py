@@ -17,7 +17,7 @@ class User(db.Model):
     picture = db.Column(db.String(256))
     role = db.Column(db.String(32), default=ROLE_DEV)
     last_login = db.Column(db.DateTime)
-    api_key = db.relationship(
+    api_keys = db.relationship(
         'APIKeys',
         backref=db.backref('user', lazy='joined'),
     )

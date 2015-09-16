@@ -11,16 +11,21 @@
             </div>
             <table class="table table-bordered">
                 <tr>
-                    <th>{{ _('Key') }}</th>
-                    <th>{{ _('Delete') }}</th>
+                    <th class="col-md-11">{{ _('Name') }}</th>
+                    {# <th>{{ _('Comment') }}</th> #}
+                    <th class="col-md-1">{{ _('Delete') }}</th>
                 </tr>
-                <tr ng-repeat="key in user.api_keys">
-                    <td>[[ key.value ]]</td>
-                    <td>
+                <tr ng-repeat="key in keys">
+                    <td class="col-md-11">[[ key.name ]]</td>
+                    {# <td>[[ key.comment ]]</td> #}
+                    <td class="col-md-1">
                         <button href="#" ng-click="delete(key)" class="btn btn-danger"><span class="glyphicon glyphicon-trash" /></button>
                     </td>
                 </tr>
             </table>
+            <div class="panel-footer">
+                <button href="#" ng-click="generate()" class="btn btn-primary"><span class="glyphicon glyphicon-plus" /> {{ _('Generate a new key') }}</button>
+            </div>
         </div>
     </div>
 </div>

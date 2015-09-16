@@ -51,21 +51,25 @@ function AdminUserController($scope, $routeParams, Users) {
     $scope.update();
 }
 
-function UserController($scope, $routeParams, Users) {
-    Users.get({'id': $routeParams.id},
-        function(infos){
-            $scope.user = infos.user;
-            $scope.resource = infos;
-        }
-    );
-    $scope.delete = function(api_key){
-        angular.forEach($scope.user.api_keys, function(api_key, index){
-            console.log(api_key.value);
-            console.log(this.value);
-            if(api_key.value == this.value){
-               $scope.user.api_keys.splice(index, 1);
+function UserApiKeysController($scope, $routeParams, Users, APIKeys) {
+    $scope.refresh = function(){
+        Users.get({'id': $routeParams.id},
+            function(infos){
+                $scope.user = infos.user;
+                $scope.keys = APIKeys.query({'userId': infos.user.id});
             }
-        }, api_key);
-        $scope.resource.$save({'id': $scope.resource.user.id});
+        );
     }
+    $scope.delete = function(api_key){
+        api_key.$delete({'userId': api_key.user.id, 'id': api_key.id}, function(data){
+            $scope.refresh();
+        });
+    }
+    $scope.generate = function(){
+        key = new APIKeys();
+        key.$save({}, function(data){
+            $scope.refresh();
+        });
+    }
+    $scope.refresh();
 }
