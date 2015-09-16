@@ -4,10 +4,8 @@
 from jeto import db
 
 
-# @TODO Should be named APIKey (without the 's')
-class APIKeys(db.Model):
-    # @TODO should not have a 's' at the end as well
-    __tablename__ = 'api_keys'
+class APIKey(db.Model):
+    __tablename__ = 'api_key'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
     comment = db.Column(db.String(255))

@@ -31,7 +31,7 @@ from jeto.services.users import UserApi, user_fields
 from jeto.services.ssl import SSLApi
 from jeto.services.api_keys import APIKeyApi
 from jeto.models.user import User
-from jeto.models.api import APIKeys
+from jeto.models.api import APIKey
 from jeto.models.project import Project
 from jeto.models.permission import ViewHostPermission, ViewHostNeed
 from jeto.models.permission import ProvisionInstanceNeed, DestroyInstanceNeed,\
@@ -238,7 +238,7 @@ def api_user(request):
     # first, try to login using the api_key url arg
     api_key = request.args.get('api_key')
     if api_key:
-        key = APIKeys.query.filter_by(name=api_key).first()
+        key = APIKey.query.filter_by(name=api_key).first()
         if key:
             return key.user
 
@@ -250,7 +250,7 @@ def api_user(request):
             api_key = base64.b64decode(api_key)
         except TypeError:
             pass
-        key = APIKeys.query.filter_by(name=api_key).first()
+        key = APIKey.query.filter_by(name=api_key).first()
         if key:
             return key.user
 

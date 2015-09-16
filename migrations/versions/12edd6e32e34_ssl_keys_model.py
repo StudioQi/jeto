@@ -1,4 +1,4 @@
-"""empty message
+"""SSL keys model
 
 Revision ID: 12edd6e32e34
 Revises: 3c70b82ce4e8

@@ -316,6 +316,14 @@ class VagrantInstance(db.Model):
         )
         return results
 
+    def rsync(self):
+        results = self._submit_job(
+            'rsync',
+            path=self._generatePath(),
+            host=self.host,
+        )
+        return results
+
     def sync(self):
         results = self._submit_job(
             'sync',

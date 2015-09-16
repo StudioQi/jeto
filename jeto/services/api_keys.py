@@ -6,7 +6,7 @@ from flask_restful import fields, marshal_with
 
 from jeto import db
 
-from jeto.models.api import APIKeys
+from jeto.models.api import APIKey
 from jeto.services import RestrictedResource  # , adminAuthenticate
 from jeto.services.users import user_fields
 from uuid import uuid4
@@ -23,14 +23,14 @@ class APIKeyApi(RestrictedResource):
     def get(self, userId=None, id=None):
         """Retrieve a list of API keys"""
         if id is not None:
-            key = APIKeys.query.get(id)
+            key = APIKey.query.get(id)
             if key.user == current_user or current_user.is_admin():
                 return key
             else:
                 abort(403)
 
         if userId == current_user.id or current_user.is_admin():
-            marsh = APIKeys.query.filter(APIKeys.user_id == userId).all()
+            marsh = APIKey.query.filter(APIKey.user_id == userId).all()
             return marsh
         else:
             abort(403)
@@ -43,7 +43,7 @@ class APIKeyApi(RestrictedResource):
         # @TODO : We should not bind the user to current_user, in case the
         # key was added by an admin to a user.
         user = current_user
-        api_key = APIKeys()
+        api_key = APIKey()
 
         # @TODO : We should make sure the name was not already provided, maybe
         # we are just changing the comment on this key.
@@ -56,7 +56,7 @@ class APIKeyApi(RestrictedResource):
 
     def delete(self, userId, id):
         """delete API Key"""
-        key = APIKeys.query.get(id)
+        key = APIKey.query.get(id)
         if key.user == current_user or current_user.is_admin():
             db.session.delete(key)
             db.session.commit()

@@ -18,7 +18,7 @@ class User(db.Model):
     role = db.Column(db.String(32), default=ROLE_DEV)
     last_login = db.Column(db.DateTime)
     api_keys = db.relationship(
-        'APIKeys',
+        'APIKey',
         backref=db.backref('user', lazy='joined'),
     )
     permissions_grids = db.relationship(
