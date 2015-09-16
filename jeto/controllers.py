@@ -49,6 +49,7 @@ def index(**kwargs):
 @app.route('/domains/<id>')
 @app.route('/htpassword')
 @app.route('/htpassword/<slug>')
+@app.route('/users/<id>/api-keys')
 @login_required
 def limited(**kwargs):
     return render_template('index.html', brand_image=get_brand_image())

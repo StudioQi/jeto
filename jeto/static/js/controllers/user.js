@@ -33,7 +33,7 @@ function UsersListController($scope, $routeParams, createDialog, Users) {
     }
 }
 
-function UserController($scope, $routeParams, Users) {
+function AdminUserController($scope, $routeParams, Users) {
     $scope.update = function() {
         Users.get({id: $routeParams.id}, function(infos) {
             $scope.user = infos.user;
@@ -49,4 +49,23 @@ function UserController($scope, $routeParams, Users) {
         $scope.resource.$save({id: $scope.user.id});
     };
     $scope.update();
+}
+
+function UserController($scope, $routeParams, Users) {
+    Users.get({'id': $routeParams.id},
+        function(infos){
+            $scope.user = infos.user;
+            $scope.resource = infos;
+        }
+    );
+    $scope.delete = function(api_key){
+        angular.forEach($scope.user.api_keys, function(api_key, index){
+            console.log(api_key.value);
+            console.log(this.value);
+            if(api_key.value == this.value){
+               $scope.user.api_keys.splice(index, 1);
+            }
+        }, api_key);
+        $scope.resource.$save({'id': $scope.resource.user.id});
+    }
 }
