@@ -38,8 +38,11 @@ POST
 Run changes the state on a specific instance.
 
 Parameters posted as JSON:
+
 - state: start | stop | status | runScript | reload | rsync
+
 - machine: machine name in the instance, optional depending on the 'state'
+
 - async: true | false
 
 rsync
