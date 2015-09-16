@@ -55,15 +55,8 @@ class UserApi(RestrictedResource):
             else:
                 return {'user': marshal(user, user_fields_with_teams)}
 
-    def post(self, id=None):
-        if id == current_user.id:
-            # Currently, only api keys update are supported
-            app.logger.debug(request.json.get('user').get('api_keys'));
-        else:
-            return self.postAdmin(id)
-
     @adminAuthenticate
-    def postAdmin(self, id=None):
+    def post(self, id=None):
         if 'state' in request.json and request.json['state'] == 'create':
             user = User(
                 None,
