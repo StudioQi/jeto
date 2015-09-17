@@ -123,18 +123,15 @@ def authorized(resp):
 
 @identity_changed.connect_via(app)
 def on_identity_changed(sender, identity):
-    identity.user = current_user
-    if hasattr(current_user, 'id'):
-        identity.provides.add(UserNeed(unicode(current_user.id)))
-        identity.provides.add(RoleNeed(unicode(current_user.role)))
-        _set_permissions(current_user.get_permissions_grids(), identity)
-        if current_user.teams:
-            for team in current_user.teams:
-                _set_permissions(team.get_permissions_grids(), identity)
+    identity_permissions(sender, identity)
 
 
 @identity_loaded.connect_via(app)
 def on_identity_loaded(sender, identity):
+    identity_permissions(sender, identity)
+
+
+def identity_permissions(sender, identity):
     identity.user = current_user
     if hasattr(current_user, 'id'):
         identity.provides.add(UserNeed(unicode(current_user.id)))
@@ -247,23 +244,9 @@ def load_user(id):
 
 @lm.request_loader
 def api_user(request):
-    # first, try to login using the api_key url arg
-    api_key = request.args.get('api_key')
-    if api_key:
-        key = APIKey.query.filter_by(name=api_key).first()
-        if key:
-            identity_changed.send(current_app._get_current_object(),
-                                  identity=Identity(key.user.id))
-            return key.user
-
     # next, try to login using Basic Auth
-    api_key = request.headers.get('Authorization')
+    api_key = request.headers.get('X-JETO-KEY')
     if api_key:
-        api_key = api_key.replace('Basic ', '', 1)
-        try:
-            api_key = base64.b64decode(api_key)
-        except TypeError:
-            pass
         key = APIKey.query.filter_by(name=api_key).first()
         if key:
             identity_changed.send(current_app._get_current_object(),
