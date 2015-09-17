@@ -244,7 +244,6 @@ def load_user(id):
 
 @lm.request_loader
 def api_user(request):
-    # next, try to login using Basic Auth
     api_key = request.headers.get('X-JETO-KEY')
     if api_key:
         key = APIKey.query.filter_by(name=api_key).first()
