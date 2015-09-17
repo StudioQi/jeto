@@ -14,6 +14,7 @@ from flask.ext.principal import UserNeed, RoleNeed
 from rq import Queue, Connection
 import time
 import json
+import base64
 
 from requests import get
 import ansiconv
@@ -28,7 +29,9 @@ from jeto.services.hosts import HostApi
 from jeto.services.teams import TeamApi
 from jeto.services.users import UserApi, user_fields
 from jeto.services.ssl import SSLApi
+from jeto.services.api_keys import APIKeyApi
 from jeto.models.user import User
+from jeto.models.api import APIKey
 from jeto.models.project import Project
 from jeto.models.permission import ViewHostPermission, ViewHostNeed
 from jeto.models.permission import ProvisionInstanceNeed, DestroyInstanceNeed,\
@@ -49,6 +52,7 @@ def index(**kwargs):
 @app.route('/domains/<id>')
 @app.route('/htpassword')
 @app.route('/htpassword/<slug>')
+@app.route('/users/<id>/api-keys')
 @login_required
 def limited(**kwargs):
     return render_template('index.html', brand_image=get_brand_image())
@@ -117,8 +121,17 @@ def authorized(resp):
     return redirect(url_for('index'))
 
 
+@identity_changed.connect_via(app)
+def on_identity_changed(sender, identity):
+    identity_permissions(sender, identity)
+
+
 @identity_loaded.connect_via(app)
 def on_identity_loaded(sender, identity):
+    identity_permissions(sender, identity)
+
+
+def identity_permissions(sender, identity):
     identity.user = current_user
     if hasattr(current_user, 'id'):
         identity.provides.add(UserNeed(unicode(current_user.id)))
@@ -227,6 +240,20 @@ def get_access_token():
 @lm.user_loader
 def load_user(id):
     return User.query.get(int(id))
+
+
+@lm.request_loader
+def api_user(request):
+    api_key = request.headers.get('X-JETO-KEY')
+    if api_key:
+        key = APIKey.query.filter_by(name=api_key).first()
+        if key:
+            identity_changed.send(current_app._get_current_object(),
+                                  identity=Identity(key.user.id))
+            return key.user
+
+    # finally, return None if both methods did not login the user
+    return None
 
 
 @lm.unauthorized_handler
@@ -412,6 +439,10 @@ api.add_resource(UserApi, '/api/users/<id>')
 
 api.add_resource(SSLApi, '/api/SSLKeys', endpoint='SSLKey')
 api.add_resource(SSLApi, '/api/SSLKeys/<id>')
+
+api.add_resource(APIKeyApi, '/api/APIKeys', endpoint='APIKeys')
+api.add_resource(APIKeyApi, '/api/APIKeys/<userId>', endpoint='ApiKeysUser')
+api.add_resource(APIKeyApi, '/api/APIKeys/<userId>/<int:id>')
 
 api.add_resource(DomainControllerApi,
                  '/api/domainControllers',

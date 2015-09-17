@@ -34,6 +34,10 @@ angular.module(
                 templateUrl: '/partials/htpassword/list.html',
                 controller: HtpasswordController
             })
+            .when('/users/:id/api-keys', {
+                templateUrl: '/partials/users/api-keys.html',
+                controller: UserApiKeysController
+            })
             .when('/htpassword/:slug', {
                 templateUrl: '/partials/htpassword/view.html',
                 controller: HtpasswordListController
@@ -80,7 +84,7 @@ angular.module(
             })
             .when('/admin/users/:id', {
                 templateUrl: '/partials/admin/users/item.html',
-                controller: UserController
+                controller: AdminUserController
             })
             .when('/admin/domainControllers', {
                 templateUrl: '/partials/admin/domainController/list.html',

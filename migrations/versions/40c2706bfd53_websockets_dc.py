@@ -1,14 +1,14 @@
-"""empty message
+"""Adding websockets proxying
 
 Revision ID: 40c2706bfd53
-Revises: 2b6315172fd1
+Revises: 59194701b6e9
 Create Date: 2015-06-26 19:05:00.989278
 
 """
 
 # revision identifiers, used by Alembic.
 revision = '40c2706bfd53'
-down_revision = '2b6315172fd1'
+down_revision = '59194701b6e9'
 
 from alembic import op
 import sqlalchemy as sa

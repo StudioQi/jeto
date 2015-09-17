@@ -1,0 +1,32 @@
+{% set breadcrumbs = [(_('User'),'/'),('[[ user.name ]]',),] %}
+{% extends 'partials/partialBase.html' %}
+
+{% block content %}
+<h3>{{ _('Keys for user :') }} <b>[[ user.name ]]</b></h3>
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                [[ user.name ]]
+            </div>
+            <table class="table table-bordered">
+                <tr>
+                    <th class="col-md-11">{{ _('Name') }}</th>
+                    {# <th>{{ _('Comment') }}</th> #}
+                    <th class="col-md-1">{{ _('Delete') }}</th>
+                </tr>
+                <tr ng-repeat="key in keys">
+                    <td class="col-md-11">[[ key.name ]]</td>
+                    {# <td>[[ key.comment ]]</td> #}
+                    <td class="col-md-1">
+                        <button href="#" ng-click="delete(key)" class="btn btn-danger"><span class="glyphicon glyphicon-trash" /></button>
+                    </td>
+                </tr>
+            </table>
+            <div class="panel-footer">
+                <button href="#" ng-click="generate()" class="btn btn-primary"><span class="glyphicon glyphicon-plus" /> {{ _('Generate a new key') }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

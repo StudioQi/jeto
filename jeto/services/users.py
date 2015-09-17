@@ -3,6 +3,7 @@ from flask import request
 
 from flask.ext.restful import fields, marshal
 from flask.ext.sqlalchemy import get_debug_queries
+from flask_login import current_user
 
 from jeto import db, app
 
@@ -10,6 +11,12 @@ from jeto.services import RestrictedResource, adminAuthenticate
 from jeto.services.teams import team_fields_wo_users
 
 from jeto.models.user import User, ROLE_ADMIN, ROLE_DEV
+
+api_key_fields = {
+    'id': fields.Integer,
+    'comment': fields.String,
+    'name': fields.String,
+}
 
 user_fields = {
     'id': fields.String,
@@ -37,7 +44,16 @@ class UserApi(RestrictedResource):
             }
         else:
             user = User.query.get(id)
-            return {'user': marshal(user, user_fields_with_teams)}
+            if user == current_user:
+                user_fields_with_keys = dict(
+                    user_fields,
+                    **{
+                        'api_keys': fields.Nested(api_key_fields)
+                    }
+                )
+                return {'user': marshal(user, user_fields_with_keys)}
+            else:
+                return {'user': marshal(user, user_fields_with_teams)}
 
     @adminAuthenticate
     def post(self, id=None):

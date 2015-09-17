@@ -11,13 +11,15 @@ from jeto.services import project_wo_instance_fields
 from jeto.models.vagrant import VagrantBackend
 from jeto.models.permission import ProvisionInstancePermission,\
     StopInstancePermission, StartInstancePermission,\
-    RunScriptInstancePermission, SyncInstancePermission
+    RunScriptInstancePermission, SyncInstancePermission, \
+    RSyncInstancePermission
 
 states = {
     'stop': StopInstancePermission,
     'start': StartInstancePermission,
     'provision': ProvisionInstancePermission,
     'runScript': RunScriptInstancePermission,
+    'rsync': RSyncInstancePermission,
     'sync': SyncInstancePermission
 }
 
@@ -108,7 +110,6 @@ class InstanceApi(Resource):
 
     def get(self, id, machineName=None):
         instance = self._getInstance(id)
-
         jeto_infos = None
         if machineName is None:
             instance.status, jeto_infos, scripts, date_commit = instance._status()
@@ -145,6 +146,8 @@ class InstanceApi(Resource):
             if current_user.has_permission(permission, id):
                 if state == 'runScript':
                     instance.runScript(query.get('script'), machineName)
+                elif state == 'rsync':
+                    instance.rsync()
                 elif state == 'sync':
                     instance.sync()
                 else:

@@ -17,6 +17,10 @@ class User(db.Model):
     picture = db.Column(db.String(256))
     role = db.Column(db.String(32), default=ROLE_DEV)
     last_login = db.Column(db.DateTime)
+    api_keys = db.relationship(
+        'APIKey',
+        backref=db.backref('user', lazy='joined'),
+    )
     permissions_grids = db.relationship(
         'UserPermissionsGrids',
         backref='user',
@@ -35,7 +39,7 @@ class User(db.Model):
         self.last_login = last_login
 
     def __unicode__(self):
-        return 'User {} : {}, Role :{}'.format(
+        return u'User {} : {}, Role :{}'.format(
             self.id,
             self.name,
             self.role

@@ -33,7 +33,7 @@ function UsersListController($scope, $routeParams, createDialog, Users) {
     }
 }
 
-function UserController($scope, $routeParams, Users) {
+function AdminUserController($scope, $routeParams, Users) {
     $scope.update = function() {
         Users.get({id: $routeParams.id}, function(infos) {
             $scope.user = infos.user;
@@ -49,4 +49,27 @@ function UserController($scope, $routeParams, Users) {
         $scope.resource.$save({id: $scope.user.id});
     };
     $scope.update();
+}
+
+function UserApiKeysController($scope, $routeParams, Users, APIKeys) {
+    $scope.refresh = function(){
+        Users.get({'id': $routeParams.id},
+            function(infos){
+                $scope.user = infos.user;
+                $scope.keys = APIKeys.query({'userId': infos.user.id});
+            }
+        );
+    }
+    $scope.delete = function(api_key){
+        api_key.$delete({'userId': api_key.user.id, 'id': api_key.id}, function(data){
+            $scope.refresh();
+        });
+    }
+    $scope.generate = function(){
+        key = new APIKeys();
+        key.$save({}, function(data){
+            $scope.refresh();
+        });
+    }
+    $scope.refresh();
 }

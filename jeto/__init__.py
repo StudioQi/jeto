@@ -21,7 +21,6 @@ app.logger.addHandler(handler)
 db = SQLAlchemy(app)
 babel = Babel(app)
 oauth = OAuth()
-principal = Principal(app)
 
 google = oauth.remote_app(
     'google',
@@ -39,6 +38,7 @@ google = oauth.remote_app(
     consumer_secret=app.config['GOOGLE_CLIENT_SECRET']
 )
 
+principal = Principal(app)
 lm = LoginManager(app)
 
 import jeto.core

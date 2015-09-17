@@ -35,7 +35,33 @@ Will return a single instance if your Token has access.
 POST
 ^^^^
 
----
+Run changes the state on a specific instance.
+
+Parameters posted as JSON:
+
+- state: start | stop | status | runScript | reload | rsync
+
+- machine: machine name in the instance, optional depending on the 'state'
+
+- async: true | false
+
+rsync
+*****
+
+Run `vagrant rsync` (will fail if it is not supported by the provider)
+
+`machine` is optional.
+ex: '{"state":"rsync","machine":"www", "async":true}'
+
+runScript
+*********
+
+This will execute the `script` defined in `jeto.json`. `machine` is mandatory.
+
+ex: '{"state":"runScript","machine":"www","script":"status","async":true}'
+
+Returned objects
+----------------
 
 .. _object-instance:
 
