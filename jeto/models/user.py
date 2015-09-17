@@ -39,7 +39,7 @@ class User(db.Model):
         self.last_login = last_login
 
     def __unicode__(self):
-        return 'User {} : {}, Role :{}'.format(
+        return u'User {} : {}, Role :{}'.format(
             self.id,
             self.name,
             self.role

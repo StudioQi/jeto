@@ -240,6 +240,8 @@ def api_user(request):
     if api_key:
         key = APIKey.query.filter_by(name=api_key).first()
         if key:
+            identity_changed.send(current_app._get_current_object(),
+                                  identity=Identity(key.user.id))
             return key.user
 
     # next, try to login using Basic Auth
@@ -252,6 +254,8 @@ def api_user(request):
             pass
         key = APIKey.query.filter_by(name=api_key).first()
         if key:
+            identity_changed.send(current_app._get_current_object(),
+                                  identity=Identity(key.user.id))
             return key.user
 
     # finally, return None if both methods did not login the user
