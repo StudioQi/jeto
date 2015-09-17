@@ -110,8 +110,6 @@ class InstanceApi(Resource):
 
     def get(self, id, machineName=None):
         instance = self._getInstance(id)
-        app.logger.debug(id)
-
         jeto_infos = None
         if machineName is None:
             instance.status, jeto_infos, scripts, date_commit = instance._status()
