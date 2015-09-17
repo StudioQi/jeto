@@ -121,6 +121,18 @@ def authorized(resp):
     return redirect(url_for('index'))
 
 
+@identity_changed.connect_via(app)
+def on_identity_changed(sender, identity):
+    identity.user = current_user
+    if hasattr(current_user, 'id'):
+        identity.provides.add(UserNeed(unicode(current_user.id)))
+        identity.provides.add(RoleNeed(unicode(current_user.role)))
+        _set_permissions(current_user.get_permissions_grids(), identity)
+        if current_user.teams:
+            for team in current_user.teams:
+                _set_permissions(team.get_permissions_grids(), identity)
+
+
 @identity_loaded.connect_via(app)
 def on_identity_loaded(sender, identity):
     identity.user = current_user

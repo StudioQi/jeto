@@ -38,8 +38,8 @@ google = oauth.remote_app(
     consumer_secret=app.config['GOOGLE_CLIENT_SECRET']
 )
 
-lm = LoginManager(app)
 principal = Principal(app)
+lm = LoginManager(app)
 
 import jeto.core
 import jeto.controllers
