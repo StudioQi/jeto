@@ -7,6 +7,7 @@ from jeto.core import redis_conn, is_async
 from jeto.models.project import Project
 from jeto.models.host import Host
 from jeto.models.permission import ViewInstancePermission
+from jeto.models.auditlog import auditlog
 
 import time
 import slugify
@@ -60,9 +61,6 @@ class VagrantBackend(BackendProvider):
         return instances
 
     def create(self, request):
-        audit = AuditLog(
-            objectName=request['name'],
-            )
         if 'environment' in request:
             environment = request['environment']
         else:
@@ -93,6 +91,10 @@ class VagrantBackend(BackendProvider):
 
     def delete(self, instanceId):
         instance = VagrantInstance.query.get(instanceId)
+        auditlog(
+            current_user,
+            'delete instance',
+            instance)
         instance.delete()
 
     def provision(self, instanceId, machineName):

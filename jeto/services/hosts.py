@@ -7,6 +7,7 @@ from jeto import db
 from jeto.core import clean
 
 from jeto.models.host import Host
+from jeto.models.auditlog import auditlog
 from jeto.services import RestrictedResource, adminAuthenticate
 from jeto.models.permission import ViewHostPermission
 
@@ -49,6 +50,10 @@ class HostApi(RestrictedResource):
                 request.json['params'].replace("<br>", "\r\n"),
                 clean(request.json['provider'])
             )
+            auditlog(
+                current_user,
+                'create host',
+                host)
             db.session.add(host)
             db.session.commit()
             return {
@@ -56,6 +61,10 @@ class HostApi(RestrictedResource):
             }
         else:
             host = Host.query.get(id)
+            auditlog(
+                current_user,
+                'update host',
+                host)
             name = clean(request.json['name'].rstrip())
 
             params = request.json['params']
@@ -87,5 +96,9 @@ class HostApi(RestrictedResource):
     @adminAuthenticate
     def delete(self, id):
         host = Host.query.get(id)
+        auditlog(
+            current_user,
+            'delete host',
+            host)
         db.session.delete(host)
         db.session.commit()
