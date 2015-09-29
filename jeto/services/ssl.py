@@ -14,6 +14,8 @@ from jeto.models.domainController import DomainController
 from jeto.services import RestrictedResource  # , adminAuthenticate
 # from jeto.models.permission import ViewHostPermission
 from jeto.services.domains import domain_controller_fields
+from flask.ext.login import current_user
+from jeto.models.auditlog import auditlog
 
 
 json_headers = {'Content-Type': 'application/json',
@@ -62,6 +64,10 @@ class SSLApi(RestrictedResource):
         new_cert.name = name
         DC = DomainController.query.get(DC)
         new_cert.domain_controller = DC
+        auditlog(
+            current_user,
+            'create',
+            new_cert)
         db.session.add(new_cert)
         db.session.commit()
         req.post(
@@ -77,6 +83,10 @@ class SSLApi(RestrictedResource):
     def delete(self, id):
         """delete SSL cert/key"""
         key = SSL.query.get(id)
+        auditlog(
+            current_user,
+            'create',
+            key)
         db.session.delete(key)
         db.session.commit()
         try:

@@ -4,6 +4,7 @@ from flask import request
 from flask.ext.restful import fields, marshal
 from flask.ext.sqlalchemy import get_debug_queries
 from flask_login import current_user
+from jeto.models.auditlog import auditlog
 
 from jeto import db, app
 
@@ -62,6 +63,10 @@ class UserApi(RestrictedResource):
                 None,
                 request.json['name'],
             )
+            auditlog(
+                current_user,
+                'create',
+                user)
             db.session.add(user)
             db.session.commit()
         else:
@@ -73,6 +78,10 @@ class UserApi(RestrictedResource):
                 elif role == ROLE_DEV:
                     user.role = ROLE_DEV
 
+            auditlog(
+                current_user,
+                'update',
+                user)
             db.session.add(user)
             db.session.commit()
 
@@ -87,6 +96,10 @@ class UserApi(RestrictedResource):
     @adminAuthenticate
     def delete(self, id):
         user = User.query.get(id)
+        auditlog(
+            current_user,
+            'delete',
+            user)
         try:
             db.session.delete(user)
             db.session.commit()

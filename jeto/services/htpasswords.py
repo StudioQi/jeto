@@ -2,6 +2,8 @@ import requests as req
 from flask import request, json
 
 from flask.ext.restful import Resource, fields, marshal
+from flask.ext.login import current_user
+from jeto.models.auditlog import auditlog
 from jeto import app
 
 
@@ -36,6 +38,10 @@ class HtpasswordApi(Resource, HtpasswordService):
 
         data = json.dumps({'name': name})
         # Should mean we are adding a new user
+        auditlog(
+            current_user,
+            'create',
+            name, 'htpasswd')
         r = req.post(self._get_url(),
                      headers=self._get_headers(),
                      data=data)
@@ -45,6 +51,10 @@ class HtpasswordApi(Resource, HtpasswordService):
 
     def delete(self, slug):
         url = self._get_url() + '/{}'.format(slug)
+        auditlog(
+            current_user,
+            'delete',
+            slug, 'htpasswd')
         r = req.delete(url=url, headers=self._get_headers())
         return r.content
 
@@ -52,6 +62,12 @@ class HtpasswordApi(Resource, HtpasswordService):
         domain = request.json['domain']
         ip = request.json['ip'].strip()
         data = json.dumps({'site': domain, 'ip': ip})
+        auditlog(
+            current_user,
+            'update',
+            slug,
+            'htpasswd'
+        )
         r = req.put(self._get_url() + '/{}'.format(slug),
                     headers=self._get_headers(),
                     data=data)
@@ -66,6 +82,10 @@ class HtpasswordListApi(Resource, HtpasswordService):
         return {'item': htpassword}
 
     def delete(self, slug):
+        auditlog(
+            current_user,
+            'deleted',
+            slug, 'htpasswd')
         r = req.delete(self._get_url(slug))
         return r.content
 
@@ -74,10 +94,19 @@ class HtpasswordListApi(Resource, HtpasswordService):
         for user in users:
             if 'state' in user:
                 if user['state'] == 'DELETE':
+                    auditlog(
+                        current_user,
+                        'delete user {}'.format(
+                            user['username']),
+                        slug, 'htpasswd')
                     req.delete(self._get_url(slug) +
                                '/{}'.format(user['username']))
 
                 if user['state'] == 'CREATE':
+                    auditlog(
+                        current_user,
+                        'add user {}'.format(user['username']),
+                        slug, 'htpasswd')
                     data = json.dumps({
                         'username': user['username'],
                         'password': user['password']
