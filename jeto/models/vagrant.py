@@ -140,7 +140,7 @@ class VagrantInstance(db.Model):
     def __unicode__(self):
         return '{} : {} : {}'.format(
             self.name,
-            self.status,
+            self._status,
             self._generatePath()
         )
 

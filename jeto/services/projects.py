@@ -63,7 +63,7 @@ class ProjectApi(RestrictedResource):
             current_user,
             action,
             project,
-            request.get_json())
+            request_details=request.get_json())
         db.session.add(project)
         db.session.commit()
 
