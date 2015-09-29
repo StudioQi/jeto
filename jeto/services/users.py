@@ -66,7 +66,8 @@ class UserApi(RestrictedResource):
             auditlog(
                 current_user,
                 'create',
-                user)
+                user,
+                request_details=request.json)
             db.session.add(user)
             db.session.commit()
         else:
@@ -81,7 +82,8 @@ class UserApi(RestrictedResource):
             auditlog(
                 current_user,
                 'update',
-                user)
+                user,
+                request_details=request.json)
             db.session.add(user)
             db.session.commit()
 

@@ -21,13 +21,18 @@ class AuditLog(db.Model):
     user_name = db.Column(db.String(255))
     start_date = db.Column(db.DateTime, default=datetime.utcnow)
     end_date = db.Column(db.DateTime)
-    content = db.Column(db.Text)
     summary = db.Column(db.Text)
-    query = db.Column(db.Text)
+    request_details = db.Column(db.Text)
     result = db.Column(db.String(255))
 
 
-def auditlog(user, action, obj, object_type=None, summary=None):
+def auditlog(
+        user,
+        action,
+        obj,
+        object_type=None,
+        request_details=None,
+        summary=None):
     """ Creates an entry in the auditlog db """
     object_name = getattr(obj, 'name', str(obj))
     object_type = object_type or type(obj).__name__
@@ -42,6 +47,7 @@ def auditlog(user, action, obj, object_type=None, summary=None):
         user_name=user.name,
         objectId=getattr(obj, 'id', None),
         objectType=object_type,
+        request_details=str(request_details),
         objectName=object_name,
         summary=summary)
     db.session.add(l)

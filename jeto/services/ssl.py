@@ -67,7 +67,8 @@ class SSLApi(RestrictedResource):
         auditlog(
             current_user,
             'create',
-            new_cert)
+            new_cert,
+            request_details=request.get_json())
         db.session.add(new_cert)
         db.session.commit()
         req.post(
@@ -85,7 +86,7 @@ class SSLApi(RestrictedResource):
         key = SSL.query.get(id)
         auditlog(
             current_user,
-            'create',
+            'delete',
             key)
         db.session.delete(key)
         db.session.commit()
