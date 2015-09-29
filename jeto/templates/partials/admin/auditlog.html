@@ -1,0 +1,20 @@
+{% set breadcrumbs = [(_('Administration'),'/admin'),(_('Auditlog'),),] %}
+{% set titleSuffix = 'Audit log' %}
+{% extends 'partials/admin/partialBase.html' %}
+{% block contentAdmin %}
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <button type="button" class="btn btn-default" ng-click="get_logs()">{{ _('Refresh') }}</button>
+        <hr />
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12 table-responsive">
+          [[ auditlog ]]
+      </div>
+    </div>
+  </div>
+{% endblock %}

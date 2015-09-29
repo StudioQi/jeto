@@ -60,6 +60,9 @@ class VagrantBackend(BackendProvider):
         return instances
 
     def create(self, request):
+        audit = AuditLog(
+            objectName=request['name'],
+            )
         if 'environment' in request:
             environment = request['environment']
         else:

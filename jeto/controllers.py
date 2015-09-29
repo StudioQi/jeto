@@ -14,7 +14,6 @@ from flask.ext.principal import UserNeed, RoleNeed
 from rq import Queue, Connection
 import time
 import json
-import base64
 
 from requests import get
 import ansiconv
@@ -27,6 +26,7 @@ from jeto.services.htpasswords import HtpasswordApi, HtpasswordListApi
 from jeto.services.projects import ProjectApi
 from jeto.services.hosts import HostApi
 from jeto.services.teams import TeamApi
+from jeto.services.auditlog import AuditlogApi
 from jeto.services.users import UserApi, user_fields
 from jeto.services.ssl import SSLApi
 from jeto.services.api_keys import APIKeyApi
@@ -437,6 +437,7 @@ api.add_resource(TeamApi, '/api/teams/<int:id>')
 api.add_resource(UserApi, '/api/users', endpoint='users')
 api.add_resource(UserApi, '/api/users/<id>')
 
+api.add_resource(AuditlogApi, '/api/auditlog', endpoint='Auditlog')
 api.add_resource(SSLApi, '/api/SSLKeys', endpoint='SSLKey')
 api.add_resource(SSLApi, '/api/SSLKeys/<id>')
 

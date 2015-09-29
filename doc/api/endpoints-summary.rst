@@ -17,3 +17,4 @@ All endpoints will require your :doc:`Access Token </api/generate-access-token>`
     /api/htpasswd
     /api/hosts
     /api/ssl
+    /api/auditlog

@@ -58,6 +58,10 @@ angular.module(
                 templateUrl: '/partials/admin/teams/list.html',
                 controller: TeamsListController
             })
+            .when('/admin/auditlog', {
+                templateUrl: '/partials/admin/auditlog.html',
+                controller: AuditlogListController
+            })
             .when('/admin/teams/:id', {
                 templateUrl: '/partials/admin/teams/item.html',
                 controller: TeamController
