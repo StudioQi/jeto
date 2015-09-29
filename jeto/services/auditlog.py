@@ -3,6 +3,7 @@
 from flask.ext.restful import fields, marshal
 from jeto import db
 from jeto.models.auditlog import AuditLog
+from flask.ext.login import current_user
 from jeto.services import RestrictedResource  # , adminAuthenticate
 
 
@@ -34,6 +35,9 @@ class AuditlogApi(RestrictedResource):
             return marshal(
                 db.session.query(AuditLog).all() or {},
                 auditlog_summary_fields)
+
+        ret = (current_user.is_admin() and auditlog_details_fields or
+               auditlog_summary_fields)
         return marshal(
             db.session.query(AuditLog).get(id) or {},
-            auditlog_details_fields)
+            ret)
