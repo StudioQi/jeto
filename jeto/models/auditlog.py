@@ -14,6 +14,7 @@ class AuditLog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     jobid = db.Column(db.Integer)
     objectId = db.Column(db.Integer)
+    objectType = db.Column(db.String(255))
     objectName = db.Column(db.String(255))
     action = db.Column(db.String(255))
     user_id = db.Column(db.String(64))
@@ -41,6 +42,7 @@ def auditlog(user, action, obj, summary=None):
         user_id=user.id,
         user_name=user.name,
         objectId=obj.id,
+        objectType=type(obj).__name__,
         objectName=object_name,
         summary=summary)
     db.session.add(l)
