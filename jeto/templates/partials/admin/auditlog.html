@@ -17,10 +17,18 @@
           <tr>
             <th>{{ _('Date') }}</th>
             <th>{{ _('Summary') }}</th>
+            <th ng-show="hasObjectId">{{ _('Object id') }}</th>
+            <th ng-show="hasObjectName">{{ _('Object name') }}</th>
+            <th ng-show="hasObjectType">{{ _('Object Type') }}</th>
+            <th ng-show="hasUserName">{{ _('User name') }}</th>
           </tr>
           <tr dir-paginate="log in auditlogs | itemsPerPage: itemsPerPage" current-page="currentPage" total-items="itemsCount">
             <td>[[ log.start_date ]]</td>
             <td>[[ log.summary ]]</td>
+            <td ng-show="log.objectId !== undefined">[[ log.objectId ]]</td>
+            <td ng-show="log.objectName !== undefined">[[ log.objectName ]]</td>
+            <td ng-show="log.objectType !== undefined">[[ log.objectType ]]</td>
+            <td ng-show="log.user_name !== undefined">[[ log.user_name ]]</td>
           </tr>
         </table>
         <dir-pagination-controls boundary-links="true" on-page-change="pageChanged(newPageNumber)"></dir-pagination-controls>

@@ -6,19 +6,15 @@ from jeto.models.auditlog import AuditLog
 from flask.ext.login import current_user
 from jeto.services import RestrictedResource  # , adminAuthenticate
 
-
-json_headers = {'Content-Type': 'application/json',
-                'Accept': 'application/json'}
-
 auditlog_summary_fields = {
     'id': fields.Integer,
-    'start_date': fields.DateTime,
+    'start_date': fields.DateTime(dt_format='iso8601'),
     'summary': fields.String
 }
 
 auditlog_details_fields = {
     'id': fields.Integer,
-    'start_date': fields.DateTime,
+    'start_date': fields.DateTime(dt_format='iso8601'),
     'summary': fields.String,
     'objectId': fields.Integer,
     'objectType': fields.String,
@@ -50,11 +46,15 @@ class AuditlogApi(RestrictedResource):
             all()
 
         if current_user.is_admin():
-            data = [marshal(log, auditlog_summary_fields) for log in logs]
-        else:
             data = [marshal(log, auditlog_details_fields) for log in logs]
+        else:
+            data = [marshal(log, auditlog_summary_fields) for log in logs]
 
-        response = Response(json.dumps(data), status=200, mimetype='application/json')
+        response = Response(
+            json.dumps(data),
+            status=200,
+            mimetype='application/json'
+        )
         response.headers['count'] = AuditLog.query.count()
         response.headers['per_page'] = PER_PAGE
         response.headers['page'] = page
