@@ -45,3 +45,8 @@ You can create team, add users, projects and hosts and give specific permissions
     /api/htpasswd
     /api/hosts
     /api/ssl
+
+.. toctree::
+    :maxdepth: 1
+    :caption: Misc
+    /tips-and-tricks

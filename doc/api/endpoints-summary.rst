@@ -3,7 +3,7 @@
 Endpoints summary
 =================
 
-All endpoints will require your :doc:`Access Token </api/generate-access-token>`_ and will be limited in permissions to the user generating the token.
+All endpoints will require your `Access Token </api/generate-access-token>`_ and will be limited in permissions to the user generating the token.
 
 
 .. toctree::
@@ -17,3 +17,4 @@ All endpoints will require your :doc:`Access Token </api/generate-access-token>`
     /api/htpasswd
     /api/hosts
     /api/ssl
+    /api/auditlog

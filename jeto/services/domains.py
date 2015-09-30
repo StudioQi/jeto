@@ -11,6 +11,7 @@ from jeto.services import RestrictedResource, adminAuthenticate
 from jeto.models.domain import Domain, Upstream, Alias
 from jeto.models.domainController import DomainController
 from jeto.models.user import User
+from jeto.models.auditlog import auditlog
 
 from jeto.models.permission import ViewDomainPermission,\
     EditDomainPermission, CreateDomainPermission
@@ -100,8 +101,10 @@ class DomainsApi(Resource):
 
         if id is None:
             domain = Domain()
+            action = 'create'
         else:
             domain = Domain.query.get(id)
+            action = 'update'
             for upstream in domain.upstreams:
                 db.session.delete(upstream)
 
@@ -109,6 +112,11 @@ class DomainsApi(Resource):
                 db.session.delete(alias)
 
             db.session.commit()
+        auditlog(
+            current_user,
+            '{} domain'.format(action),
+            domain,
+            request_details=request.get_json())
 
         uri = query['uri']
         htpasswd = query.get('htpasswd')
@@ -283,6 +291,11 @@ class DomainControllerApi(RestrictedResource):
                 request.json['port'],
                 request.json['accept_self_signed']
             )
+            auditlog(
+                current_user,
+                'create domaincontroller',
+                domain_controller,
+                request_details=request.get_json())
             db.session.add(domain_controller)
             db.session.commit()
             return self.get(domain_controller.id)
@@ -291,6 +304,11 @@ class DomainControllerApi(RestrictedResource):
             name = clean(request.json['name'].rstrip())
             address = clean(request.json['address'].rstrip())
             port = clean(request.json['port'].rstrip())
+            auditlog(
+                current_user,
+                'update domaincontroller',
+                domain_controller,
+                request_details=request.get_json())
 
             if name != '':
                 domain_controller.name = name
@@ -330,5 +348,9 @@ class DomainControllerApi(RestrictedResource):
     @adminAuthenticate
     def delete(self, id):
         domain_controller = DomainController.query.get(id)
+        auditlog(
+            current_user,
+            'delete domaincontroller',
+            domain_controller)
         db.session.delete(domain_controller)
         db.session.commit()

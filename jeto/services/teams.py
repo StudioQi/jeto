@@ -9,6 +9,8 @@ from jeto.services.users import user_fields
 from jeto.models.user import User
 from jeto.models.team import Team
 from jeto.models.permission import TeamPermissionsGrids
+from flask.ext.login import current_user
+from jeto.models.auditlog import auditlog
 
 team_fields = dict(
     team_fields_wo_users,
@@ -36,6 +38,11 @@ class TeamApi(RestrictedResource):
                 None,
                 request.json['name'],
             )
+            auditlog(
+                current_user,
+                'create',
+                team,
+                request_details=request.json)
             db.session.add(team)
             db.session.commit()
             return {
@@ -58,6 +65,11 @@ class TeamApi(RestrictedResource):
     def put(self, id):
         team = Team.query.get(id)
         team = self._updatePermissions(team)
+        auditlog(
+            current_user,
+            'update',
+            team,
+            request_details=request.json)
         db.session.add(team)
         db.session.commit()
 
@@ -86,5 +98,9 @@ class TeamApi(RestrictedResource):
     @adminAuthenticate
     def delete(self, id):
         team = Team.query.get(id)
+        auditlog(
+            current_user,
+            'delete',
+            team)
         db.session.delete(team)
         db.session.commit()

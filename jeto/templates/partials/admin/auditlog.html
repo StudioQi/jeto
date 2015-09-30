@@ -1,0 +1,38 @@
+{% set breadcrumbs = [(_('Administration'),'/admin'),(_('Auditlog'),),] %}
+{% set titleSuffix = 'Audit log' %}
+{% extends 'partials/admin/partialBase.html' %}
+{% block contentAdmin %}
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <button type="button" class="btn btn-default" ng-click="get_logs()">{{ _('Refresh') }}</button>
+        <hr />
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12 table-responsive">
+        <table class="table table-bordered">
+          <tr>
+            <th>{{ _('Date') }}</th>
+            <th>{{ _('Summary') }}</th>
+            <th ng-show="hasObjectId">{{ _('Object id') }}</th>
+            <th ng-show="hasObjectName">{{ _('Object name') }}</th>
+            <th ng-show="hasObjectType">{{ _('Object Type') }}</th>
+            <th ng-show="hasUserName">{{ _('User name') }}</th>
+          </tr>
+          <tr dir-paginate="log in auditlogs | itemsPerPage: itemsPerPage" current-page="currentPage" total-items="itemsCount">
+            <td>[[ log.start_date ]]</td>
+            <td>[[ log.summary ]]</td>
+            <td ng-show="log.objectId !== undefined">[[ log.objectId ]]</td>
+            <td ng-show="log.objectName !== undefined">[[ log.objectName ]]</td>
+            <td ng-show="log.objectType !== undefined">[[ log.objectType ]]</td>
+            <td ng-show="log.user_name !== undefined">[[ log.user_name ]]</td>
+          </tr>
+        </table>
+        <dir-pagination-controls boundary-links="true" on-page-change="pageChanged(newPageNumber)"></dir-pagination-controls>
+      </div>
+    </div>
+  </div>
+{% endblock %}

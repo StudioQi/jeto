@@ -9,6 +9,8 @@ from jeto.services.instances import instance_fields
 from jeto.services.teams import team_fields
 from jeto.models.project import Project
 from jeto.models.team import Team
+from jeto.models.auditlog import auditlog
+from flask.ext.login import current_user
 
 project_fields = dict(
     project_wo_instance_fields,
@@ -40,8 +42,10 @@ class ProjectApi(RestrictedResource):
     @adminAuthenticate
     def post(self, id=None):
         if 'state' in request.json and request.json['state'] == 'create':
+            action = 'create'
             project = Project(None, request.json['name'])
         else:
+            action = 'update'
             project = Project.query.get(id)
 
         if 'name' in request.json\
@@ -55,6 +59,11 @@ class ProjectApi(RestrictedResource):
         elif 'base_path' in request.json:
             project.base_path = request.json['base_path']
 
+        auditlog(
+            current_user,
+            action,
+            project,
+            request_details=request.get_json())
         db.session.add(project)
         db.session.commit()
 
@@ -72,6 +81,10 @@ class ProjectApi(RestrictedResource):
             for permission in\
                     team.get_permissions_grids('project', project.id):
                 db.session.delete(permission)
+        auditlog(
+            current_user,
+            'delete',
+            project)
 
         db.session.delete(project)
         db.session.commit()

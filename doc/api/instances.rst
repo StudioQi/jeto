@@ -3,6 +3,32 @@
 Instances
 =========
 
+.. _object-instance:
+
+Instance Object
+---------------
+
+.. code-block:: javascript
+
+                        "archive_url": <url downloaded if configured>
+                        "environment": <instance environment>
+                        "git_reference": <project's git reference>
+                        "host": {
+                            <host where the instance is deployed>
+                        }, 
+                        "id": <instance ID>
+                        "jeto_infos": <jeto_info from jeto.json>
+                        "name": <instance name>
+                        "path": <path on the vagrant worker to get the instance from if configured>
+                        "project": {
+                            < project linked to this instance
+                        }, 
+                        "status": {
+                            "ip": null, 
+                            "name": null, 
+                            "status": null
+                        }
+
 /api/instances
 --------------
 
@@ -15,8 +41,27 @@ Will return all instances your Token has access to.
 
 **Returns** : Array of instances
 
+
 POST
 ^^^^
+
+Creates an instance.
+Returns : an instance object
+Parameters posted as JSON:
+
+.. code-block:: javascript
+
+                {
+                    "name":"<instance name>",
+                    "path":"",
+                    "environment":"<instance environment>",
+                    "project": "<project ID>",
+                    "host": "<host ID>",
+                    "gitReference":"<git reference>",
+                    "state":"create",
+                    "async": true|false}
+
+
 
 ---
 
@@ -31,6 +76,12 @@ Will return a single instance if your Token has access.
 **Parameters** : Integer
 
 **Returns** : A single Instance object with detailed status or a 404 error page.
+
+
+DELETE
+^^^^^^
+
+Delete the specified instance
 
 POST
 ^^^^

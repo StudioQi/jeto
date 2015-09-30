@@ -9,6 +9,7 @@ from jeto.services.hosts import host_fields
 from jeto.services import project_wo_instance_fields
 
 from jeto.models.vagrant import VagrantBackend
+from jeto.models.auditlog import auditlog
 from jeto.models.permission import ProvisionInstancePermission,\
     StopInstancePermission, StartInstancePermission,\
     RunScriptInstancePermission, SyncInstancePermission, \
@@ -68,6 +69,11 @@ class InstancesApi(Resource):
             instanceId = int(instanceId)
             instance = self.backend.get(instanceId)
 
+            auditlog(
+                current_user,
+                '{} instance'.format(query.get('state', 'unknown')),
+                instance,
+                request_details=request.get_json())
             if 'start' in query.get('state', ''):
                 provider = query['state'].replace('start-', '')
                 instance.start(provider)

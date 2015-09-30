@@ -7,10 +7,12 @@ angular.module(
         'fundoo.services',
         'ui.select2',
         'ngRoute',
+        'angularUtils.directives.dirPagination',
     ]
 )
-.config(['$routeProvider', '$locationProvider', '$interpolateProvider', '$logProvider', 
-    function($routeProvider, $locationProvider, $interpolateProvider, $logProvider) {
+.config(['$routeProvider', '$locationProvider', '$interpolateProvider', '$logProvider', 'paginationTemplateProvider',
+    function($routeProvider, $locationProvider, $interpolateProvider, $logProvider, paginationTemplateProvider) {
+        paginationTemplateProvider.setPath('/partials/dirPagination.html');
         $locationProvider.html5Mode(true);
         $logProvider.debugEnabled(true);
         $routeProvider
@@ -57,6 +59,10 @@ angular.module(
             .when('/admin/teams', {
                 templateUrl: '/partials/admin/teams/list.html',
                 controller: TeamsListController
+            })
+            .when('/admin/auditlog', {
+                templateUrl: '/partials/admin/auditlog.html',
+                controller: AuditlogListController
             })
             .when('/admin/teams/:id', {
                 templateUrl: '/partials/admin/teams/item.html',

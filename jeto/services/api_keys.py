@@ -7,6 +7,7 @@ from flask_restful import fields, marshal_with
 from jeto import db
 
 from jeto.models.api import APIKey
+from jeto.models.auditlog import auditlog
 from jeto.services import RestrictedResource  # , adminAuthenticate
 from jeto.services.users import user_fields
 from uuid import uuid4
@@ -50,6 +51,11 @@ class APIKeyApi(RestrictedResource):
         api_key.name = unicode(uuid4())
         api_key.user = user
         api_key.comment = comment or "Random API Key"
+        auditlog(
+            user,
+            'create api key',
+            api_key,
+            request_details=request.get_json())
         db.session.add(api_key)
         db.session.commit()
         return api_key
@@ -58,6 +64,7 @@ class APIKeyApi(RestrictedResource):
         """delete API Key"""
         key = APIKey.query.get(id)
         if key.user == current_user or current_user.is_admin():
+            auditlog(current_user, 'delete api key', key)
             db.session.delete(key)
             db.session.commit()
         else:

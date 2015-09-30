@@ -10,7 +10,7 @@ function InstanceController($scope, $routeParams, Instances, JobDetails, Machine
 
                 // Let's say it's disabled by default
                 $scope.canSync = false;
-                if(instance.git_reference != ''){
+                if(instance.git_reference != '' && instance.git_reference != null){
                     // It should be of no use to update tag, only branches
                     if(instance.git_reference.indexOf('tags/') !== 0){
                         $scope.canSync = true;
