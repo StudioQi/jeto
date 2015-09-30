@@ -438,6 +438,8 @@ api.add_resource(UserApi, '/api/users', endpoint='users')
 api.add_resource(UserApi, '/api/users/<id>')
 
 api.add_resource(AuditlogApi, '/api/auditlog', endpoint='Auditlog')
+api.add_resource(AuditlogApi, '/api/auditlog/<int:id>')
+
 api.add_resource(SSLApi, '/api/SSLKeys', endpoint='SSLKey')
 api.add_resource(SSLApi, '/api/SSLKeys/<id>')
 

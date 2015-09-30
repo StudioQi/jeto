@@ -62,7 +62,8 @@ class ProjectApi(RestrictedResource):
         auditlog(
             current_user,
             action,
-            project)
+            project,
+            request_details=request.get_json())
         db.session.add(project)
         db.session.commit()
 

@@ -94,7 +94,8 @@ class VagrantBackend(BackendProvider):
         auditlog(
             current_user,
             'delete instance',
-            instance)
+            instance,
+            request_details=request.get_json())
         instance.delete()
 
     def provision(self, instanceId, machineName):
@@ -139,7 +140,7 @@ class VagrantInstance(db.Model):
     def __unicode__(self):
         return '{} : {} : {}'.format(
             self.name,
-            self.status,
+            self._status,
             self._generatePath()
         )
 

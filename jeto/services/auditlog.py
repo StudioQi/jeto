@@ -1,48 +1,43 @@
 # -=- encoding: utf-8 -=-
 
-from flask import Response
-from flask.ext.restful import fields, marshal, request
-import json
-
-from jeto import db, app
+from flask.ext.restful import fields, marshal
+from jeto import db
 from jeto.models.auditlog import AuditLog
-from jeto.services import RestrictedResource
+from flask.ext.login import current_user
+from jeto.services import RestrictedResource  # , adminAuthenticate
 
-auditlog_fields = {
+
+json_headers = {'Content-Type': 'application/json',
+                'Accept': 'application/json'}
+
+auditlog_summary_fields = {
     'id': fields.Integer,
     'start_date': fields.DateTime,
     'summary': fields.String
 }
 
+auditlog_details_fields = {
+    'id': fields.Integer,
+    'start_date': fields.DateTime,
+    'summary': fields.String,
+    'objectId': fields.Integer,
+    'objectType': fields.String,
+    'objectName': fields.String,
+    'request_details': fields.String,
+    'user_id': fields.Integer,
+    'user_name': fields.String,
+}
+
 
 class AuditlogApi(RestrictedResource):
-    def get(self):
-        PER_PAGE = 10
-        data = request.args
+    def get(self, id=None):
+        if id is None:
+            return marshal(
+                db.session.query(AuditLog).all() or {},
+                auditlog_summary_fields)
 
-        page = data.get('page', 1)
-        limit = int(data.get('limit', PER_PAGE))
-        offset = (int(page) - 1) * limit
-        order_by = data.get('order_y', 'start_date')
-        sorted = data.get('sorted', 'desc')
-        if sorted.upper() not in ['ASC', 'DESC']:
-            sorted = 'desc'
-
-        logs = AuditLog.\
-            query.\
-            order_by('{} {}'.format(order_by, sorted)).\
-            limit(limit).\
-            offset(offset).\
-            all()
-
-        data = [marshal(log, auditlog_fields) for log in logs]
-        app.logger.debug(json.dumps(data))
-        response = Response(json.dumps(data), status=200, mimetype='application/json')
-        response.headers['count'] = AuditLog.query.count()
-        response.headers['per_page'] = PER_PAGE
-        response.headers['page'] = page
-        response.headers['limit'] = limit
-        response.headers['offset'] = offset
-        response.headers['order_by'] = order_by
-        response.headers['sorted'] = sorted
-        return response
+        ret = (current_user.is_admin() and auditlog_details_fields or
+               auditlog_summary_fields)
+        return marshal(
+            db.session.query(AuditLog).get(id) or {},
+            ret)

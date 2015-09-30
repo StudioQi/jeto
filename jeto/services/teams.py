@@ -41,7 +41,8 @@ class TeamApi(RestrictedResource):
             auditlog(
                 current_user,
                 'create',
-                team)
+                team,
+                request_details=request.json)
             db.session.add(team)
             db.session.commit()
             return {
@@ -67,7 +68,8 @@ class TeamApi(RestrictedResource):
         auditlog(
             current_user,
             'update',
-            team)
+            team,
+            request_details=request.json)
         db.session.add(team)
         db.session.commit()
 

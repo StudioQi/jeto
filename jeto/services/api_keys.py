@@ -51,7 +51,11 @@ class APIKeyApi(RestrictedResource):
         api_key.name = unicode(uuid4())
         api_key.user = user
         api_key.comment = comment or "Random API Key"
-        auditlog(user, 'create api key', api_key)
+        auditlog(
+            user,
+            'create api key',
+            api_key,
+            request_details=request.get_json())
         db.session.add(api_key)
         db.session.commit()
         return api_key

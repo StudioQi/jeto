@@ -112,7 +112,11 @@ class DomainsApi(Resource):
                 db.session.delete(alias)
 
             db.session.commit()
-        auditlog(current_user, '{} domain'.format(action), domain)
+        auditlog(
+            current_user,
+            '{} domain'.format(action),
+            domain,
+            request_details=request.get_json())
 
         uri = query['uri']
         htpasswd = query.get('htpasswd')
@@ -290,7 +294,8 @@ class DomainControllerApi(RestrictedResource):
             auditlog(
                 current_user,
                 'create domaincontroller',
-                domain_controller)
+                domain_controller,
+                request_details=request.get_json())
             db.session.add(domain_controller)
             db.session.commit()
             return self.get(domain_controller.id)
@@ -302,7 +307,8 @@ class DomainControllerApi(RestrictedResource):
             auditlog(
                 current_user,
                 'update domaincontroller',
-                domain_controller)
+                domain_controller,
+                request_details=request.get_json())
 
             if name != '':
                 domain_controller.name = name

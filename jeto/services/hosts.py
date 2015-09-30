@@ -53,7 +53,8 @@ class HostApi(RestrictedResource):
             auditlog(
                 current_user,
                 'create host',
-                host)
+                host,
+                request_details=request.get_json())
             db.session.add(host)
             db.session.commit()
             return {
@@ -64,7 +65,8 @@ class HostApi(RestrictedResource):
             auditlog(
                 current_user,
                 'update host',
-                host)
+                host,
+                request_details=request.get_json())
             name = clean(request.json['name'].rstrip())
 
             params = request.json['params']

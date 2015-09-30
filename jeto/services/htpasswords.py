@@ -41,7 +41,8 @@ class HtpasswordApi(Resource, HtpasswordService):
         auditlog(
             current_user,
             'create',
-            name, 'htpasswd')
+            name, 'htpasswd',
+            request_details=request.get_json())
         r = req.post(self._get_url(),
                      headers=self._get_headers(),
                      data=data)
@@ -66,7 +67,8 @@ class HtpasswordApi(Resource, HtpasswordService):
             current_user,
             'update',
             slug,
-            'htpasswd'
+            'htpasswd',
+            request_details=request.get_json()
         )
         r = req.put(self._get_url() + '/{}'.format(slug),
                     headers=self._get_headers(),
@@ -85,7 +87,8 @@ class HtpasswordListApi(Resource, HtpasswordService):
         auditlog(
             current_user,
             'deleted',
-            slug, 'htpasswd')
+            slug, 'htpasswd',
+        )
         r = req.delete(self._get_url(slug))
         return r.content
 
@@ -98,7 +101,8 @@ class HtpasswordListApi(Resource, HtpasswordService):
                         current_user,
                         'delete user {}'.format(
                             user['username']),
-                        slug, 'htpasswd')
+                        slug, 'htpasswd',
+                        request_details=request.get_json())
                     req.delete(self._get_url(slug) +
                                '/{}'.format(user['username']))
 
@@ -106,7 +110,8 @@ class HtpasswordListApi(Resource, HtpasswordService):
                     auditlog(
                         current_user,
                         'add user {}'.format(user['username']),
-                        slug, 'htpasswd')
+                        slug, 'htpasswd',
+                        request_details=request.get_json())
                     data = json.dumps({
                         'username': user['username'],
                         'password': user['password']

@@ -72,7 +72,8 @@ class InstancesApi(Resource):
             auditlog(
                 current_user,
                 '{} instance'.format(query.get('state', 'unknown')),
-                instance)
+                instance,
+                request_details=request.get_json())
             if 'start' in query.get('state', ''):
                 provider = query['state'].replace('start-', '')
                 instance.start(provider)
