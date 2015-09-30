@@ -13,7 +13,17 @@
 
     <div class="row">
       <div class="col-md-12 table-responsive">
-          [[ auditlog ]]
+        <table class="table table-bordered">
+          <tr>
+            <th>{{ _('Date') }}</th>
+            <th>{{ _('Summary') }}</th>
+          </tr>
+          <tr dir-paginate="log in auditlogs | itemsPerPage: itemsPerPage" current-page="currentPage" total-items="itemsCount">
+            <td>[[ log.start_date ]]</td>
+            <td>[[ log.summary ]]</td>
+          </tr>
+        </table>
+        <dir-pagination-controls boundary-links="true" on-page-change="pageChanged(newPageNumber)"></dir-pagination-controls>
       </div>
     </div>
   </div>

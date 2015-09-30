@@ -17,16 +17,16 @@ auditlog_fields = {
 
 class AuditlogApi(RestrictedResource):
     def get(self):
-        PER_PAGE = 30
+        PER_PAGE = 10
         data = request.args
 
         page = data.get('page', 1)
         limit = int(data.get('limit', PER_PAGE))
         offset = (int(page) - 1) * limit
         order_by = data.get('order_y', 'start_date')
-        sorted = data.get('sorted', 'asc')
+        sorted = data.get('sorted', 'desc')
         if sorted.upper() not in ['ASC', 'DESC']:
-            sorted = 'asc'
+            sorted = 'desc'
 
         logs = AuditLog.\
             query.\
@@ -38,6 +38,8 @@ class AuditlogApi(RestrictedResource):
         data = [marshal(log, auditlog_fields) for log in logs]
         app.logger.debug(json.dumps(data))
         response = Response(json.dumps(data), status=200, mimetype='application/json')
+        response.headers['count'] = AuditLog.query.count()
+        response.headers['per_page'] = PER_PAGE
         response.headers['page'] = page
         response.headers['limit'] = limit
         response.headers['offset'] = offset
