@@ -3,7 +3,7 @@
 Endpoints summary
 =================
 
-All endpoints will require your `Access Token </api/generate-access-token>`_ and will be limited in permissions to the user generating the token.
+All endpoints will require your `Access Token <generate-access-token.html>`_ and will be limited in permissions to the user generating the token.
 
 
 .. toctree::
