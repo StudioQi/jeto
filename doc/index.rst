@@ -18,6 +18,7 @@ You can create team, add users, projects and hosts and give specific permissions
     /quickstart/create-new-instance
     /quickstart/create-new-domain
     /quickstart/create-new-project
+    /misc/tips-and-tricks
 
 
 .. toctree::
@@ -46,8 +47,3 @@ You can create team, add users, projects and hosts and give specific permissions
     /api/hosts
     /api/ssl
     /api/auditlog
-
-.. toctree::
-    :maxdepth: 1
-    :caption: Misc
-    /misc/tips-and-tricks
