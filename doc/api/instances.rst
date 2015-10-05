@@ -3,31 +3,6 @@
 Instances
 =========
 
-.. _object-instance:
-
-Instance Object
----------------
-
-.. code-block:: javascript
-
-                        "archive_url": <url downloaded if configured>
-                        "environment": <instance environment>
-                        "git_reference": <project's git reference>
-                        "host": {
-                            <host where the instance is deployed>
-                        }, 
-                        "id": <instance ID>
-                        "jeto_infos": <jeto_info from jeto.json>
-                        "name": <instance name>
-                        "path": <path on the vagrant worker to get the instance from if configured>
-                        "project": {
-                            < project linked to this instance
-                        }, 
-                        "status": {
-                            "ip": null, 
-                            "name": null, 
-                            "status": null
-                        }
 
 /api/instances
 --------------
@@ -39,7 +14,7 @@ Will return all instances your Token has access to.
 
 **Parameters** : None
 
-**Returns** : Array of instances
+**Returns** : Array of instances `object-instance`
 
 
 POST
@@ -49,21 +24,19 @@ Creates an instance.
 Returns : an instance object
 Parameters posted as JSON:
 
-.. code-block:: javascript
 
-                {
-                    "name":"<instance name>",
-                    "path":"",
-                    "environment":"<instance environment>",
-                    "project": "<project ID>",
-                    "host": "<host ID>",
-                    "gitReference":"<git reference>",
-                    "state":"create",
-                    "async": true|false}
+====================  =======  ===========
+Field                 Type     Description
+====================  =======  ===========
+name                  string   Name to give the instance
+path or gitReference  string   path on the vagrant-worker or git reference
+environment           string   what environment to assign the instance
+host                  int      ID of the host to create the instance on
+state                 string   "create"
+async                 bool     Is it an async call ?
+====================  =======  ===========
 
 
-
----
 
 /api/instances/<id>
 -------------------
@@ -73,7 +46,7 @@ GET
 
 Will return a single instance if your Token has access.
 
-**Parameters** : Integer
+**Parameters** : Integer, instance ID
 
 **Returns** : A single Instance object with detailed status or a 404 error page.
 
@@ -90,11 +63,13 @@ Run changes the state on a specific instance.
 
 Parameters posted as JSON:
 
-- state: start | stop | status | runScript | reload | rsync
-
-- machine: machine name in the instance, optional depending on the 'state'
-
-- async: true | false
+====================  =======  ========
+Field                 Type     Values  
+====================  =======  ========
+state                 string   start,stop,status,runScript,reload,rsync
+async                 bool     true, false
+machine               string   specific machine name to run the action on
+====================  =======  ========
 
 rsync
 *****
@@ -102,14 +77,14 @@ rsync
 Run `vagrant rsync` (will fail if it is not supported by the provider)
 
 `machine` is optional.
-ex: '{"state":"rsync","machine":"www", "async":true}'
+ex: `{"state":"rsync","machine":"www", "async":true}`
 
 runScript
 *********
 
 This will execute the `script` defined in `jeto.json`. `machine` is mandatory.
 
-ex: '{"state":"runScript","machine":"www","script":"status","async":true}'
+ex: `{"state":"runScript","machine":"www","script":"status","async":true}`
 
 Returned objects
 ----------------
@@ -126,6 +101,7 @@ id             int                            The unique identifier of the insta
 name           string                         The name given to the instance when creating it.
 path           string                         The path where the instance is on the vagrant-worker system.
 archive_url    string                         The archive url given at creation time.
+project        :ref:`object-projects`         The project linked to
 git_reference  string                         Can be a branch or a tag of a git repository. Does not include the repository url.
 status         Array of :ref:`object-status`  Array of status objects (ip, name and status)
 environment    string                         The environment given at creation time.

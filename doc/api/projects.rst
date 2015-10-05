@@ -8,12 +8,14 @@ Projects
 Project object
 --------------
 
-.. code-block:: javascript
-                
-                "base_path": <path on the system>, 
-                "git_address": <git url>
-                "id": <project ID>
-                "instances": [ <list of instances related to project>]
+===========  ===============================  ===========
+Field        Type                             Description
+===========  ===============================  ===========
+base_path    string                           path on the system 
+git_address  string                           git url
+id           int                              project ID
+instances    Array of :ref:`object-instance`  list of instances related to project
+===========  ===============================  ===========
 
 /api/projects
 -------------
@@ -30,19 +32,19 @@ Creates a Projet
 
 Parameters posted as JSON:
 
-.. code-block:: javascript
-
-                {
-                    "name":"<project name>",
-                    "base_path":"",
-                    "git_address":"<git url>",
-                    "state":"create"}
-   
-
+========================  ======  ===========
+Field                     Type    Description
+========================  ======  ===========
+base_path or git_address  string  path on the system or git address
+name                      string  project name
+state                     string  "create"
+========================  ======  ===========
 
 
 /api/projects/<id>/git-references
 ---------------------------------
+
+**Parameters** : int, project ID
 
 GET
 ^^^
