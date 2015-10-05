@@ -14,7 +14,7 @@ Will return all instances your Token has access to.
 
 **Parameters** : None
 
-**Returns** : Array of instances `object-instance`
+**Returns** : Array of instances :ref:`object-instance`
 
 
 POST
@@ -101,7 +101,7 @@ id             int                            The unique identifier of the insta
 name           string                         The name given to the instance when creating it.
 path           string                         The path where the instance is on the vagrant-worker system.
 archive_url    string                         The archive url given at creation time.
-project        :ref:`object-projects`         The project linked to
+project        :ref:`object-project`         The project linked to
 git_reference  string                         Can be a branch or a tag of a git repository. Does not include the repository url.
 status         Array of :ref:`object-status`  Array of status objects (ip, name and status)
 environment    string                         The environment given at creation time.
