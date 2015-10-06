@@ -193,15 +193,20 @@ class CommandApi(InstanceApi):
         or the specified command states+output"""
         if command_id is not None:
             try:
-                job = Job.fetch(str(command_id), connection=redis_conn)
-            except:
+                # job = Job.fetch(str(command_id), connection=redis_conn)
+                job = redis_conn.hgetall('rq:job:{}'.format(command_id))
+                job.pop('data', None)
+                job.pop('description', None)
+                print(job)
+            except Exception as e:
+                print(e.message)
                 abort(400)
-            console = redis_conn.get('{}:console'.format(job.id)) or ''
-            return {
-                'id': job.id,
-                'status': job.status,
-                'console': console
-            }
+            console = redis_conn.get('{}:console'.format(command_id)) or ''
+            job.update(
+                {'id': command_id,
+                 'result': u'{}'.format(repr(job.get('result', ''))),
+                 'console': console})
+            return job
         # find redis jobs for the instance
         jobs_key = 'jobs:{}'.format(instance_id)
         jobs = redis_conn.hkeys(jobs_key)
