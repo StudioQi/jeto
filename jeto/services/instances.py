@@ -197,7 +197,6 @@ class CommandApi(InstanceApi):
                 job = redis_conn.hgetall('rq:job:{}'.format(command_id))
                 job.pop('data', None)
                 job.pop('description', None)
-                print(job)
             except Exception as e:
                 print(e.message)
                 abort(400)
@@ -228,13 +227,14 @@ class CommandApi(InstanceApi):
         if permission:
             if current_user.has_permission(permission, instance_id):
                 if action == 'runScript':
-                    job_id =  instance.runScript(query.get('script'), machineName)
+                    job_id = instance.runScript(
+                        query.get('script'), machineName)
                 elif action == 'rsync':
-                    job_id =  instance.rsync()
+                    job_id = instance.rsync()
                 elif action == 'sync':
-                    job_id =  instance.sync()
+                    job_id = instance.sync()
                 else:
-                    job_id =  getattr(self, action)(instance_id, machineName)
+                    job_id = getattr(self, action)(instance_id, machineName)
             else:
                 abort(403)
         console = redis_conn.get('{}:console'.format(job_id)) or ''
