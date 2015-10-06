@@ -56,18 +56,24 @@ DELETE
 
 Delete the specified instance
 
+/api/instances/<id>/commands
+-------------------
+
+GET
+^^^
+returns a list of command IDs ordered from recent to old.
+
 POST
 ^^^^
 
-Run changes the state on a specific instance.
+Run the actions on the specific instance.
 
 Parameters posted as JSON:
 
 ====================  =======  ========
 Field                 Type     Values  
 ====================  =======  ========
-state                 string   start,stop,status,runScript,reload,rsync
-async                 bool     true, false
+action                 string   start,stop,status,runScript,reload,rsync
 machine               string   specific machine name to run the action on
 ====================  =======  ========
 
@@ -77,14 +83,21 @@ rsync
 Run `vagrant rsync` (will fail if it is not supported by the provider)
 
 `machine` is optional.
-ex: `{"state":"rsync","machine":"www", "async":true}`
+ex: `{"action":"rsync","machine":"www"}`
 
 runScript
 *********
 
 This will execute the `script` defined in `jeto.json`. `machine` is mandatory.
 
-ex: `{"state":"runScript","machine":"www","script":"status","async":true}`
+ex: `{"action":"runScript","machine":"www","script":"status"}`
+
+/api/instances/<id>/commands/<command id>
+-----------------------------------------
+
+GET
+^^^
+returns the state of the command
 
 Returned objects
 ----------------
