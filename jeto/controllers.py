@@ -437,7 +437,8 @@ api.add_resource(InstanceApi, '/api/instances/<int:id>/<machineName>/ip',
 
 api.add_resource(CommandApi, '/api/instances/<int:instance_id>/command',
                  endpoint='commands')
-api.add_resource(CommandApi, '/api/instances/<int:instance_id>/command/<command_id>',
+api.add_resource(CommandApi,
+                 '/api/instances/<int:instance_id>/command/<command_id>',
                  endpoint='command_details')
 
 api.add_resource(DomainsApi, '/api/domains', endpoint='domains')

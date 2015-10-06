@@ -164,20 +164,20 @@ class InstanceApi(Resource):
                 abort(403)
 
     def provision(self, id, machineName):
-        self.backend.provision(id, machineName)
+        return self.backend.provision(id, machineName)
 
     def stop(self, id, machineName):
-        self.backend.stop(id, machineName)
+        return self.backend.stop(id, machineName)
 
     def start(self, id, machineName):
-        self.backend.start(id, machineName)
+        return self.backend.start(id, machineName)
 
     def sync(self, id):
-        self.backend.sync(id)
+        return self.backend.sync(id)
 
     def delete(self, id):
         instanceId = int(id)
-        self.backend.delete(instanceId)
+        return self.backend.delete(instanceId)
 
     def _getInstance(self, id):
         instances = self.backend.get_all_instances()
@@ -197,6 +197,30 @@ class CommandApi(InstanceApi):
         # find redis jobs for the instance
         jobs_key = 'jobs:{}'.format(instance_id)
         jobs = redis_conn.hkeys(jobs_key)
-        ## sort by jobid/time most recent first
+        # sort by jobid/time most recent first
         jobs.sort(reverse=True)
         return jobs
+
+    def post(self, instance_id):
+        instance = self._getInstance(instance_id) or abort(404)
+
+        query = request.get_json()
+        # force async
+        request.json['async'] = True
+
+        machineName = query.get('machine', "")
+
+        action = query.get('action')
+        permission = states.get(action)
+        if permission:
+            if current_user.has_permission(permission, instance_id):
+                if action == 'runScript':
+                    return instance.runScript(query.get('script'), machineName)
+                elif action == 'rsync':
+                    return instance.rsync()
+                elif action == 'sync':
+                    return instance.sync()
+                else:
+                    return getattr(self, action)(instance_id, machineName)
+            else:
+                abort(403)
