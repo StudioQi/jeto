@@ -192,8 +192,16 @@ class CommandApi(InstanceApi):
         """Get a list of commands in queue for the instance
         or the specified command states+output"""
         if command_id is not None:
-            job = Job.fetch(str(command_id), connection=redis_conn)
-            return job.status
+            try:
+                job = Job.fetch(str(command_id), connection=redis_conn)
+            except:
+                abort(400)
+            console = redis_conn.get('{}:console'.format(job.id)) or ''
+            return {
+                'id': job.id,
+                'status': job.status,
+                'console': console
+            }
         # find redis jobs for the instance
         jobs_key = 'jobs:{}'.format(instance_id)
         jobs = redis_conn.hkeys(jobs_key)
@@ -215,12 +223,17 @@ class CommandApi(InstanceApi):
         if permission:
             if current_user.has_permission(permission, instance_id):
                 if action == 'runScript':
-                    return instance.runScript(query.get('script'), machineName)
+                    job_id =  instance.runScript(query.get('script'), machineName)
                 elif action == 'rsync':
-                    return instance.rsync()
+                    job_id =  instance.rsync()
                 elif action == 'sync':
-                    return instance.sync()
+                    job_id =  instance.sync()
                 else:
-                    return getattr(self, action)(instance_id, machineName)
+                    job_id =  getattr(self, action)(instance_id, machineName)
             else:
                 abort(403)
+        console = redis_conn.get('{}:console'.format(job_id)) or ''
+        return {
+            'id': job_id,
+            'console': console
+        }
