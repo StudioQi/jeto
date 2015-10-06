@@ -4,6 +4,8 @@ from flask.ext.restful import Resource, fields, marshal
 from flask.ext.login import current_user
 
 from jeto import app
+from rq.job import Job
+from jeto.core import redis_conn
 
 from jeto.services.hosts import host_fields
 from jeto.services import project_wo_instance_fields
@@ -182,3 +184,19 @@ class InstanceApi(Resource):
         for instance in instances:
             if instance.id == id:
                 return instance
+
+
+class CommandApi(InstanceApi):
+    """sends commands to instances"""
+    def get(self, instance_id, command_id=None):
+        """Get a list of commands in queue for the instance
+        or the specified command states+output"""
+        if command_id is not None:
+            job = Job.fetch(str(command_id), connection=redis_conn)
+            return job.status
+        # find redis jobs for the instance
+        jobs_key = 'jobs:{}'.format(instance_id)
+        jobs = redis_conn.hkeys(jobs_key)
+        ## sort by jobid/time most recent first
+        jobs.sort(reverse=True)
+        return jobs
