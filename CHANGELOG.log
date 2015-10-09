@@ -1,3 +1,17 @@
+0.5 - October 09 2015
+---
+- API cleanup and documentation
+- We can now generate and use API keys
+- Every action is now loggued
+- Display commit date in instances view
+- We can setup websocket proxies
+- Showing more errors
+- fix: Git sync option should force the pull/checkout 
+- fix: Infinite load of a instance page
+- fix: scripts do not receive an environment 
+- fix: delete folders when we delete an instance
+- fix: issue saving domains
+
 0.4 - June 25 2015
 ---
 - Now adding the possibility to Sync an instance with the git repo, with the same reference. Only works on branch and git projects.
