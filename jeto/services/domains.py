@@ -171,6 +171,11 @@ class DomainsApi(Resource):
 
     def delete(self, id):
         domain = Domain.query.get(id)
+        auditlog(
+            current_user,
+            '{} domain'.format(action),
+            domain,
+            request_details=request.get_json())
         db.session.delete(domain)
         db.session.commit()
         url = self._get_url(domain) + '/{}'.format(id)
