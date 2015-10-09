@@ -112,12 +112,6 @@ class DomainsApi(Resource):
                 db.session.delete(alias)
 
             db.session.commit()
-        auditlog(
-            current_user,
-            '{} domain'.format(action),
-            domain,
-            request_details=request.get_json())
-
         uri = query['uri']
         htpasswd = query.get('htpasswd')
         ssl_key = query.get('ssl_key')
@@ -164,6 +158,12 @@ class DomainsApi(Resource):
                 getattr(domain.domain_controller, 'id')
             ) is False:
                 return abort(403)
+
+        auditlog(
+            current_user,
+            '{} domain'.format(action),
+            domain,
+            request_details=request.get_json())
 
         db.session.add(domain)
         db.session.commit()

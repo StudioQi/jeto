@@ -39,9 +39,17 @@ class Domain(db.Model):
 
         return False
 
+    @property
+    def name(self):
+        return self.uri
+
     def __str__(self):
         return 'Domain {}: {} with controller : {}'\
-            .format(self.id, self.uri, self.domain_controller.id)
+            .format(
+                getattr(
+                    self, 'id', None),
+                self.uri,
+                getattr(self.domain_controller, 'id', None))
 
 
 class Alias(db.Model):
