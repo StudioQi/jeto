@@ -18,6 +18,7 @@ You can create team, add users, projects and hosts and give specific permissions
     /quickstart/create-new-instance
     /quickstart/create-new-domain
     /quickstart/create-new-project
+    /quickstart/upgrading
     /misc/tips-and-tricks
 
 
