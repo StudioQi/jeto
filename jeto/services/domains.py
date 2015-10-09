@@ -173,7 +173,7 @@ class DomainsApi(Resource):
         domain = Domain.query.get(id)
         auditlog(
             current_user,
-            '{} domain'.format(action),
+            'delete domain',
             domain,
             request_details=request.get_json())
         db.session.delete(domain)
