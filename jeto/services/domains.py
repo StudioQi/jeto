@@ -176,13 +176,14 @@ class DomainsApi(Resource):
             'delete domain',
             domain,
             request_details=request.get_json())
+        url = self._get_url(domain) + '/{}'.format(id)
+        verify = self._get_verify(domain)
         db.session.delete(domain)
         db.session.commit()
-        url = self._get_url(domain) + '/{}'.format(id)
         req.delete(
             url=url,
             headers=self._get_headers(),
-            verify=self._get_verify(domain)
+            verify=verify
         )
         return self.get()
 
