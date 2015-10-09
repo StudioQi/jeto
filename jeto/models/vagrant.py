@@ -370,14 +370,15 @@ class VagrantInstance(db.Model):
                 kwargs=kwargs,
             )
             if action != 'worker.status':
-                redis_conn.zadd(
+                redis_conn.hmset(
                     'jobs:{}'.format(self.id),
-                    str(current_user.id),
-                    job.id,
+                    {job.id: str(current_user.id)}
                 )
 
             if is_async() is False:
                 while job.result is None:
                     time.sleep(0.5)
+            else:
+                return job.id
 
         return job.result

@@ -4,6 +4,8 @@ from flask.ext.restful import Resource, fields, marshal
 from flask.ext.login import current_user
 
 from jeto import app
+from rq.job import Job
+from jeto.core import redis_conn
 
 from jeto.services.hosts import host_fields
 from jeto.services import project_wo_instance_fields
@@ -162,23 +164,81 @@ class InstanceApi(Resource):
                 abort(403)
 
     def provision(self, id, machineName):
-        self.backend.provision(id, machineName)
+        return self.backend.provision(id, machineName)
 
     def stop(self, id, machineName):
-        self.backend.stop(id, machineName)
+        return self.backend.stop(id, machineName)
 
     def start(self, id, machineName):
-        self.backend.start(id, machineName)
+        return self.backend.start(id, machineName)
 
     def sync(self, id):
-        self.backend.sync(id)
+        return self.backend.sync(id)
 
     def delete(self, id):
         instanceId = int(id)
-        self.backend.delete(instanceId)
+        return self.backend.delete(instanceId)
 
     def _getInstance(self, id):
         instances = self.backend.get_all_instances()
         for instance in instances:
             if instance.id == id:
                 return instance
+
+
+class CommandApi(InstanceApi):
+    """sends commands to instances"""
+    def get(self, instance_id, command_id=None):
+        """Get a list of commands in queue for the instance
+        or the specified command states+output"""
+        if command_id is not None:
+            try:
+                # job = Job.fetch(str(command_id), connection=redis_conn)
+                job = redis_conn.hgetall('rq:job:{}'.format(command_id))
+                job.pop('data', None)
+                job.pop('description', None)
+            except Exception as e:
+                print(e.message)
+                abort(400)
+            console = redis_conn.get('{}:console'.format(command_id)) or ''
+            job.update(
+                {'id': command_id,
+                 'result': u'{}'.format(repr(job.get('result', ''))),
+                 'console': console})
+            return job
+        # find redis jobs for the instance
+        jobs_key = 'jobs:{}'.format(instance_id)
+        jobs = redis_conn.hkeys(jobs_key)
+        # sort by jobid/time most recent first
+        jobs.sort(reverse=True)
+        return jobs
+
+    def post(self, instance_id):
+        instance = self._getInstance(instance_id) or abort(404)
+
+        query = request.get_json()
+        # force async
+        request.json['async'] = True
+
+        machineName = query.get('machine', "")
+
+        action = query.get('action')
+        permission = states.get(action)
+        if permission:
+            if current_user.has_permission(permission, instance_id):
+                if action == 'runScript':
+                    job_id = instance.runScript(
+                        query.get('script'), machineName)
+                elif action == 'rsync':
+                    job_id = instance.rsync()
+                elif action == 'sync':
+                    job_id = instance.sync()
+                else:
+                    job_id = getattr(self, action)(instance_id, machineName)
+            else:
+                abort(403)
+        console = redis_conn.get('{}:console'.format(job_id)) or ''
+        return {
+            'id': job_id,
+            'console': console
+        }

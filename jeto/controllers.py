@@ -20,7 +20,7 @@ import ansiconv
 
 from jeto import app, babel, google, lm, db
 from jeto.core import api, redis_conn
-from jeto.services.instances import InstanceApi, InstancesApi
+from jeto.services.instances import InstanceApi, InstancesApi, CommandApi
 from jeto.services.domains import DomainsApi, DomainControllerApi
 from jeto.services.htpasswords import HtpasswordApi, HtpasswordListApi
 from jeto.services.projects import ProjectApi
@@ -267,26 +267,34 @@ def pubsub(instanceId=None):
     jobs = None
     output = ''
     # We keep all jobs for 10 hours
-    redis_conn.zremrangebyscore(
-        'jobs:{}'.format(instanceId),
-        0,
-        time.time() - 36000
-    )
+    # get all jobs for an instance
+    jobs_key = 'jobs:{}'.format(instanceId)
+    jobs = redis_conn.hkeys(jobs_key)
+    # sort by jobid/time most recent first
+    jobs.sort(reverse=True)
+    # filter older jobs
+    old_jobs = filter(
+        lambda x: x < (time.time() - 3600), jobs)
+    # delete them
+    if old_jobs:
+        redis_conn.hdel(jobs_key, *old_jobs)
 
-    if instanceId is not None:
-        jobs = redis_conn.zrevrange(
-            'jobs:{}'.format(instanceId), 0, 0, withscores=True
-        )
-        if jobs:
-            for userId, job in jobs:
-                    console = _read_console(job)
-                    output += console\
-                        .replace('\n', '<br />')\
-                        .replace('#BEGIN#', '')\
-                        .replace('#END#', '')
-                    output = ansiconv.to_html(output)
-                    # if '#END#' in console:
-                    # Save job into the db auditlog
+    if instanceId is not None and jobs:
+        # timeStarted = jobs[0]
+        # timeStarted = jobs[0]
+        # userId = redis_conn.hget(
+        #     jobs_key,
+        #     timeStarted)
+        # for job in jobs:
+        job = jobs[0]
+        console = _read_console(job)
+        output += console\
+            .replace('\n', '<br />')\
+            .replace('#BEGIN#', '')\
+            .replace('#END#', '')
+        output = ansiconv.to_html(output)
+        # if '#END#' in console:
+        # Save job into the db auditlog
 
     return Response('data: {}\n\n'.format(output),
                     mimetype='text/event-stream')
@@ -299,14 +307,25 @@ def _read_console(jobId):
     return console
 
 
+def _sort_jobs(jobs):
+    """reverse sort jobs (dict) by time/key
+    recent first
+    """
+    items = jobs.items()
+    items.sort(
+        key=lambda x: x[0],
+        reverse=True)
+    return items
+
+
 @app.route('/api/jobdetails/<instanceId>')
 def getJobAuthorOnLastJob(instanceId):
-    jobs = redis_conn.zrevrange(
-        'jobs:{}'.format(instanceId), 0, -1, withscores=True
+    jobs = redis_conn.hgetall(
+        'jobs:{}'.format(instanceId)
     )
     details = {}
     if len(jobs) > 0:
-        userId, timeStarted = jobs[0]
+        timeStarted, userId = _sort_jobs(jobs)[0]
 
         timeStarted = time.ctime(float(timeStarted))
         user = User.query.get(userId)
@@ -415,6 +434,12 @@ api.add_resource(InstancesApi, '/api/instances', endpoint='instances')
 
 api.add_resource(InstanceApi, '/api/instances/<int:id>/<machineName>/ip',
                  endpoint='machines')
+
+api.add_resource(CommandApi, '/api/instances/<int:instance_id>/command',
+                 endpoint='commands')
+api.add_resource(CommandApi,
+                 '/api/instances/<int:instance_id>/command/<command_id>',
+                 endpoint='command_details')
 
 api.add_resource(DomainsApi, '/api/domains', endpoint='domains')
 
