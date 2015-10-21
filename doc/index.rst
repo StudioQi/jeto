@@ -19,6 +19,7 @@ You can create team, add users, projects and hosts and give specific permissions
     /quickstart/create-new-domain
     /quickstart/create-new-project
     /quickstart/upgrading
+    /quickstart/troubleshooting
     /misc/tips-and-tricks
 
 
