@@ -1,7 +1,7 @@
 # -=- encoding: utf-8 -=-
 import os
 
-DEBUG = os.environ.get('DEBUG', True)
+DEBUG = os.environ.get('DEBUG', '1') == '1'
 LOGS = os.environ.get('LOGS', '/var/log/jeto/debug.log')
 ETH = os.environ.get('ETH', 'eth0')
 SECRET_KEY = os.environ.get('SECRET_KEY', 'waiquohzi7OpealeiquahChaipautheiy1Giefah0thaw2ieD1Hae5eereimeix8\
