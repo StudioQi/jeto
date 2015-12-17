@@ -8,7 +8,7 @@ with open('requirements.txt') as f:
 setup(name='jeto',
       version='0.5.2',
       description='Release everything !',
-      author='PPL',
+      author='Pierre Paul Lefebvre',
       author_email='info@pierre-paul.com',
       install_requires=required,
       url='https://jeto.io',
