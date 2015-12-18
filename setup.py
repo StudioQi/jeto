@@ -14,7 +14,20 @@ setup(
     author_email='info@pierre-paul.com',
     install_requires=required,
     url='https://jeto.io',
-    packages=['jeto'],
+    packages=[
+        'jeto',
+        'jeto.models',
+        'jeto.services',
+    ],
+    package_data={
+        'jeto': [
+            'translations/fr/LC_MESSAGES/*',
+            'templates/*.html',
+            'templates/*/*.html',
+            'templates/*/*/*.html',
+            'templates/*/*/*/*.html',
+        ]
+    },
     data_files=[
         ('/opt/jeto/static/css', glob('jeto/static/css/*')),
         ('/opt/jeto/static/lib/select2', glob('jeto/static/lib/select2/*')),
