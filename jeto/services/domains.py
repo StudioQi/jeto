@@ -239,8 +239,9 @@ class DomainsApi(Resource):
 
     def _get_url(self, domain=None):
         if domain is None or domain.domain_controller is None:
-            return 'http://' + app.config.get('DOMAINS_API_URL') + ':' +\
-                 app.config.get('DOMAINS_API_PORT')
+            return app.config.get('DOMAINS_API_SCHEME') +\
+                '://' + app.config.get('DOMAINS_API_URL') + ':' +\
+                app.config.get('DOMAINS_API_PORT')
         else:
             return domain.domain_controller.address + ':' +\
                 domain.domain_controller.port

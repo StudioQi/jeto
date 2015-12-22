@@ -9,8 +9,10 @@ quo5wimei8ohsh0lohweeng7moothah6aoshahcoo6')
 SQLALCHEMY_DATABASE_URI = os.environ.get(
     'SQLALCHEMY_DATABASE_URI',
     'mysql://root:root@localhost/jeto')
+DOMAINS_API_SCHEME = os.environ.get('DOMAINS_API_SCHEME', 'http')
 DOMAINS_API_URL = os.environ.get('DOMAINS_API_URL', '127.0.0.1')
 DOMAINS_API_PORT = os.environ.get('DOMAINS_API_PORT', '5000')
+HTPASSWORD_API_SCHEME = os.environ.get('HTPASSWORD_API_SCHEME', 'http')
 HTPASSWORD_API_URL = os.environ.get('HTPASSWORD_API_URL', '127.0.0.1')
 HTPASSWORD_API_PORT = os.environ.get('HTPASSWORD_API_PORT', '7000')
 LANGUAGES = os.environ.get('LANGUAGES', {

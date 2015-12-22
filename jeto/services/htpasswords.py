@@ -15,7 +15,8 @@ htpassword_list_fields = {
 
 class HtpasswordService(object):
     def _get_url(self):
-        return 'http://' + app.config.get('HTPASSWORD_API_URL') + ':' +\
+        return app.config.get('HTPASSWORD_API_SCHEME') +\
+            '://' + app.config.get('HTPASSWORD_API_URL') + ':' +\
             app.config.get('HTPASSWORD_API_PORT')
 
     def _get_headers(self):
