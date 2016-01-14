@@ -4,7 +4,7 @@
 
 from collections import namedtuple
 from functools import partial
-from flask.ext.principal import Permission
+from flask_principal import Permission
 
 from jeto import db
 
@@ -34,69 +34,69 @@ ViewSSLKeyNeed = partial(SSLKeyNeed, 'view')
 
 
 class StartInstancePermission(Permission):
-    def __init__(self, instanceId):
-        need = StartInstanceNeed(unicode(instanceId))
+    def __init__(self, instance_id):
+        need = StartInstanceNeed(unicode(instance_id))
         super(StartInstancePermission, self).__init__(need)
 
 
 class StopInstancePermission(Permission):
-    def __init__(self, instanceId):
-        need = StopInstanceNeed(unicode(instanceId))
+    def __init__(self, instance_id):
+        need = StopInstanceNeed(unicode(instance_id))
         super(StopInstancePermission, self).__init__(need)
 
 
 class ProvisionInstancePermission(Permission):
-    def __init__(self, instanceId):
-        need = ProvisionInstanceNeed(unicode(instanceId))
+    def __init__(self, instance_id):
+        need = ProvisionInstanceNeed(unicode(instance_id))
         super(ProvisionInstancePermission, self).__init__(need)
 
 
 class DestroyInstancePermission(Permission):
-    def __init__(self, instanceId):
-        need = DestroyInstanceNeed(unicode(instanceId))
+    def __init__(self, instance_id):
+        need = DestroyInstanceNeed(unicode(instance_id))
         super(DestroyInstancePermission, self).__init__(need)
 
 
 class ViewInstancePermission(Permission):
-    def __init__(self, instanceId):
-        need = ViewInstanceNeed(unicode(instanceId))
+    def __init__(self, instance_id):
+        need = ViewInstanceNeed(unicode(instance_id))
         super(ViewInstancePermission, self).__init__(need)
 
 
 class RunScriptInstancePermission(Permission):
-    def __init__(self, instanceId):
-        need = RunScriptInstanceNeed(unicode(instanceId))
+    def __init__(self, instance_id):
+        need = RunScriptInstanceNeed(unicode(instance_id))
         super(RunScriptInstancePermission, self).__init__(need)
 
 
 class SyncInstancePermission(Permission):
-    def __init__(self, instanceId):
-        need = SyncInstanceNeed(unicode(instanceId))
+    def __init__(self, instance_id):
+        need = SyncInstanceNeed(unicode(instance_id))
         super(SyncInstancePermission, self).__init__(need)
 
 
 class RSyncInstancePermission(Permission):
-    def __init__(self, instanceId):
-        need = RSyncInstanceNeed(unicode(instanceId))
+    def __init__(self, instance_id):
+        need = RSyncInstanceNeed(unicode(instance_id))
         super(RSyncInstancePermission, self).__init__(need)
 
 
 class ViewHostPermission(Permission):
-    def __init__(self, hostId):
-        need = ViewHostNeed(unicode(hostId))
+    def __init__(self, host_id):
+        need = ViewHostNeed(unicode(host_id))
         super(ViewHostPermission, self).__init__(need)
 
 
 class ViewProjectPermission(Permission):
-    def __init__(self, projectId):
-        need = ViewProjectNeed(unicode(projectId))
+    def __init__(self, project_id):
+        need = ViewProjectNeed(unicode(project_id))
         super(ViewProjectPermission, self).__init__(need)
 
 
 class TeamPermissionsGrids(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    objectId = db.Column(db.Integer)
-    objectType = db.Column(db.String(64))
+    object_id = db.Column(db.Integer)
+    object_type = db.Column(db.String(64))
     action = db.Column(db.String(64))
     team_id = db.Column(
         db.Integer,
@@ -106,8 +106,8 @@ class TeamPermissionsGrids(db.Model):
 
 class UserPermissionsGrids(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    objectId = db.Column(db.Integer)
-    objectType = db.Column(db.String(64))
+    object_id = db.Column(db.Integer)
+    object_type = db.Column(db.String(64))
     action = db.Column(db.String(64))
     user_id = db.Column(
         db.String(64),
@@ -116,24 +116,24 @@ class UserPermissionsGrids(db.Model):
 
 
 class ViewDomainPermission(Permission):
-    def __init__(self, projectId):
-        need = ViewDomainNeed(unicode(projectId))
+    def __init__(self, project_id):
+        need = ViewDomainNeed(unicode(project_id))
         super(ViewDomainPermission, self).__init__(need)
 
 
 class EditDomainPermission(Permission):
-    def __init__(self, projectId):
-        need = EditDomainNeed(unicode(projectId))
+    def __init__(self, project_id):
+        need = EditDomainNeed(unicode(project_id))
         super(EditDomainPermission, self).__init__(need)
 
 
 class CreateDomainPermission(Permission):
-    def __init__(self, projectId):
-        need = CreateDomainNeed(unicode(projectId))
+    def __init__(self, project_id):
+        need = CreateDomainNeed(unicode(project_id))
         super(CreateDomainPermission, self).__init__(need)
 
 
 class SSLKeyPermission(Permission):
-    def __init__(self, SSLId):
-        need = ViewSSLKeyNeed(unicode(SSLId))
+    def __init__(self, ssl_id):
+        need = ViewSSLKeyNeed(unicode(ssl_id))
         super(SSLKeyPermission, self).__init__(need)

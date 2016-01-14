@@ -1,20 +1,18 @@
 # -=- encoding: utf-8 -=-
-from flask import request, abort
+import json
+import requests as req
 
-# from flask.ext.login import current_user
-from flask.ext.restful import fields, marshal_with
+from flask import request, abort
+from flask_login import current_user
+from flask_restful import fields, marshal_with
 
 from jeto import db
 from jeto.core import clean
-import requests as req
-import json
 
 from jeto.models.ssl import SSL
 from jeto.models.domainController import DomainController
-from jeto.services import RestrictedResource  # , adminAuthenticate
-# from jeto.models.permission import ViewHostPermission
+from jeto.services import RestrictedResource
 from jeto.services.domains import domain_controller_fields
-from flask.ext.login import current_user
 from jeto.models.auditlog import auditlog
 
 
@@ -99,8 +97,4 @@ class SSLApi(RestrictedResource):
                 ),
             )
         except:
-            pass
-
-    def put(self, id):
-        """Update (override) an SSL cert/key"""
-        pass
+            abort(500)

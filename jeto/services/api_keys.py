@@ -1,6 +1,7 @@
 # -=- encoding: utf-8 -=-
-from flask import request, abort
+from uuid import uuid4
 
+from flask import request, abort
 from flask_login import current_user
 from flask_restful import fields, marshal_with
 
@@ -8,9 +9,8 @@ from jeto import db
 
 from jeto.models.api import APIKey
 from jeto.models.auditlog import auditlog
-from jeto.services import RestrictedResource  # , adminAuthenticate
+from jeto.services import RestrictedResource
 from jeto.services.users import user_fields
-from uuid import uuid4
 
 api_key_fields = {
     'id': fields.Integer,
@@ -21,7 +21,7 @@ api_key_fields = {
 
 class APIKeyApi(RestrictedResource):
     @marshal_with(api_key_fields)
-    def get(self, userId=None, id=None):
+    def get(self, user_id=None, id=None):
         """Retrieve a list of API keys"""
         if id is not None:
             key = APIKey.query.get(id)
@@ -30,8 +30,8 @@ class APIKeyApi(RestrictedResource):
             else:
                 abort(403)
 
-        if userId == current_user.id or current_user.is_admin():
-            marsh = APIKey.query.filter(APIKey.user_id == userId).all()
+        if user_id == current_user.id or current_user.is_admin():
+            marsh = APIKey.query.filter(APIKey.user_id == user_id).all()
             return marsh
         else:
             abort(403)
@@ -60,7 +60,7 @@ class APIKeyApi(RestrictedResource):
         db.session.commit()
         return api_key
 
-    def delete(self, userId, id):
+    def delete(self, user_id, id):
         """delete API Key"""
         key = APIKey.query.get(id)
         if key.user == current_user or current_user.is_admin():

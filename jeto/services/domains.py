@@ -1,13 +1,13 @@
 import requests as req
 from flask import request, json, abort
 
-from flask.ext.restful import Resource, fields, marshal
-from flask.ext.login import current_user
+from flask_restful import Resource, fields, marshal
+from flask_login import current_user
 
 from jeto import db, app
 from jeto.core import clean
 
-from jeto.services import RestrictedResource, adminAuthenticate
+from jeto.services import RestrictedResource, admin_authenticate
 from jeto.models.domain import Domain, Upstream, Alias
 from jeto.models.domainController import DomainController
 from jeto.models.user import User
@@ -82,7 +82,7 @@ class DomainsApi(Resource):
 
     def post(self):
         # Should mean we are adding a new domain
-        domain = self._editDomain()
+        domain = self._edit_domain()
         app.logger.debug(
             (self._get_url(domain),
              self._get_headers(),
@@ -96,7 +96,7 @@ class DomainsApi(Resource):
         )
         return self.get(domain.id)
 
-    def _editDomain(self, id=None):
+    def _edit_domain(self, id=None):
         query = request.get_json()
 
         if id is None:
@@ -220,7 +220,7 @@ class DomainsApi(Resource):
                         request.json['domain_controller'] is None:
                     self._delete_on_dc(domain)
 
-            domain = self._editDomain(id)
+            domain = self._edit_domain(id)
 
             app.logger.debug(
                 (
@@ -287,7 +287,7 @@ class DomainControllerApi(RestrictedResource):
                 domain_controller_fields_with_domains
             )
 
-    @adminAuthenticate
+    @admin_authenticate
     def post(self, id=None):
         if 'state' in request.json and request.json['state'] == 'create':
             domain_controller = DomainController(
@@ -329,7 +329,7 @@ class DomainControllerApi(RestrictedResource):
             db.session.commit()
             return self.get(id)
 
-    def _updatePermissions(self, team):
+    def _update_permissions(self, team):
         users = []
         if 'users' in request.json:
             usersId = request.json['users']
@@ -341,17 +341,17 @@ class DomainControllerApi(RestrictedResource):
         permissions = []
         if 'permissionsGrid' in request.json:
             for permission in request.json['permissionsGrid']:
-                teamPermission = TeamPermissionsGrids()
-                teamPermission.objectId = permission['objectId']
-                teamPermission.action = permission['action']
-                teamPermission.objectType = permission['objectType']
-                permissions.append(teamPermission)
+                team_permission = TeamPermissionsGrids()
+                team_permission.objectId = permission['objectId']
+                team_permission.action = permission['action']
+                team_permission.objectType = permission['objectType']
+                permissions.append(team_permission)
 
         team.permissions_grids = permissions
 
         return team
 
-    @adminAuthenticate
+    @admin_authenticate
     def delete(self, id):
         domain_controller = DomainController.query.get(id)
         auditlog(

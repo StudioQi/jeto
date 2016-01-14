@@ -1,10 +1,11 @@
 # -=- encoding: utf-8 -=-
 import json
 from flask import Response, request
-from flask.ext.restful import fields, marshal
+from flask_restful import fields, marshal
+from flask_login import current_user
+
 from jeto.models.auditlog import AuditLog
-from flask.ext.login import current_user
-from jeto.services import RestrictedResource  # , adminAuthenticate
+from jeto.services import RestrictedResource
 
 auditlog_summary_fields = {
     'id': fields.Integer,

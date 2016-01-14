@@ -1,10 +1,11 @@
 import requests as req
 from flask import request, json
 
-from flask.ext.restful import Resource, fields, marshal
-from flask.ext.login import current_user
-from jeto.models.auditlog import auditlog
+from flask_restful import Resource, fields, marshal
+from flask_login import current_user
+
 from jeto import app
+from jeto.models.auditlog import auditlog
 
 
 htpassword_list_fields = {

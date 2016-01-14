@@ -28,7 +28,7 @@ team_fields_wo_users = {
 }
 
 
-def adminAuthenticate(func):
+def admin_authenticate(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         if current_user.is_admin():

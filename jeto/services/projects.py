@@ -1,16 +1,17 @@
 from flask import request
 
-from flask.ext.restful import fields, marshal
+from flask_restful import fields, marshal
+from flask_login import current_user
+
 from jeto import db
 from jeto.core import clean
-from jeto.services import RestrictedResource, adminAuthenticate
+from jeto.services import RestrictedResource, admin_authenticate
 from jeto.services import project_wo_instance_fields
 from jeto.services.instances import instance_fields
 from jeto.services.teams import team_fields
 from jeto.models.project import Project
 from jeto.models.team import Team
 from jeto.models.auditlog import auditlog
-from flask.ext.login import current_user
 
 project_fields = dict(
     project_wo_instance_fields,
@@ -39,7 +40,7 @@ class ProjectApi(RestrictedResource):
 
             return marshal(project, project_fields)
 
-    @adminAuthenticate
+    @admin_authenticate
     def post(self, id=None):
         if 'state' in request.json and request.json['state'] == 'create':
             action = 'create'
@@ -69,11 +70,7 @@ class ProjectApi(RestrictedResource):
 
         return marshal(project, project_fields)
 
-    @adminAuthenticate
-    def put(self, id):
-        pass
-
-    @adminAuthenticate
+    @admin_authenticate
     def delete(self, id):
         project = Project.query.get(id)
         teams = Team.query.all()

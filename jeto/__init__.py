@@ -42,6 +42,6 @@ principal = Principal(app)
 lm = LoginManager(app)
 
 import jeto.core
-import jeto.controllers
+import jeto.controllers, jeto.controllers.login
 from jeto.models import *
 from jeto.services import *

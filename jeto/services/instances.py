@@ -1,10 +1,8 @@
 from flask import request, abort
 
-from flask.ext.restful import Resource, fields, marshal
-from flask.ext.login import current_user
+from flask_restful import Resource, fields, marshal
+from flask_login import current_user
 
-from jeto import app
-from rq.job import Job
 from jeto.core import redis_conn
 
 from jeto.services.hosts import host_fields
@@ -61,15 +59,15 @@ class InstancesApi(Resource):
         }
 
     def delete(self):
-        instanceId = int(request.json['id'])
-        self.backend.delete(instanceId)
+        instance_id = int(request.json['id'])
+        self.backend.delete(instance_id)
 
     def post(self):
         query = request.get_json()
-        instanceId = query.get('id')
-        if instanceId:
-            instanceId = int(instanceId)
-            instance = self.backend.get(instanceId)
+        instance_id = query.get('id')
+        if instance_id:
+            instance_id = int(instance_id)
+            instance = self.backend.get(instance_id)
 
             auditlog(
                 current_user,
@@ -103,7 +101,7 @@ class InstancesApi(Resource):
     def _start(self, id):
         self.backend.start(id)
 
-    def _getInstance(self, id):
+    def _get_instance(self, id):
         instances = self.backend.get_all_instances()
         for instance in instances:
             if instance.id == id:
@@ -116,15 +114,12 @@ class InstanceApi(Resource):
     def __init__(self):
         self.backend = VagrantBackend()
 
-    def get(self, id, machineName=None):
-        instance = self._getInstance(id)
-        jeto_infos = None
-        if machineName is None:
+    def get(self, id, machine_name=None):
+        instance = self._get_instance(id)
+        if machine_name is None:
             instance.status, jeto_infos, scripts, date_commit = instance._status()
-            # instance.jeto_infos = json.dumps(instance.jeto_infos)
         else:
-            # app.logger.debug(instance._ip(machineName))
-            return {'ip': instance._ip(machineName)}
+            return {'ip': instance._ip(machine_name)}
 
         instance_json = marshal(instance, instance_fields)
         instance_json['date_commit'] = date_commit
@@ -133,7 +128,7 @@ class InstanceApi(Resource):
         return instance_json
 
     def post(self, id):
-        instance = self._getInstance(id) or abort(404)
+        instance = self._get_instance(id) or abort(404)
 
         changed = False
         query = request.get_json()
@@ -145,41 +140,42 @@ class InstanceApi(Resource):
         if changed:
             instance.save()
 
+        machine_name = ''
         if 'machine' in query:
-            machineName = query['machine']
+            machine_name = query['machine']
 
         state = query.get('state')
         permission = states.get(state)
         if permission:
             if current_user.has_permission(permission, id):
                 if state == 'runScript':
-                    instance.runScript(query.get('script'), machineName)
+                    instance.runScript(query.get('script'), machine_name)
                 elif state == 'rsync':
                     instance.rsync()
                 elif state == 'sync':
                     instance.sync()
                 else:
-                    getattr(self, state)(id, machineName)
+                    getattr(self, state)(id, machine_name)
             else:
                 abort(403)
 
-    def provision(self, id, machineName):
-        return self.backend.provision(id, machineName)
+    def provision(self, id, machine_name):
+        return self.backend.provision(id, machine_name)
 
-    def stop(self, id, machineName):
-        return self.backend.stop(id, machineName)
+    def stop(self, id, machine_name):
+        return self.backend.stop(id, machine_name)
 
-    def start(self, id, machineName):
-        return self.backend.start(id, machineName)
+    def start(self, id, machine_name):
+        return self.backend.start(id, machine_name)
 
     def sync(self, id):
         return self.backend.sync(id)
 
     def delete(self, id):
-        instanceId = int(id)
-        return self.backend.delete(instanceId)
+        instance_id = int(id)
+        return self.backend.delete(instance_id)
 
-    def _getInstance(self, id):
+    def _get_instance(self, id):
         instances = self.backend.get_all_instances()
         for instance in instances:
             if instance.id == id:
@@ -197,15 +193,17 @@ class CommandApi(InstanceApi):
                 job = redis_conn.hgetall('rq:job:{}'.format(command_id))
                 job.pop('data', None)
                 job.pop('description', None)
+
+                console = redis_conn.get('{}:console'.format(command_id)) or ''
+                job.update(
+                        {'id': command_id,
+                         'result': u'{}'.format(repr(job.get('result', ''))),
+                         'console': console})
+                return job
+
             except Exception as e:
                 print(e.message)
                 abort(400)
-            console = redis_conn.get('{}:console'.format(command_id)) or ''
-            job.update(
-                {'id': command_id,
-                 'result': u'{}'.format(repr(job.get('result', ''))),
-                 'console': console})
-            return job
         # find redis jobs for the instance
         jobs_key = 'jobs:{}'.format(instance_id)
         jobs = redis_conn.hkeys(jobs_key)
@@ -214,29 +212,34 @@ class CommandApi(InstanceApi):
         return jobs
 
     def post(self, instance_id):
-        instance = self._getInstance(instance_id) or abort(404)
+        instance = self._get_instance(instance_id) or abort(404)
 
         query = request.get_json()
         # force async
         request.json['async'] = True
 
-        machineName = query.get('machine', "")
+        machine_name = query.get('machine', "")
 
         action = query.get('action')
         permission = states.get(action)
+        job_id = None
         if permission:
             if current_user.has_permission(permission, instance_id):
                 if action == 'runScript':
                     job_id = instance.runScript(
-                        query.get('script'), machineName)
+                        query.get('script'), machine_name)
                 elif action == 'rsync':
                     job_id = instance.rsync()
                 elif action == 'sync':
                     job_id = instance.sync()
                 else:
-                    job_id = getattr(self, action)(instance_id, machineName)
+                    job_id = getattr(self, action)(instance_id, machine_name)
             else:
                 abort(403)
+
+        if job_id is None:
+            abort(500)
+
         console = redis_conn.get('{}:console'.format(job_id)) or ''
         return {
             'id': job_id,

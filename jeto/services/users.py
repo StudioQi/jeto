@@ -1,17 +1,18 @@
 
 from flask import request
 
-from flask.ext.restful import fields, marshal
-from flask.ext.sqlalchemy import get_debug_queries
 from flask_login import current_user
-from jeto.models.auditlog import auditlog
+from flask_restful import fields, marshal
+from flask_sqlalchemy import get_debug_queries
 
 from jeto import db, app
 
-from jeto.services import RestrictedResource, adminAuthenticate
+from jeto.models.auditlog import auditlog
+from jeto.models.user import User, ROLE_ADMIN, ROLE_DEV
+
+from jeto.services import RestrictedResource, admin_authenticate
 from jeto.services.teams import team_fields_wo_users
 
-from jeto.models.user import User, ROLE_ADMIN, ROLE_DEV
 
 api_key_fields = {
     'id': fields.Integer,
@@ -56,7 +57,7 @@ class UserApi(RestrictedResource):
             else:
                 return {'user': marshal(user, user_fields_with_teams)}
 
-    @adminAuthenticate
+    @admin_authenticate
     def post(self, id=None):
         if 'state' in request.json and request.json['state'] == 'create':
             user = User(
@@ -91,11 +92,7 @@ class UserApi(RestrictedResource):
             'user': marshal(user, user_fields),
         }
 
-    @adminAuthenticate
-    def put(self, id):
-        pass
-
-    @adminAuthenticate
+    @admin_authenticate
     def delete(self, id):
         user = User.query.get(id)
         auditlog(

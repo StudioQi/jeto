@@ -1,8 +1,6 @@
 # -=- encoding: utf-8 -=-
 
-from jeto import db
-from jeto import app
-from jeto.settings import PROJECT_BASEPATH
+from jeto import db, app
 from jeto.core import redis_conn, is_async
 from jeto.models.project import Project
 from jeto.models.host import Host
@@ -12,40 +10,21 @@ from jeto.models.auditlog import auditlog
 import time
 import slugify
 import json
-import ansiconv
 from flask import request
-from flask.ext.sqlalchemy import orm
 from flask.ext.login import current_user
 from rq import Queue, Connection
 
 
-class BackendProvider():
-    def stop(self, instanceId):
-        raise NotImplementedError("Should have implemented this")
-
-    def start(self, instanceId):
-        raise NotImplementedError("Should have implemented this")
-
-    def pause(self, instanceId):
-        raise NotImplementedError("Should have implemented this")
-
-    def kill(self, instanceId):
-        raise NotImplementedError("Should have implemented this")
-
-    def get_all_instances(self):
-        raise NotImplementedError("Should have implemented this")
-
-
-class VagrantBackend(BackendProvider):
+class VagrantBackend():
     def __init__(self):
         self.instances = VagrantInstance.query.order_by('name')
 
-    def get(self, instanceId):
-        return VagrantInstance.query.get(int(instanceId))
+    def get(self, instance_id):
+        return VagrantInstance.query.get(int(instance_id))
 
-    def find(self, instanceId=None, path=None):
+    def find(self, instance_id=None, path=None):
         for instance in self.instances:
-            if instance.id == instanceId or instance.path == path:
+            if instance.id == instance_id or instance.path == path:
                 return instance
 
         return None
@@ -85,12 +64,14 @@ class VagrantBackend(BackendProvider):
 
         return instance
 
-    def sync(self, instanceId):
-        instance = VagrantInstance.query.get(instanceId)
+    @staticmethod
+    def sync(instance_id):
+        instance = VagrantInstance.query.get(instance_id)
         return instance.sync()
 
-    def delete(self, instanceId):
-        instance = VagrantInstance.query.get(instanceId)
+    @staticmethod
+    def delete(instance_id):
+        instance = VagrantInstance.query.get(instance_id)
         auditlog(
             current_user,
             'delete instance',
@@ -98,17 +79,20 @@ class VagrantBackend(BackendProvider):
             request_details=request.get_json())
         instance.delete()
 
-    def provision(self, instanceId, machineName):
-        instance = VagrantInstance.query.get(instanceId)
-        return instance.provision(machineName)
+    @staticmethod
+    def provision(instance_id, machine_name):
+        instance = VagrantInstance.query.get(instance_id)
+        return instance.provision(machine_name)
 
-    def stop(self, instanceId, machineName):
-        instance = VagrantInstance.query.get(instanceId)
-        return instance.stop(machineName)
+    @staticmethod
+    def stop(instance_id, machine_name):
+        instance = VagrantInstance.query.get(instance_id)
+        return instance.stop(machine_name)
 
-    def start(self, instanceId, machineName):
-        instance = VagrantInstance.query.get(instanceId)
-        return instance.start(machineName)
+    @staticmethod
+    def start(instance_id, machine_name):
+        instance = VagrantInstance.query.get(instance_id)
+        return instance.start(machine_name)
 
 
 class VagrantInstance(db.Model):
@@ -150,13 +134,6 @@ class VagrantInstance(db.Model):
     def post(self):
         return self
 
-    @orm.reconstructor
-    def init_on_load(self):
-        # self.status = self._status()
-        # if 'running' in self.status:
-        #     self.ip = self._ip()
-        pass
-
     def _status(self):
         path = self._generatePath()
 
@@ -167,18 +144,17 @@ class VagrantInstance(db.Model):
             environment=self.environment,
         )
 
-        machines, jeto_infos, scripts, date_commit = self._parse_status(results)
-        machinesFormatted = []
+        machines, jeto_infos, scripts, date_commit = VagrantInstance.parse_status(results)
+        machines_formatted = []
         for machine, value in machines.iteritems():
-            app.logger.debug(value)
             if 'state-human-short' in value:
                 val = value['state-human-short']
             elif 'error-exit' in value:
-                val = value['error-exit'] # Vagrant is not ready yet
+                val = value['error-exit']  # Vagrant is not ready yet
             else:
                 val = 'Something went wrong'
 
-            machinesFormatted.append(
+            machines_formatted.append(
                 {
                     'name': machine,
                     'status': val,
@@ -186,9 +162,10 @@ class VagrantInstance(db.Model):
                 }
             )
 
-        return machinesFormatted, jeto_infos, scripts, date_commit
+        return machines_formatted, jeto_infos, scripts, date_commit
 
-    def _parse_status(self, results):
+    @staticmethod
+    def parse_status(results):
         results = json.loads(results)
 
         date_commit = results.get('date_commit', None)
@@ -217,7 +194,7 @@ class VagrantInstance(db.Model):
                     formatted.append(item)
                     item = []
 
-                # Each field is comma seperated
+                # Each field is comma separated
                 if ',' in result:
                     item = result.split(',')
                     # !(VAGRANT_COMMA) is a real comma, but escaped by vagrant
@@ -229,41 +206,40 @@ class VagrantInstance(db.Model):
                     if len(item):
                         item[-1] = item[-1] + result
 
-
-            withoutTimestamp = []
+            without_timestamp = []
             for item in formatted:
-                withoutTimestamp.append(item[1:])
+                without_timestamp.append(item[1:])
 
-            for item in withoutTimestamp:
+            for item in without_timestamp:
                 if item[0] not in machines:
                     machines[item[0]] = {}
 
                 if len(item) >= 3:
                     machines[item[0]][item[1]] = item[2]
 
-        return (machines, jeto_infos, scripts, date_commit)
+        return machines, jeto_infos, scripts, date_commit
 
-    def _ip(self, machineName):
+    def _ip(self, machine_name):
         results = self._submit_job(
             'ip',
             path=self._generatePath(),
-            machineName=machineName,
+            machine_name=machine_name,
             host=self.host,
             environment=self.environment,
         )
         return results
 
-    def _generatePath(self):
+    def _generate_path(self):
         path = self.path
         if self.git_reference:
-            return PROJECT_BASEPATH + \
+            return app.config.get('PROJECT_BASEPATH') + \
                 slugify.slugify(self.project.name) +\
                 '/' + \
                 slugify.slugify(self.name) + \
                 '/' + \
                 self.git_reference
         elif self.archive_url:
-            return PROJECT_BASEPATH + \
+            return app.config.get('PROJECT_BASEPATH') + \
                 slugify.slugify(self.project.name) +\
                 '/' + \
                 slugify.slugify(self.name) + \
@@ -272,10 +248,10 @@ class VagrantInstance(db.Model):
 
         return path
 
-    def start(self, machineName='default'):
+    def start(self, machine_name='default'):
         results = self._submit_job(
             'run',
-            machineName=machineName,
+            machine_name=machine_name,
             path=self._generatePath(),
             environment=self.environment,
             host=self.host,
@@ -283,22 +259,22 @@ class VagrantInstance(db.Model):
 
         return results
 
-    def provision(self, machineName):
+    def provision(self, machine_name):
         results = self._submit_job(
             'provision',
             path=self._generatePath(),
             environment=self.environment,
-            machineName=machineName,
+            machine_name=machine_name,
             host=self.host,
         )
         return results
 
-    def stop(self, machineName):
+    def stop(self, machine_name):
         results = self._submit_job(
             'stop',
             path=self._generatePath(),
             environment=self.environment,
-            machineName=machineName,
+            machine_name=machine_name,
             host=self.host,
         )
         return results
@@ -348,13 +324,13 @@ class VagrantInstance(db.Model):
         )
         return results
 
-    def runScript(self, script, machineName='default'):
+    def run_script(self, script, machine_name='default'):
         results = self._submit_job(
             'run_script',
             path=self._generatePath(),
             host=self.host,
             environment=self.environment,
-            machineName=machineName,
+            machine_name=machine_name,
             script=script,
         )
         return results

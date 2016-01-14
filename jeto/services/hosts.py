@@ -1,14 +1,14 @@
 from flask import request
 
-from flask.ext.login import current_user
-from flask.ext.restful import fields, marshal
+from flask_login import current_user
+from flask_restful import fields, marshal
 
 from jeto import db
 from jeto.core import clean
 
 from jeto.models.host import Host
 from jeto.models.auditlog import auditlog
-from jeto.services import RestrictedResource, adminAuthenticate
+from jeto.services import RestrictedResource, admin_authenticate
 from jeto.models.permission import ViewHostPermission
 
 
@@ -23,15 +23,15 @@ host_fields = {
 class HostApi(RestrictedResource):
     def get(self, id=None):
         if id is None:
-            hostsAll = Host.query.order_by('name')
-            permittedHosts = []
-            for host in hostsAll:
+            hosts_all = Host.query.order_by('name')
+            permitted_hosts = []
+            for host in hosts_all:
                 if current_user.has_permission(ViewHostPermission, host.id):
-                    permittedHosts.append(host)
+                    permitted_hosts.append(host)
 
             return {
                 'hosts': map(
-                    lambda t: marshal(t, host_fields), permittedHosts
+                    lambda t: marshal(t, host_fields), permitted_hosts
                 ),
             }
         else:
@@ -41,7 +41,7 @@ class HostApi(RestrictedResource):
 
             return marshal(host, host_fields)
 
-    @adminAuthenticate
+    @admin_authenticate
     def post(self, id=None):
         if 'state' in request.json and request.json['state'] == 'create':
             host = Host(
@@ -70,7 +70,7 @@ class HostApi(RestrictedResource):
             name = clean(request.json['name'].rstrip())
 
             params = request.json['params']
-            while(params.find('<br><br>') != -1):
+            while params.find('<br><br>') != -1:
                 params = params.replace("<br><br>", "<br>")
 
             params = params.replace("<br>", "\r\n")
@@ -91,11 +91,7 @@ class HostApi(RestrictedResource):
             db.session.commit()
             return self.get(id)
 
-    @adminAuthenticate
-    def put(self, id):
-        pass
-
-    @adminAuthenticate
+    @admin_authenticate
     def delete(self, id):
         host = Host.query.get(id)
         auditlog(
