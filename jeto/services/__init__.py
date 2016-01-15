@@ -1,11 +1,9 @@
 # -=- encoding: utf-8 -=-
 from functools import wraps
 from flask import abort
-# from flask.ext.restful import marshal_with
-from flask.ext.login import current_user
-from flask.ext.restful import Resource
-from flask.ext.restful import fields
-
+from flask_login import current_user
+from flask_restful import Resource
+from flask_restful import fields
 
 project_wo_instance_fields = {
     'id': fields.String,

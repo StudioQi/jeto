@@ -3,10 +3,11 @@
 # vim:fenc=utf-8
 
 import os
+from flask_script import Manager, Shell
+from flask_migrate import Migrate, MigrateCommand
+
 from jeto import app, db
 from jeto.models.user import User, ROLE_ADMIN, ROLE_DEV
-from flask.ext.script import Manager, Shell
-from flask.ext.migrate import Migrate, MigrateCommand
 
 manager = Manager(app)
 migrate = Migrate(app, db)

@@ -1,4 +1,4 @@
-angular.module('angularFlaskServices', ['ngResource'])
+angular.module('jetoServices', ['ngResource'])
     .value('version', '0.5')
     .factory('Instances', function($resource) {
         return $resource('/api/instances/:id', {id:'@id'}, {
@@ -37,6 +37,9 @@ angular.module('angularFlaskServices', ['ngResource'])
     })
     .factory('Users', function($resource) {
         return $resource('/api/users/:id', {id:'@id'});
+    })
+    .factory('CurrentUser', function($resource) {
+        return $resource('/api/users/current');
     })
     .factory('APIKeys', function($resource) {
         return $resource('/api/APIKeys/:userId/:id', {userId:'@userId', id:'@id'});

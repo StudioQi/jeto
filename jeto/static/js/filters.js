@@ -2,7 +2,7 @@
 
 /* Filters */
 
-angular.module('angularFlaskFilters', [])
+angular.module('jetoFilters', [])
 	.filter('uppercase', function() {
 		return function(input) {
 			if(input){

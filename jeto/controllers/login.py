@@ -32,7 +32,6 @@ def authorized(resp):
     headers = {'Authorization': 'OAuth {}'.format(access_token)}
     req = get('https://www.googleapis.com/oauth2/v1/userinfo', headers=headers)
     data = req.json()
-    app.logger.debug(data)
 
     if 'GOOGLE_LIMIT_DOMAIN' in app.config and \
             app.config['GOOGLE_LIMIT_DOMAIN'] and \

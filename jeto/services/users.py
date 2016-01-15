@@ -36,6 +36,11 @@ user_fields_with_teams = dict(
 )
 
 
+class CurrentUserApi(RestrictedResource):
+    def get(self):
+        return marshal(current_user, user_fields_with_teams)
+
+
 class UserApi(RestrictedResource):
     def get(self, id=None):
         if id is None:

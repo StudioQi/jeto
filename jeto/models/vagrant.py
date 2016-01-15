@@ -10,9 +10,9 @@ from jeto.models.auditlog import auditlog
 import time
 import slugify
 import json
-from flask import request
-from flask.ext.login import current_user
 from rq import Queue, Connection
+from flask import request
+from flask_login import current_user
 
 
 class VagrantBackend():

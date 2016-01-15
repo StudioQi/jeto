@@ -2,11 +2,11 @@ import logging
 from logging import FileHandler
 
 from flask import Flask
-from flask.ext.sqlalchemy import SQLAlchemy
-from flask.ext.babel import Babel
+from flask_sqlalchemy import SQLAlchemy
+from flask_babel import Babel
 from flask_oauth import OAuth
-from flask.ext.login import LoginManager
-from flask.ext.principal import Principal
+from flask_login import LoginManager
+from flask_principal import Principal
 from .settings import LOGS
 
 handler = FileHandler(LOGS)
@@ -43,5 +43,8 @@ lm = LoginManager(app)
 
 import jeto.core
 import jeto.controllers, jeto.controllers.login
+from jeto.models.team import Team
+from jeto.models.vagrant import VagrantInstance
+from jeto.models.permission import TeamPermissionsGrids, UserPermissionsGrids
 from jeto.models import *
 from jeto.services import *

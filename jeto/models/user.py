@@ -57,8 +57,9 @@ class User(db.Model):
     def is_active(self):
         return True
 
+    @property
     def is_anonymous(self):
-        return True
+        return False
 
     def is_admin(self):
         if self.role == ROLE_ADMIN:
@@ -68,18 +69,18 @@ class User(db.Model):
     def get_permissions_grids(self):
         return sorted(self.permissions_grids, key=lambda item: item.objectType)
 
-    def has_permission(self, permission_type, objectId):
-        if objectId is None:
+    def has_permission(self, permission_type, object_id):
+        if object_id is None:
             return True
 
         admin = Permission(RoleNeed(ROLE_ADMIN))
         if isinstance(permission_type, tuple):
             for permission_type_item in permission_type:
-                permission = permission_type_item(unicode(objectId))
+                permission = permission_type_item(unicode(object_id))
                 if permission.can() or admin.can():
                     return True
         else:
-            permission = permission_type(unicode(objectId))
+            permission = permission_type(unicode(object_id))
             if permission.can() or admin.can():
                 return True
 

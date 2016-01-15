@@ -1,6 +1,6 @@
 /* Directives */
 
-angular.module('angularFlaskDirectives', [])
+angular.module('jetoDirectives', [])
 .directive('appversion', ['version', function(version) {
   return function(scope, elm, attrs) {
     elm.text('Version : ' + version);
