@@ -12,10 +12,10 @@ from datetime import datetime
 class AuditLog(db.Model):
     __tablename__ = 'audit_log'
     id = db.Column(db.Integer, primary_key=True)
-    jobid = db.Column(db.Integer)
-    objectId = db.Column(db.Integer)
-    objectType = db.Column(db.String(255))
-    objectName = db.Column(db.String(255))
+    job_id = db.Column(db.Integer)
+    object_id = db.Column(db.Integer)
+    object_type = db.Column(db.String(255))
+    object_name = db.Column(db.String(255))
     action = db.Column(db.String(255))
     user_id = db.Column(db.String(64))
     user_name = db.Column(db.String(255))
@@ -33,7 +33,6 @@ def auditlog(
         object_type=None,
         request_details=None,
         summary=None):
-    """ Creates an entry in the auditlog db """
     object_name = getattr(obj, 'name', str(obj))
     object_type = object_type or type(obj).__name__
     if summary is None:

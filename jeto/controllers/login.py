@@ -59,8 +59,10 @@ def authorized(resp):
                     family_name=data['family_name'],
                     picture=data['picture'])
 
-    identity_changed.send(current_app._get_current_object(),
-                          identity=Identity(user.id))
+    identity_changed.send(
+        current_app._get_current_object(),
+        identity=Identity(user.id)
+    )
     db.session.add(user)
     db.session.commit()
 
@@ -100,7 +102,7 @@ def _set_permissions(permissions_grids, identity):
                 project = Project.query.get(permission.objectId)
                 for instance in project.instances:
                     view_permission = ViewHostPermission(
-                            unicode(instance.host.id)
+                        unicode(instance.host.id)
                     )
                     if view_permission.can():
                         _set_permissions_instance(
@@ -140,7 +142,7 @@ def _set_permissions_instance(identity, instance, permission):
         identity.provides.add(DestroyInstanceNeed(unicode(instance.id)))
     if permission.action == 'view':
         identity.provides.add(ViewInstanceNeed(unicode(instance.id)))
-    if permission.action == 'runScript':
+    if permission.action == 'run_script':
         identity.provides.add(RunScriptInstanceNeed(unicode(instance.id)))
     if permission.action == 'sync':
         identity.provides.add(SyncInstanceNeed(unicode(instance.id)))
@@ -178,8 +180,10 @@ def logout():
     for key in ('identity.name', 'identity.auth_type'):
         session.pop(key, None)
 
-    identity_changed.send(current_app._get_current_object(),
-                          identity=AnonymousIdentity())
+    identity_changed.send(
+        current_app._get_current_object(),
+        identity=AnonymousIdentity()
+    )
     flash(_("I'll miss you..."))
     return redirect(url_for('index'))
 
@@ -200,8 +204,10 @@ def api_user(request):
     if api_key:
         key = APIKey.query.filter_by(name=api_key).first()
         if key:
-            identity_changed.send(current_app._get_current_object(),
-                                  identity=Identity(key.user.id))
+            identity_changed.send(
+                current_app._get_current_object(),
+                identity=Identity(key.user.id)
+            )
             return key.user
 
     # finally, return None if both methods did not login the user

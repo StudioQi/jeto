@@ -35,18 +35,18 @@ class Team(db.Model):
         self.name = name
         self.users = users
 
-    def get_permissions_grids(self, objectType=None, objectId=None):
+    def get_permissions_grids(self, object_type=None, object_id=None):
         permissions_grids = sorted(
             self.permissions_grids,
             key=lambda item: item.objectType
         )
-        if objectType is not None:
+        if object_type is not None:
             permissions_grids = filter(
-                lambda item: item.objectType == objectType, permissions_grids
+                lambda item: item.objectType == object_type, permissions_grids
             )
-        if objectId is not None:
+        if object_id is not None:
             permissions_grids = filter(
-                lambda item: item.objectId == objectId, permissions_grids
+                lambda item: item.objectId == object_id, permissions_grids
             )
 
         return permissions_grids

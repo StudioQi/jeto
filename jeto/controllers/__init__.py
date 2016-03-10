@@ -35,7 +35,7 @@ def limited(**kwargs):
 @app.route('/admin/<subType>')
 @app.route('/admin/<subType>/<id>')
 @login_required
-def limitedAdmin(**kwargs):
+def limited_admin(**kwargs):
     if not current_user.is_admin():
         return abort(403)
 

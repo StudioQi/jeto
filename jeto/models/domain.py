@@ -32,9 +32,9 @@ class Domain(db.Model):
         backref=db.backref('domain', lazy='joined'),
     )
 
-    def has_upstream(self, upstreamInfo):
+    def has_upstream(self, upstream_info):
         for upstream in self.upstreams:
-            if upstream == upstreamInfo:
+            if upstream == upstream_info:
                 return True
 
         return False
