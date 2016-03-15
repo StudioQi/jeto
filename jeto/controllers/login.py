@@ -13,14 +13,12 @@ from jeto import app, google, lm, db
 from jeto.models.user import User
 from jeto.models.api import APIKey
 from jeto.models.project import Project
-from jeto.models.permission import ViewHostPermission, ViewHostNeed
-from jeto.models.permission import ProvisionInstanceNeed, DestroyInstanceNeed, \
-    ViewInstanceNeed, StartInstanceNeed, StopInstanceNeed, \
-    RunScriptInstanceNeed, SyncInstanceNeed
-from jeto.models.permission import CreateDomainNeed, ViewDomainNeed, \
-    EditDomainNeed
-
-
+from jeto.models.permission import ViewHostPermission, view_host_need
+from jeto.models.permission import provision_instance_need, destroy_instance_need, \
+    view_instance_need, start_instance_need, stop_instance_need, \
+    run_script_instance_need, sync_instance_need
+from jeto.models.permission import create_domain_need, view_domain_need, \
+    edit_domain_need
 @app.route('/oauth2callback')
 @google.authorized_handler
 def authorized(resp):
@@ -128,34 +126,34 @@ def _set_permissions_host(identity, permission, host=None):
     if host:
         object_id = host.id
     if permission.action == 'view':
-        identity.provides.add(ViewHostNeed(unicode(object_id)))
+        identity.provides.add(view_host_need(unicode(object_id)))
 
 
 def _set_permissions_instance(identity, instance, permission):
     if permission.action == 'start':
-        identity.provides.add(StartInstanceNeed(unicode(instance.id)))
+        identity.provides.add(start_instance_need(unicode(instance.id)))
     if permission.action == 'stop':
-        identity.provides.add(StopInstanceNeed(unicode(instance.id)))
+        identity.provides.add(stop_instance_need(unicode(instance.id)))
     if permission.action == 'provision':
-        identity.provides.add(ProvisionInstanceNeed(unicode(instance.id)))
+        identity.provides.add(provision_instance_need(unicode(instance.id)))
     if permission.action == 'destroy':
-        identity.provides.add(DestroyInstanceNeed(unicode(instance.id)))
+        identity.provides.add(destroy_instance_need(unicode(instance.id)))
     if permission.action == 'view':
-        identity.provides.add(ViewInstanceNeed(unicode(instance.id)))
+        identity.provides.add(view_instance_need(unicode(instance.id)))
     if permission.action == 'run_script':
-        identity.provides.add(RunScriptInstanceNeed(unicode(instance.id)))
+        identity.provides.add(run_script_instance_need(unicode(instance.id)))
     if permission.action == 'sync':
-        identity.provides.add(SyncInstanceNeed(unicode(instance.id)))
+        identity.provides.add(sync_instance_need(unicode(instance.id)))
 
 
 def _set_permissions_domain_controller(identity, permission):
     objectId = unicode(permission.objectId)
     if permission.action == 'create':
-        identity.provides.add(CreateDomainNeed(objectId))
+        identity.provides.add(create_domain_need(objectId))
     if permission.action == 'edit':
-        identity.provides.add(EditDomainNeed(objectId))
+        identity.provides.add(edit_domain_need(objectId))
     if permission.action == 'view':
-        identity.provides.add(ViewDomainNeed(objectId))
+        identity.provides.add(view_domain_need(objectId))
 
 
 @app.route('/login')
