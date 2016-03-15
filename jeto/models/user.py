@@ -51,6 +51,7 @@ class User(db.Model):
     def get_id(self):
         return unicode(self.id)
 
+    @property
     def is_authenticated(self):
         return True
 
