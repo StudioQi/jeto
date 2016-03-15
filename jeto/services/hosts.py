@@ -29,11 +29,7 @@ class HostApi(RestrictedResource):
                 if current_user.has_permission(ViewHostPermission, host.id):
                     permitted_hosts.append(host)
 
-            return {
-                'hosts': map(
-                    lambda t: marshal(t, host_fields), permitted_hosts
-                ),
-            }
+            return [marshal(host, host_fields) for host in permitted_hosts]
         else:
             host = Host.query.get(id)
             host.params = host.params.replace('\r\n', '<br>')

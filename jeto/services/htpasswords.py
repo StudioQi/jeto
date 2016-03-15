@@ -30,9 +30,7 @@ class HtpasswordApi(Resource, HtpasswordService):
         r = req.get(self._get_url())
         items = r.json()['lists']
 
-        return {
-            'lists': map(lambda t: marshal(t, htpassword_list_fields), items),
-        }
+        return [marshal(item, htpassword_list_fields) for item in items]
 
     def post(self, slug=None):
         name = request.json['name']

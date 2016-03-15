@@ -25,9 +25,7 @@ class TeamApi(RestrictedResource):
     def get(self, id=None):
         if id is None:
             teams = Team.query.order_by('name')
-            return {
-                'teams': map(lambda t: marshal(t, team_fields), teams),
-            }
+            return [marshal(team, team_fields) for team in teams]
         else:
             team = Team.query.get(id)
             return marshal(team, team_fields)

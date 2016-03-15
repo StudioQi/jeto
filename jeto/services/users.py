@@ -45,10 +45,7 @@ class UserApi(RestrictedResource):
     def get(self, id=None):
         if id is None:
             users = User.query.order_by('name')
-            return {
-                'users': map(lambda t: marshal(t, user_fields_with_teams),
-                             users),
-            }
+            return [marshal(user, user_fields_with_teams) for user in users]
         else:
             user = User.query.get(id)
             if user == current_user:

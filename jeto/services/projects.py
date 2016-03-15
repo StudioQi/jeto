@@ -26,9 +26,7 @@ class ProjectApi(RestrictedResource):
     def get(self, id=None):
         if id is None:
             projects = Project.query.order_by('name')
-            return {
-                'projects': map(lambda t: marshal(t, project_fields), projects)
-            }
+            return [marshal(project, project_fields) for project in projects]
         else:
             project = Project.query.get(id)
             project.teams = []
