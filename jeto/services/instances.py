@@ -86,9 +86,7 @@ class InstancesApi(Resource):
         else:
             return self.get()
 
-        return {
-            'instance': marshal(instance, instance_fields),
-        }
+        return marshal(instance, instance_fields);
 
     def _sync(self, id):
         self.backend.sync(id)

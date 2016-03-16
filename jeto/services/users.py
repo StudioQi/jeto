@@ -55,9 +55,9 @@ class UserApi(RestrictedResource):
                         'api_keys': fields.Nested(api_key_fields)
                     }
                 )
-                return {'user': marshal(user, user_fields_with_keys)}
+                return marshal(user, user_fields_with_keys)
             else:
-                return {'user': marshal(user, user_fields_with_teams)}
+                return marshal(user, user_fields_with_teams)
 
     @admin_authenticate
     def post(self, id=None):
@@ -90,9 +90,7 @@ class UserApi(RestrictedResource):
             db.session.add(user)
             db.session.commit()
 
-        return {
-            'user': marshal(user, user_fields),
-        }
+        return marshal(user, user_fields)
 
     @admin_authenticate
     def delete(self, id):

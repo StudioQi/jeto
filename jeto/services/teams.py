@@ -44,9 +44,7 @@ class TeamApi(RestrictedResource):
                 request_details=request.json)
             db.session.add(team)
             db.session.commit()
-            return {
-                'team': marshal(team, team_fields),
-            }
+            return self.get(team.id)
         else:
             # Not used right now, put() is called instead.
             team = Team.query.get(id)
