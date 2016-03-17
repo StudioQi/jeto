@@ -43,6 +43,11 @@ class CurrentUserApi(RestrictedResource):
 
 class UserApi(RestrictedResource):
     def get(self, id=None):
+        """
+        Return users' datas.
+        :param id: Id of a specific user (default None)
+        :return: The list of all users if id is undefined otherwise, data on the specific user
+        """
         if id is None:
             users = User.query.order_by('name')
             return [marshal(user, user_fields_with_teams) for user in users]
@@ -60,45 +65,64 @@ class UserApi(RestrictedResource):
                 return marshal(user, user_fields_with_teams)
 
     @admin_authenticate
-    def post(self, id=None):
-        if 'state' in request.json and request.json['state'] == 'create':
-            user = User(
-                None,
-                request.json['name'],
-            )
-            auditlog(
-                current_user,
-                'create',
-                user,
-                request_details=request.json)
-            db.session.add(user)
-            db.session.commit()
-        else:
-            user = User.query.get(id)
-            if 'user' in request.json and 'role' in request.json['user']:
-                role = request.json['user']['role']
-                if role == ROLE_ADMIN:
-                    user.role = ROLE_ADMIN
-                elif role == ROLE_DEV:
-                    user.role = ROLE_DEV
+    def post(self):
+        """
+        Create a new user
+        :return: Datas of the new user
+        """
 
-            auditlog(
-                current_user,
-                'update',
-                user,
-                request_details=request.json)
-            db.session.add(user)
-            db.session.commit()
+        user = User(
+            **request.json
+        )
+
+        #auditlog(
+        #    current_user,
+        #    'create',
+        #    user,
+        #    request_details=request.json)
+        db.session.add(user)
+        db.session.commit()
+
+        return marshal(user, user_fields)
+
+    @admin_authenticate
+    def put(self, id):
+        """
+        Update an existing user
+        :param id: User's id
+        :return: Object of the updated user.
+        """
+        user = User.query.get(id)
+        if 'user' in request.json and 'role' in request.json['user']:
+            role = request.json['user']['role']
+            if role == ROLE_ADMIN:
+                user.role = ROLE_ADMIN
+            elif role == ROLE_DEV:
+                user.role = ROLE_DEV
+
+        auditlog(
+            current_user,
+            'update',
+            user,
+            request_details=request.json)
+        db.session.add(user)
+        db.session.commit()
 
         return marshal(user, user_fields)
 
     @admin_authenticate
     def delete(self, id):
+        """
+        Delete an user identified by its id
+        :param id: User's id
+        :return:
+        """
+
         user = User.query.get(id)
-        auditlog(
-            current_user,
-            'delete',
-            user)
+        #auditlog(
+        #    current_user,
+        #    'delete',
+        #    user)
         try:
             db.session.delete(user)
             db.session.commit()
