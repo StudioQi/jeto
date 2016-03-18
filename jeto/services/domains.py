@@ -288,46 +288,47 @@ class DomainControllerApi(RestrictedResource):
             )
 
     @admin_authenticate
-    def post(self, id=None):
-        if 'state' in request.json and request.json['state'] == 'create':
-            domain_controller = DomainController(
-                None,
-                request.json['name'],
-                request.json['address'],
-                request.json['port'],
-                request.json['accept_self_signed']
-            )
-            auditlog(
-                current_user,
-                'create domaincontroller',
-                domain_controller,
-                request_details=request.get_json())
-            db.session.add(domain_controller)
-            db.session.commit()
-            return self.get(domain_controller.id)
-        else:
-            domain_controller = DomainController.query.get(id)
-            name = clean(request.json['name'].rstrip())
-            address = clean(request.json['address'].rstrip())
-            port = clean(request.json['port'].rstrip())
-            auditlog(
-                current_user,
-                'update domaincontroller',
-                domain_controller,
-                request_details=request.get_json())
+    def post(self):
+        domain_controller = DomainController(
+            None,
+            request.json['name'],
+            request.json['address'],
+            request.json['port'],
+            request.json['accept_self_signed']
+        )
+        auditlog(
+            current_user,
+            'create domaincontroller',
+            domain_controller,
+            request_details=request.get_json())
+        db.session.add(domain_controller)
+        db.session.commit()
+        return self.get(domain_controller.id)
 
-            if name != '':
-                domain_controller.name = name
+    @admin_authenticate
+    def put(self, id):
+        domain_controller = DomainController.query.get(id)
+        name = clean(request.json['name'].rstrip())
+        address = clean(request.json['address'].rstrip())
+        port = clean(request.json['port'].rstrip())
+        auditlog(
+            current_user,
+            'update domaincontroller',
+            domain_controller,
+            request_details=request.get_json())
 
-            if address != '':
-                domain_controller.address = address
+        if name != '':
+            domain_controller.name = name
 
-            if port != '':
-                domain_controller.port = port
+        if address != '':
+            domain_controller.address = address
 
-            db.session.add(domain_controller)
-            db.session.commit()
-            return self.get(id)
+        if port != '':
+            domain_controller.port = port
+
+        db.session.add(domain_controller)
+        db.session.commit()
+        return self.get(id)
 
     def _update_permissions(self, team):
         users = []

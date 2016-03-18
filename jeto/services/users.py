@@ -75,11 +75,11 @@ class UserApi(RestrictedResource):
             **request.json
         )
 
-        #auditlog(
-        #    current_user,
-        #    'create',
-        #    user,
-        #    request_details=request.json)
+        auditlog(
+            current_user,
+            'create',
+            user,
+            request_details=request.json)
         db.session.add(user)
         db.session.commit()
 

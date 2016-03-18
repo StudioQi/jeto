@@ -39,13 +39,35 @@ class ProjectApi(RestrictedResource):
             return marshal(project, project_fields)
 
     @admin_authenticate
-    def post(self, id=None):
-        if 'state' in request.json and request.json['state'] == 'create':
-            action = 'create'
-            project = Project(None, request.json['name'])
-        else:
-            action = 'update'
-            project = Project.query.get(id)
+    def post(self):
+        action = 'create'
+        project = Project(None, request.json['name'])
+
+        if 'name' in request.json\
+                and request.json['name'] != '':
+            project.name = clean(request.json['name'])
+        if 'git_address' in request.json\
+                and request.json['git_address'] != '':
+            project.git_address = clean(
+                request.json['git_address'].replace(' ', '')
+            )
+        elif 'base_path' in request.json:
+            project.base_path = request.json['base_path']
+
+        auditlog(
+            current_user,
+            action,
+            project,
+            request_details=request.get_json())
+        db.session.add(project)
+        db.session.commit()
+
+        return marshal(project, project_fields)
+
+    @admin_authenticate
+    def put(self,id):
+        action = 'update'
+        project = Project.query.get(id)
 
         if 'name' in request.json\
                 and request.json['name'] != '':

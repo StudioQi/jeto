@@ -24,6 +24,8 @@ mock_modules = {
     'flask.ext.login': mock,
     'flask.ext.babel': mock,
     'flask.ext.sqlalchemy': mock,
+    'flask.ext.sqlalchemy._compat': mock,
+    'flask.signals': mock,
     'flask.ext.principal': mock,
     'flask.ext.restful': restful,
     'logging': mock,
