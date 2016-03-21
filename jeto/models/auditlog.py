@@ -44,10 +44,10 @@ def auditlog(
     l = AuditLog(
         user_id=user.id,
         user_name=user.name,
-        objectId=getattr(obj, 'id', None),
-        objectType=object_type,
+        object_id=getattr(obj, 'id', None),
+        object_type=object_type,
         request_details=str(request_details),
-        objectName=object_name,
+        object_name=object_name,
         summary=summary)
     db.session.add(l)
     db.session.commit()
