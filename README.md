@@ -37,6 +37,15 @@ Feel free to contact us if you want a little demo around the project.
 requires: `pip install mock`
 from the checkout run `python tests/tests_services.py`
 
+
+###INITIALISE DATABASE
+
+``python initdb.py``
+
+###GIVE ADMIN ROLE TO THE CURRENT USER
+
+``python manage.py add_admin``
+
 ## License
 
 [Creative Commons Attribution 3.0 Unported] [2]

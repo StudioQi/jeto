@@ -17,6 +17,7 @@ LANGUAGES = {
 PROJECT_BASEPATH = '/home/vagrant/projects/'
 # oauth
 REDIRECT_URI = '/oauth2callback'
+GOOGLE_LOGIN_REDIRECT_URI = 'http://jeto.io/oauth2callback'
 GOOGLE_CLIENT_ID = ''
 GOOGLE_CLIENT_SECRET = ''
 # GOOGLE_LIMIT_DOMAIN = ['test.com', 'example.com']

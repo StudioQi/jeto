@@ -1,9 +1,9 @@
 from flask import request
 
-from flask_restful import fields, marshal
+from flask_restful import fields, marshal, abort
 from flask_login import current_user
 
-from jeto import db
+from jeto import db, app
 from jeto.core import clean
 from jeto.services import RestrictedResource, admin_authenticate, team_fields_wo_users
 from jeto.services.users import user_fields
@@ -28,39 +28,32 @@ class TeamApi(RestrictedResource):
             return [marshal(team, team_fields) for team in teams]
         else:
             team = Team.query.get(id)
-            return marshal(team, team_fields)
+            if hasattr(team, 'id'):
+                return marshal(team, team_fields)
+            else:
+                abort(404, message="Team {} doesn't exist".format(id))
 
     @admin_authenticate
-    def post(self, id=None):
-        if 'state' in request.json and request.json['state'] == 'create':
-            team = Team(
-                None,
-                request.json['name'],
-            )
-            auditlog(
-                current_user,
-                'create',
-                team,
-                request_details=request.json)
-            db.session.add(team)
-            db.session.commit()
-            return self.get(team.id)
-        else:
-            # Not used right now, put() is called instead.
-            team = Team.query.get(id)
-            name = clean(request.json['name'])
-            if name != '':
-                team.name = name
-
-            # team = self._updatePermissions(team)
-
-            db.session.add(team)
-            db.session.commit()
-            return self.get(id)
+    def post(self):
+        team = Team(
+            None,
+            request.json['name'],
+        )
+        auditlog(
+            current_user,
+            'create',
+            team,
+            request_details=request.json)
+        db.session.add(team)
+        db.session.commit()
+        return self.get(team.id)
 
     @admin_authenticate
     def put(self, id):
         team = Team.query.get(id)
+        name = clean(request.json['name'])
+        if name != '':
+            team.name = name
         team = self._update_permissions(team)
         auditlog(
             current_user,
@@ -69,6 +62,7 @@ class TeamApi(RestrictedResource):
             request_details=request.json)
         db.session.add(team)
         db.session.commit()
+        return self.get(team.id)
 
     def _update_permissions(self, team):
         users = []
