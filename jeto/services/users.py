@@ -119,10 +119,10 @@ class UserApi(RestrictedResource):
         """
 
         user = User.query.get(id)
-        #auditlog(
-        #    current_user,
-        #    'delete',
-        #    user)
+        auditlog(
+            current_user,
+            'delete',
+            user)
         try:
             db.session.delete(user)
             db.session.commit()
