@@ -33,7 +33,7 @@ class TestTeamsAPI(TestCase):
         self.assertEqual(r.json, [])
 
     @patch('jeto.services.current_user')
-    def test_add(self, current_user):
+    def test_general(self, current_user):
         team = {
             "id":  1,
             "name": "Original name",
