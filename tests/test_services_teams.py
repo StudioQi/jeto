@@ -66,7 +66,6 @@ class TestTeamsAPI(TestCase):
         r = self.webtest.delete('/api/teams/1')
         self.assertTrue(r.status, 200)
         r = self.webtest.get('/api/teams/1', expect_errors=True)
-        app.logger.debug(r.status)
         self.assertEqual(r.status, "404 NOT FOUND")
         r = self.webtest.get('/api/teams')
         self.assertEqual(r.json, [])
