@@ -17,7 +17,7 @@ project_fields = dict(
     project_wo_instance_fields,
     **{
         'instances': fields.Nested(instance_fields),
-        'teams': fields.Nested(team_fields)
+        'teams': fields.Nested(team_fields, default=[])
     }
 )
 
@@ -28,13 +28,17 @@ class ProjectApi(RestrictedResource):
             projects = Project.query.order_by('name')
             return [marshal(project, project_fields) for project in projects]
         else:
-            project = Project.query.get(id)
-            project.teams = []
-            teams = Team.query.all()
-            for team in teams:
-                if team.get_permissions_grids('project', project.id) is not\
-                        None:
-                    project.teams.append(team)
+            project = Project.query.get_or_404(id)
+
+            # For admin purposes, we expose the teams with
+            # privileges on this project
+            if current_user.is_admin():
+                project.teams = []
+                teams = Team.query.all()
+                for team in teams:
+                    if team.get_permissions_grids('project', project.id) is not\
+                            None:
+                        project.teams.append(team)
 
             return marshal(project, project_fields)
 
@@ -62,17 +66,19 @@ class ProjectApi(RestrictedResource):
         db.session.add(project)
         db.session.commit()
 
-        return marshal(project, project_fields)
+        return self.get(project.id)
 
     @admin_authenticate
-    def put(self,id):
+    def put(self, id):
         action = 'update'
         project = Project.query.get(id)
 
         if 'name' in request.json\
+                and request.json['name'] is not None \
                 and request.json['name'] != '':
             project.name = clean(request.json['name'])
         if 'git_address' in request.json\
+                and request.json['git_address'] is not None \
                 and request.json['git_address'] != '':
             project.git_address = clean(
                 request.json['git_address'].replace(' ', '')
