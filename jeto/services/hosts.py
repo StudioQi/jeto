@@ -19,23 +19,23 @@ host_fields = {
     'params': fields.String,
 }
 
+class HostsApi(RestrictedResource):
+    def get(self):
+        hosts_all = Host.query.order_by('name')
+        permitted_hosts = []
+        for host in hosts_all:
+            if current_user.has_permission(ViewHostPermission, host.id):
+                permitted_hosts.append(host)
+
+        return [marshal(host, host_fields) for host in permitted_hosts]
 
 class HostApi(RestrictedResource):
-    def get(self, id=None):
-        if id is None:
-            hosts_all = Host.query.order_by('name')
-            permitted_hosts = []
-            for host in hosts_all:
-                if current_user.has_permission(ViewHostPermission, host.id):
-                    permitted_hosts.append(host)
+    def get(self, id):
+        host = Host.query.get_or_404(id)
+        host.params = host.params.replace('\r\n', '<br>')
+        host.params = host.params.replace('\n', '<br>')
 
-            return [marshal(host, host_fields) for host in permitted_hosts]
-        else:
-            host = Host.query.get(id)
-            host.params = host.params.replace('\r\n', '<br>')
-            host.params = host.params.replace('\n', '<br>')
-
-            return marshal(host, host_fields)
+        return marshal(host, host_fields)
 
     @admin_authenticate
     def post(self):
