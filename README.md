@@ -34,9 +34,25 @@ Feel free to contact us if you want a little demo around the project.
 ![Vagrant-Control](doc/images/v0.1.0.png)
 
 ###TESTS
-requires: `pip install mock`
-from the checkout run `python tests/tests_services.py`
+To launch test, you need to install virtualenv.
 
+`pip install virtualenv`
+
+Create your venv in the root of the project
+
+`virtualenv venv`
+
+Activate your venv
+
+`. venv/bin/activate`
+
+Reinstall package exclusively in your venv
+
+`pip install -r requirements.txt`
+
+After activation of virtualenv and configure environment, you can launch test with py.test :
+
+`py.test tests/`
 
 ###INITIALISE DATABASE
 
