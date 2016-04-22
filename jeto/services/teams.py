@@ -27,11 +27,8 @@ class TeamApi(RestrictedResource):
             teams = Team.query.order_by('name')
             return [marshal(team, team_fields) for team in teams]
         else:
-            team = Team.query.get(id)
-            if hasattr(team, 'id'):
-                return marshal(team, team_fields)
-            else:
-                abort(404, message="Team {} doesn't exist".format(id))
+            team = Team.query.get_or_404(id)
+            return marshal(team, team_fields)
 
     @admin_authenticate
     def post(self):

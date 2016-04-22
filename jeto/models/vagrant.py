@@ -11,23 +11,20 @@ import time
 import slugify
 import json
 from rq import Queue, Connection
-from flask import request
+from flask import request, abort
 from flask_login import current_user
 
-
 class VagrantBackend():
-    def __init__(self):
-        self.instances = VagrantInstance.query.order_by('name')
 
     def get(self, instance_id):
-        return VagrantInstance.query.get(int(instance_id))
-
-    def find(self, instance_id=None, path=None):
-        for instance in self.instances:
-            if instance.id == instance_id or instance.path == path:
-                return instance
-
-        return None
+        instance = VagrantInstance.query.get_or_404(int(instance_id))
+        if(current_user.has_permission(
+                ViewInstancePermission,
+                instance.id
+            )):
+            return instance
+        else:
+            abort(403)
 
     def get_all_instances(self):
         instances = filter(
@@ -35,7 +32,7 @@ class VagrantBackend():
                 ViewInstancePermission,
                 instance.id
             ),
-            self.instances
+            VagrantInstance.query.order_by('name')
         )
         return instances
 
@@ -58,8 +55,10 @@ class VagrantBackend():
         db.session.commit()
 
         if instance.git_reference:
+            # TODO: Add an exception if the clone fail
             instance.clone()
         elif instance.archive_url:
+            # TODO: Add an exception if the extract fail
             instance.extract()
 
         return instance
@@ -72,11 +71,6 @@ class VagrantBackend():
     @staticmethod
     def delete(instance_id):
         instance = VagrantInstance.query.get(instance_id)
-        auditlog(
-            current_user,
-            'delete instance',
-            instance,
-            request_details=request.get_json())
         instance.delete()
 
     @staticmethod
@@ -125,7 +119,7 @@ class VagrantInstance(db.Model):
         return '{} : {} : {}'.format(
             self.name,
             self._status,
-            self._generatePath()
+            self._generate_path()
         )
 
     def __str__(self):
@@ -135,7 +129,7 @@ class VagrantInstance(db.Model):
         return self
 
     def _status(self):
-        path = self._generatePath()
+        path = self._generate_path()
 
         results = self._submit_job(
             'status',
@@ -222,7 +216,7 @@ class VagrantInstance(db.Model):
     def _ip(self, machine_name):
         results = self._submit_job(
             'ip',
-            path=self._generatePath(),
+            path=self._generate_path(),
             machine_name=machine_name,
             host=self.host,
             environment=self.environment,
@@ -252,7 +246,7 @@ class VagrantInstance(db.Model):
         results = self._submit_job(
             'run',
             machine_name=machine_name,
-            path=self._generatePath(),
+            path=self._generate_path(),
             environment=self.environment,
             host=self.host,
         )
@@ -262,7 +256,7 @@ class VagrantInstance(db.Model):
     def provision(self, machine_name):
         results = self._submit_job(
             'provision',
-            path=self._generatePath(),
+            path=self._generate_path(),
             environment=self.environment,
             machine_name=machine_name,
             host=self.host,
@@ -272,7 +266,7 @@ class VagrantInstance(db.Model):
     def stop(self, machine_name):
         results = self._submit_job(
             'stop',
-            path=self._generatePath(),
+            path=self._generate_path(),
             environment=self.environment,
             machine_name=machine_name,
             host=self.host,
@@ -282,7 +276,7 @@ class VagrantInstance(db.Model):
     def delete(self):
         self._submit_job(
             'destroy',
-            path=self._generatePath(),
+            path=self._generate_path(),
             environment=self.environment,
             host=self.host,
         )
@@ -292,7 +286,7 @@ class VagrantInstance(db.Model):
     def extract(self):
         results = self._submit_job(
             'extract',
-            path=self._generatePath(),
+            path=self._generate_path(),
             archive_url=self.archive_url,
             host=self.host,
         )
@@ -301,7 +295,7 @@ class VagrantInstance(db.Model):
     def rsync(self):
         results = self._submit_job(
             'rsync',
-            path=self._generatePath(),
+            path=self._generate_path(),
             host=self.host,
         )
         return results
@@ -309,7 +303,7 @@ class VagrantInstance(db.Model):
     def sync(self):
         results = self._submit_job(
             'sync',
-            path=self._generatePath(),
+            path=self._generate_path(),
             git_reference=self.git_reference,
         )
         return results
@@ -317,7 +311,7 @@ class VagrantInstance(db.Model):
     def clone(self):
         results = self._submit_job(
             'clone',
-            path=self._generatePath(),
+            path=self._generate_path(),
             git_address=self.project.git_address,
             git_reference=self.git_reference,
             host=self.host,
@@ -325,9 +319,15 @@ class VagrantInstance(db.Model):
         return results
 
     def run_script(self, script, machine_name='default'):
+        """
+        Run a script as specified in the jeto.json file
+        :param script: Name definied in jeto.json
+        :param machine_name: Name for the machine
+        :return:
+        """
         results = self._submit_job(
             'run_script',
-            path=self._generatePath(),
+            path=self._generate_path(),
             host=self.host,
             environment=self.environment,
             machine_name=machine_name,
@@ -336,6 +336,12 @@ class VagrantInstance(db.Model):
         return results
 
     def _submit_job(self, action, **kwargs):
+        """
+        Send a job to the queue manager
+        :param action:
+        :param kwargs:
+        :return:
+        """
         with Connection():
             queue = Queue('high', connection=redis_conn)
             action = 'worker.{}'.format(action)

@@ -84,8 +84,9 @@ from jeto.services.teams import TeamApi
 from jeto.services.users import UserApi, CurrentUserApi
 from jeto.services.api_keys import APIKeyApi
 
-api.add_resource(InstanceApi, '/api/instances/<int:id>', endpoint='instance')
+api.add_resource(InstanceApi, '/api/instance/<int:id>', endpoint='instance')
 api.add_resource(InstancesApi, '/api/instances', endpoint='instances')
+api.add_resource(InstanceApi, '/api/instance', endpoint='instance_creation')
 api.add_resource(InstanceApi, '/api/instances/<int:id>/<machineName>/ip',
                  endpoint='machines')
 

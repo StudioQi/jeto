@@ -3,6 +3,7 @@ from flask import request, abort
 from flask_restful import Resource, fields, marshal
 from flask_login import current_user
 
+from jeto import app
 from jeto.core import redis_conn
 
 from jeto.services.hosts import host_fields
@@ -25,7 +26,7 @@ states = {
 }
 
 
-status_fields = {
+machine_fields = {
     'name': fields.String,
     'status': fields.String,
     'ip': fields.String,
@@ -35,13 +36,13 @@ instance_fields = {
     'id': fields.String,
     'name': fields.String,
     'path': fields.String,
-    'archive_url': fields.String,
-    'git_reference': fields.String,
-    'status': fields.Nested(status_fields),
+    'archive_url': fields.String(default=""),
+    'git_reference': fields.String(default=""),
+    'machines': fields.List(fields.Nested(machine_fields), default=[]),
     'environment': fields.String,
     'project': fields.Nested(project_wo_instance_fields),
     'host': fields.Nested(host_fields),
-    'jeto_infos': fields.List(fields.String),
+    'jeto_infos': fields.List(fields.String, default=""),
 }
 
 
@@ -56,52 +57,15 @@ class InstancesApi(Resource):
 
         return [marshal(instance, instance_fields) for instance in instances]
 
-    def delete(self):
-        instance_id = int(request.json['id'])
-        self.backend.delete(instance_id)
-
-    def post(self):
-        query = request.get_json()
-        instance_id = query.get('id')
-        if instance_id:
-            instance_id = int(instance_id)
-            instance = self.backend.get(instance_id)
-
-            auditlog(
-                current_user,
-                '{} instance'.format(query.get('state', 'unknown')),
-                instance,
-                request_details=request.get_json())
-            if 'start' in query.get('state', ''):
-                provider = query['state'].replace('start-', '')
-                instance.start(provider)
-
-            elif query.get('state') == 'stop':
-                instance.stop()
-            elif query.get('state') == 'sync':
-                instance.sync()
-
-        elif query.get('state') == 'create':
-            instance = self.backend.create(query)
-        else:
-            return self.get()
-
-        return marshal(instance, instance_fields);
-
-    def _sync(self, id):
-        self.backend.sync(id)
-
-    def _stop(self, id):
-        self.backend.stop(id)
-
-    def _start(self, id):
-        self.backend.start(id)
-
-    def _get_instance(self, id):
-        instances = self.backend.get_all_instances()
-        for instance in instances:
-            if instance.id == id:
-                return instance
+    # I don't verified if these functions are used somewhere but, I don't think it's logical to have them here.
+    # def _sync(self, id):
+    #     self.backend.sync(id)
+    #
+    # def _stop(self, id):
+    #     self.backend.stop(id)
+    #
+    # def _start(self, id):
+    #     self.backend.start(id)
 
 
 class InstanceApi(Resource):
@@ -111,9 +75,10 @@ class InstanceApi(Resource):
         self.backend = VagrantBackend()
 
     def get(self, id, machine_name=None):
-        instance = self._get_instance(id)
+
+        instance = self.backend.get(id)
         if machine_name is None:
-            instance.status, jeto_infos, scripts, date_commit = instance._status()
+            instance.machines, jeto_infos, scripts, date_commit = instance._status()
         else:
             return {'ip': instance._ip(machine_name)}
 
@@ -123,37 +88,51 @@ class InstanceApi(Resource):
         instance_json['scripts'] = scripts
         return instance_json
 
-    def post(self, id):
-        instance = self._get_instance(id) or abort(404)
-
-        changed = False
+    def post(self):
         query = request.get_json()
-        if 'name' in query:
-            if query['name'] != instance.name:
-                instance.name = query['name']
-                changed = True
 
-        if changed:
-            instance.save()
+        instance = self.backend.create(query)
 
-        machine_name = ''
-        if 'machine' in query:
-            machine_name = query['machine']
+        auditlog(
+                 current_user,
+                 '{} instance'.format(query.get('state', 'unknown')),
+                 instance,
+                 request_details=request.get_json())
 
-        state = query.get('state')
-        permission = states.get(state)
-        if permission:
-            if current_user.has_permission(permission, id):
-                if state == 'runScript':
-                    instance.runScript(query.get('script'), machine_name)
-                elif state == 'rsync':
-                    instance.rsync()
-                elif state == 'sync':
-                    instance.sync()
-                else:
-                    getattr(self, state)(id, machine_name)
-            else:
-                abort(403)
+        return marshal(instance, instance_fields)
+
+    # This function seems unfunctional and call functions unimplemented like save().
+    # def put(self, id):
+    #     instance = self.backend.get(id)
+    #
+    #     changed = False
+    #     query = request.get_json()
+    #     if 'name' in query:
+    #         if query['name'] != instance.name:
+    #             instance.name = query['name']
+    #             changed = True
+    #
+    #     if changed:
+    #         instance.save()
+    #
+    #     machine_name = ''
+    #     if 'machine' in query:
+    #         machine_name = query['machine']
+    #
+    #     state = query.get('state')
+    #     permission = states.get(state)
+    #     if permission:
+    #         if current_user.has_permission(permission, id):
+    #             if state == 'runScript':
+    #                 instance.runScript(query.get('script'), machine_name)
+    #             elif state == 'rsync':
+    #                 instance.rsync()
+    #             elif state == 'sync':
+    #                 instance.sync()
+    #             else:
+    #                 getattr(self, state)(id, machine_name)
+    #         else:
+    #             abort(403)
 
     def provision(self, id, machine_name):
         return self.backend.provision(id, machine_name)
@@ -168,8 +147,13 @@ class InstanceApi(Resource):
         return self.backend.sync(id)
 
     def delete(self, id):
-        instance_id = int(id)
-        return self.backend.delete(instance_id)
+        instance = self.backend.get(id)
+        auditlog(
+            current_user,
+            'delete instance',
+            instance
+        )
+        return self.backend.delete(id)
 
     def _get_instance(self, id):
         instances = self.backend.get_all_instances()
