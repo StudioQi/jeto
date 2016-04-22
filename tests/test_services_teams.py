@@ -1,13 +1,10 @@
 #!/usr/bin/env python
 # -=- encoding: utf-8 -=-
 from unittest import TestCase
-from unittest import main
 from flask.ext.webtest import TestApp
 from jeto import app, db
-from jeto.models.team import Team
 from jeto import services
 import jeto
-import flask_restful
 from mock import patch, Mock, MagicMock
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite://"

@@ -33,7 +33,7 @@ class TestHostsAPI(TestCase):
     @patch('jeto.services.hosts.current_user')
     def test_general(self, current_user, current_user_host):
         host = {
-            "id":  1,
+            "id":  "1",
             "name": "Original name",
             "params": "",
             "provider": ""
