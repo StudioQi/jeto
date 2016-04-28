@@ -327,6 +327,7 @@ class VagrantInstance(db.Model):
             'rsync',
             path=self._generatePath(),
             host=self.host,
+            environment=self.environment,
             machineName=machineName,
         )
         return results
