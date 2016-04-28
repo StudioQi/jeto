@@ -145,8 +145,7 @@ class InstanceApi(Resource):
         if changed:
             instance.save()
 
-        if 'machine' in query:
-            machineName = query['machine']
+        machineName = query.get('machine', None)
 
         state = query.get('state')
         permission = states.get(state)
@@ -155,7 +154,7 @@ class InstanceApi(Resource):
                 if state == 'runScript':
                     instance.runScript(query.get('script'), machineName)
                 elif state == 'rsync':
-                    instance.rsync()
+                    instance.rsync(machineName)
                 elif state == 'sync':
                     instance.sync()
                 else:

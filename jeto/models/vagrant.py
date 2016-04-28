@@ -322,11 +322,12 @@ class VagrantInstance(db.Model):
         )
         return results
 
-    def rsync(self):
+    def rsync(self, machineName=None):
         results = self._submit_job(
             'rsync',
             path=self._generatePath(),
             host=self.host,
+            machineName=machineName,
         )
         return results
 
