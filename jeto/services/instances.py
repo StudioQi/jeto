@@ -219,7 +219,7 @@ class CommandApi(InstanceApi):
         # force async
         request.json['async'] = True
 
-        machineName = query.get('machine', "")
+        machineName = query.get('machine', None)
 
         action = query.get('action')
         permission = states.get(action)
@@ -229,7 +229,7 @@ class CommandApi(InstanceApi):
                     job_id = instance.runScript(
                         query.get('script'), machineName)
                 elif action == 'rsync':
-                    job_id = instance.rsync()
+                    job_id = instance.rsync(machineName)
                 elif action == 'sync':
                     job_id = instance.sync()
                 else:
